@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "ignore": [
+    "node_modules/**",
+    "dist/**",
+    "build/**"
+  ],
+  "patterns": {
+    "**/*.js": {
+      "style": {
+        "comments": {
+          "tone": "gritty, motivating, trade-focused",
+          "examples": [
+            "// 🚀 Trade Hustle Style: Fast, clean, bold, no fluff.",
+            "// Built for the grind. Keep it sharp, keep it simple.",
+            "// Always explain WHY the code matters, not just WHAT it does."
+          ]
+        },
+        "docstrings": {
+          "tone": "direct, educational, for Gen Z tradespeople learning code",
+          "format": "Google",
+          "examples": [
+            "Args:\n    data (dict): Resume details for HVAC tech.\nReturns:\n    str: Optimized bullet points, ATS-ready."
+          ]
+        }
+      }
+    },
+    "**/*.py": {
+      "style": {
+        "comments": {
+          "tone": "gritty, practical, blue-collar coding coach",
+          "examples": [
+            "# ⚡ Hustle Rule: Keep it lean, no wasted lines.",
+            "# Show cause-and-effect in logic: how this block levels up the resume builder."
+          ]
+        },
+        "docstrings": {
+          "tone": "clear, structured, hustle mindset",
+          "format": "Google",
+          "examples": [
+            "Args:\n    request (dict): Trade Hustle resume input payload.\nReturns:\n    dict: ATS-optimized resume suggestions."
+          ]
+        }
+      }
+    }
+  }
+}
