@@ -10,37 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout your repository
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
-      # Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      # Authenticate with Google Cloud using your service account
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
         with:
-          node-version: '18'
+          credentials_json: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
 
       # Set up gcloud SDK
-      - name: Set up gcloud SDK
+      - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: tradehustleresumebuilder
 
-      # Authenticate with Firebase using service account
-      - name: Authenticate with Firebase
-        run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > ${HOME}/firebase-key.json
-          gcloud auth activate-service-account --key-file=${HOME}/firebase-key.json
-          gcloud --quiet config set project tradehustleresumebuilder
-
-      # Install dependencies for Cloud Functions
-      - name: Install dependencies in functions
+      # Install dependencies for functions
+      - name: Install functions dependencies
         run: |
           cd functions
           npm install
 
       # Deploy to Firebase Hosting + Functions
-      - name: Deploy to Firebase Hosting and Functions
+      - name: Deploy to Firebase
         run: |
           npm install -g firebase-tools
-          firebase deploy --only hosting,functions --non-interactive --token "${{ secrets.FIREBASE_AUTH_TOKEN }}"
+          firebase deploy --only hosting,functions --non-interactive
