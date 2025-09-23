@@ -11,37 +11,87 @@
         "comments": {
           "tone": "gritty, motivating, trade-focused",
           "examples": [
-            "// 🚀 Trade Hustle Style: Fast, clean, bold, no fluff.",
-            "// Built for the grind. Keep it sharp, keep it simple.",
-            "// Always explain WHY the code matters, not just WHAT it does."
+            "// ⚡ Hustle Style: Firebase first, keep APIs lean.",
+            "// Integrates Shopify frontend with Firebase Functions.",
+            "// Resume Builder logic — keep it ATS-optimized and modular."
           ]
         },
         "docstrings": {
-          "tone": "direct, educational, for Gen Z tradespeople learning code",
+          "tone": "direct, dev-friendly, resume-builder context",
           "format": "Google",
           "examples": [
-            "Args:\n    data (dict): Resume details for HVAC tech.\nReturns:\n    str: Optimized bullet points, ATS-ready."
+            "Args:\n    req (object): Firebase request payload with trade resume data.\nReturns:\n    Promise: Shopify-ready response with ATS-optimized content."
           ]
+        }
+      }
+    },
+    "**/*.ts": {
+      "style": {
+        "comments": {
+          "tone": "gritty, motivating, trade-focused, typed",
+          "examples": [
+            "// ⚡ Hustle Rule: Use interfaces for resume data.",
+            "// ATS logic: always type your returns.",
+            "// Firebase + Shopify integration with strong types and error handling.",
+            "// Hustle Rule: keep it typed, keep it clean",
+            "// Cause & Effect: input → ATS-ready resume → export",
+            "// Trade Hustle Pro Tip: use interfaces instead of plain objects"
+          ]
+        },
+        "docstrings": {
+          "tone": "direct, typed, resume-builder context",
+          "format": "JSDoc",
+          "examples": [
+            "@param resumeData {ResumeInput} ATS fields parsed\n@returns {ResumeOutput} JSON + PDF export-ready",
+            "@typedef {Object} ATSScore\n@property {number} value - Calculated ATS score for resume.",
+            "Always include Trade Hustle style comments with type annotations. Example:\n@param resumeData: ResumeInput (ATS fields parsed)\n@returns ResumeOutput (JSON + PDF export-ready)"
+          ]
+        },
+        "patterns": {
+          "interface": "Suggest interface ResumeTemplate { ... } for structured resume data.",
+          "type": "Use type ATSScore = number; for scoring logic.",
+          "errorHandling": "Prefer try/catch with Error types, never swallow errors.",
+          "async": "Use async/await with typed Promise responses, e.g. Promise<UserProfile>."
         }
       }
     },
     "**/*.py": {
       "style": {
         "comments": {
-          "tone": "gritty, practical, blue-collar coding coach",
+          "tone": "gritty, pragmatic, AI+resume-builder focused",
           "examples": [
-            "# ⚡ Hustle Rule: Keep it lean, no wasted lines.",
-            "# Show cause-and-effect in logic: how this block levels up the resume builder."
+            "# 🚀 Connects Firebase Admin SDK to resume pipeline.",
+            "# Keeps resume output ATS-optimized, Shopify export-ready."
           ]
         },
         "docstrings": {
-          "tone": "clear, structured, hustle mindset",
+          "tone": "clear, structured, trade/ATS context",
           "format": "Google",
           "examples": [
-            "Args:\n    request (dict): Trade Hustle resume input payload.\nReturns:\n    dict: ATS-optimized resume suggestions."
+            "Args:\n    data (dict): Resume info (skills, trade, experience).\nReturns:\n    dict: AI-enhanced resume suggestions with ATS keywords."
           ]
         }
       }
     }
+  },
+  "contextBias": {
+    "preferredTech": [
+      "Firebase Admin SDK",
+      "Firestore",
+      "Firebase Functions",
+      "Shopify Liquid",
+      "Shopify API",
+      "ATS resume optimization",
+      "Node.js",
+      "Python FastAPI"
+    ],
+    "keywords": [
+      "resume builder",
+      "ATS",
+      "Firebase integration",
+      "Shopify product funnel",
+      "trade careers",
+      "AI resume editing"
+    ]
   }
 }
