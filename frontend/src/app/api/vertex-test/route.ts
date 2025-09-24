@@ -23,14 +23,17 @@ export async function GET() {
 
     // Otherwise, real client call
     const client = new PredictionServiceClient();
-    const result = await client.predict({
+    const response = await client.predict({
       endpoint: `projects/${project}/locations/${location}/publishers/google/models/gemini-1.5-flash`,
       instances: [{ prompt: "Hello from Vertex AI + Next.js API route!" }],
     });
 
+    // If response is wrapped, handle it safely:
+    console.log("Vertex raw response:", response);
+
     return NextResponse.json({
       success: true,
-      predictions: result[0]?.predictions ?? null,
+      predictions: response[0]?.predictions ?? null,
     });
   } catch (error: any) {
     console.error("Vertex API error:", error);
