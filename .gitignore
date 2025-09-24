@@ -3,3 +3,7 @@
 serviceAccountKey.json
 /storage/emulated/0/Download/tradehustleresumebuilder-firebase-adminsdk-fbsvc-0167555505.json
 node_modules
+
+# Environment files
+.env.local
+.env
