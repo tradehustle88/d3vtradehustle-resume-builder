@@ -1,0 +1,13 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Yellow paint splatter effect -->
+  <g opacity="0.8">
+    <circle cx="100" cy="100" r="35" fill="#fbbf24"/>
+    <circle cx="80" cy="85" r="18" fill="#fbbf24"/>
+    <circle cx="125" cy="115" r="22" fill="#fbbf24"/>
+    <circle cx="65" cy="125" r="10" fill="#fbbf24"/>
+    <circle cx="135" cy="75" r="14" fill="#fbbf24"/>
+    <ellipse cx="90" cy="135" rx="12" ry="8" fill="#fbbf24"/>
+    <ellipse cx="120" cy="65" rx="9" ry="15" fill="#fbbf24"/>
+    <circle cx="105" cy="140" r="6" fill="#fbbf24"/>
+  </g>
+</svg>

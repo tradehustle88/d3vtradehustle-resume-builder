@@ -1,21 +1,123 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Background gradient for hero */
+.bg-hero {
+  background: linear-gradient(to bottom, #000000, #001a33, #000000);
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Title */
+.hero-title {
+  font-family: "Oswald", sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  color: white;
+  position: relative;
+  display: inline-block;
+  text-transform: uppercase;
+  line-height: 1.2;
+  letter-spacing: 2px;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+/* Flowing multi-color outline effect */
+.hero-title::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  color: transparent;
+  -webkit-text-stroke: 3px transparent;
+  background: linear-gradient(
+    90deg,
+    #ff0000,
+    #ffd700,
+    #1e90ff,
+    #ff0000
+  );
+  background-size: 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: outline-flow 8s linear infinite;
+  z-index: -1;
+}
+
+@keyframes outline-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 400% 50%; }
+}
+
+/* Logo */
+.hero-logo {
+  transition: filter 0.6s ease, transform 0.6s ease;
+}
+.hero-logo:hover {
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9));
+  transform: rotate(2deg);
+}
+
+/* Subtitle */
+.hero-subtitle {
+  font-family: "Oswald", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffd700;
+  text-transform: uppercase;
+  line-height: 1.5;
+  letter-spacing: 1px;
+}
+
+/* Brick block section */
+.brick-block {
+  background: url("/textures/brick-dark.png") repeat;
+  background-size: cover;
+  background-blend-mode: overlay;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 1;
+}
+
+/* Unlock the Hustle button */
+.btn-hustle {
+  display: inline-block;
+  padding: 0.85rem 2.5rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: white;
+  background: #8b0000;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+.btn-hustle:hover {
+  background: #ff0000;
+  filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.9));
+  transform: translateY(-2px);
+}
+
+/* Optional paint splatters */
+.paint-red,
+.paint-yellow,
+.paint-blue {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  opacity: 0.15;
+  animation: paint-fade 20s infinite linear;
+}
+
+.paint-red { top: 10%; left: 5%; }
+.paint-yellow { bottom: 15%; right: 10%; }
+.paint-blue { top: 40%; right: 20%; }
+
+@keyframes paint-fade {
+  0% { opacity: 0.1; transform: rotate(0deg) scale(1); }
+  50% { opacity: 0.25; transform: rotate(180deg) scale(1.05); }
+  100% { opacity: 0.1; transform: rotate(360deg) scale(1); }
 }

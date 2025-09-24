@@ -1,19 +1,44 @@
+"use client";
+
+import Image from "next/image";
+import Footer from "@/components/Footer";
+
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-black to-blue-900 text-white text-center px-6">
-      <h1 className="text-5xl font-extrabold text-yellow-400 drop-shadow-lg mb-6">
+    <main className="bg-hero relative min-h-screen flex flex-col items-center text-center overflow-hidden px-6">
+      {/* Title */}
+      <h1 className="hero-title mt-12" data-text="WELCOME TO THE GRIND">
         WELCOME TO THE GRIND
       </h1>
-      <p className="text-xl text-gray-300 max-w-2xl mb-8">
-        Built for the Trade. Backed by Hustle. 
-        Power up your career with the <span className="text-red-500 font-bold">Trade Hustle Resume Builder</span>.
-      </p>
-      <a
-        href="/resume"
-        className="px-6 py-3 bg-red-600 rounded-lg text-lg font-semibold hover:bg-red-700 transition"
-      >
-        HUSTLE NOW
-      </a>
+
+      {/* Logo */}
+      <div className="mt-6 relative z-10">
+        <Image
+          src="/resume-logo.png"
+          alt="Trade Hustle Logo"
+          width={340}
+          height={340}
+          priority
+          className="hero-logo"
+        />
+      </div>
+
+      {/* Subtitle with Brick Plate */}
+      <section className="brick-block max-w-3xl w-full mt-8 p-8 relative z-10 rounded-lg">
+        <h2 className="hero-subtitle">
+          BUILT FOR THE TRADE. BACKED BY HUSTLE. POWERED BY ENHANCED INTELLIGENCE.
+        </h2>
+
+        {/* Unlock Button */}
+        <div className="mt-8">
+          <a href="/unlock" className="btn-hustle">
+            Unlock the Hustle
+          </a>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <Footer />
     </main>
-  )
+  );
 }
