@@ -82,3 +82,23 @@ npm run dev
 ```bash
 # From root directory
 node src/adminTest.js
+```
+
+---
+
+## 🔒 Security Migration Complete
+
+This project has been updated to use environment variables instead of service account JSON files for enhanced security:
+
+- ✅ **No more `serviceAccountKey.json`** - All credentials are now environment variables
+- ✅ **Flexible configuration** - Supports both JSON string format and individual variables  
+- ✅ **Production ready** - Individual environment variables recommended for deployment
+- ✅ **Development friendly** - JSON string format works great for local development
+
+### Migration Notes
+- The `src/adminTest.js` script now loads credentials from environment variables
+- All Firebase Admin SDK integrations use `process.env.FIREBASE_SERVICE_ACCOUNT_KEY`
+- Environment files (`.env.local`, `.env`) are properly ignored by git
+- Complete setup instructions are provided above
+
+---
