@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
+import { initializeAppCheck, ReCaptchaV3Provider } from "firebase/app-check";
 
 // Firebase config from env vars
 const firebaseConfig = {
@@ -17,11 +17,10 @@ const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 // ✅ Setup App Check (only runs in browser)
 if (typeof window !== "undefined") {
-  const appCheck = getAppCheck(app);
-  appCheck.activate(
-    new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_KEY!),
-    true // auto-refresh App Check tokens
-  );
+  initializeAppCheck(app, {
+    provider: new ReCaptchaV3Provider(process.env.NEXT_PUBLIC_RECAPTCHA_KEY!),
+    isTokenAutoRefreshEnabled: true, // auto-refresh App Check tokens
+  });
 }
 
 export default app;

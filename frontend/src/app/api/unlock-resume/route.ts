@@ -24,14 +24,17 @@ export async function POST(req: Request) {
       );
     }
 
-    // 2. Save email to Firestore
-    const docRef = db.collection("unlocks").doc();
-    await docRef.set({
-      email,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    });
-
-    console.log("📩 Email saved to Firestore:", email);
+    // 2. Save email to Firestore (if available)
+    if (db) {
+      const docRef = db.collection("unlocks").doc();
+      await docRef.set({
+        email,
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      });
+      console.log("📩 Email saved to Firestore:", email);
+    } else {
+      console.log("📩 Email captured (Firestore not available):", email);
+    }
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
