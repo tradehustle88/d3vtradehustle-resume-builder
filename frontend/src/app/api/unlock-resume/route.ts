@@ -1,47 +1,39 @@
+
 import { NextResponse } from "next/server";
-import { db } from "@/lib/firebaseAdmin";
-import * as admin from "firebase-admin";
+import admin from "firebase-admin";
+
+if (!admin.apps.length) {
+  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY || "{}");
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
+
+const db = admin.firestore();
 
 export async function POST(req: Request) {
   try {
     const { email, token } = await req.json();
-    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
-    // 1. Verify reCAPTCHA
-    const verifyUrl = "https://www.google.com/recaptcha/api/siteverify";
-    const response = await fetch(verifyUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: `secret=${secretKey}&response=${token}`,
+    // Verify token with reCAPTCHA secret
+    const verifyRes = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
+      { method: "POST" }
+    ).then(r => r.json());
+
+    if (!verifyRes.success || verifyRes.score < 0.5) {
+      return NextResponse.json({ success: false, error: "Failed reCAPTCHA" }, { status: 400 });
+    }
+
+    // Store email in Firestore
+    await db.collection("unlocks").add({
+      email,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
-
-    const data = await response.json();
-
-    if (!data.success || data.score < 0.5) {
-      return NextResponse.json(
-        { success: false, reason: "Recaptcha failed" },
-        { status: 403 }
-      );
-    }
-
-    // 2. Save email to Firestore (if available)
-    if (db) {
-      const docRef = db.collection("unlocks").doc();
-      await docRef.set({
-        email,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
-      console.log("📩 Email saved to Firestore:", email);
-    } else {
-      console.log("📩 Email captured (Firestore not available):", email);
-    }
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error("Unlock error:", err);
-    return NextResponse.json(
-      { success: false, error: "Server error" },
-      { status: 500 }
-    );
+    console.error("Unlock API error:", err);
+    return NextResponse.json({ success: false, error: err.message }, { status: 500 });
   }
 }
