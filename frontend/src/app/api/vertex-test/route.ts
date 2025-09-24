@@ -16,7 +16,7 @@ export async function GET() {
     });
 
     // Ping Vertex AI model (Gemini flash as test)
-    const [response] = await client.predict({
+    const result = await client.predict({
       endpoint: `projects/${project}/locations/${location}/publishers/google/models/gemini-1.5-flash`,
       instances: [
         {
@@ -25,7 +25,10 @@ export async function GET() {
       ],
     });
 
-    return NextResponse.json({ success: true, response });
+    // Access prediction safely
+    console.log("Prediction result:", result.predictions?.[0]);
+
+    return NextResponse.json({ success: true, result: result.predictions?.[0] });
   } catch (err: any) {
     console.error("Vertex AI Error:", err);
     return NextResponse.json({ success: false, error: err.message });
