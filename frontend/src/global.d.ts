@@ -1,8 +1,12 @@
+// Global type definitions
 declare global {
+  // reCAPTCHA v3 types
   interface Window {
-    grecaptcha: any;
+    grecaptcha: {
+      ready: (callback: () => void) => void;
+      execute: (siteKey: string, options: { action: string }) => Promise<string>;
+    };
   }
-  const grecaptcha: any;
 }
 
 export {};

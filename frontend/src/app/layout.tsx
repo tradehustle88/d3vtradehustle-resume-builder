@@ -70,9 +70,9 @@ export default function RootLayout({
           referrerPolicy="no-referrer"
         />
         
-        {/* Google reCAPTCHA v3 */}
-        <Script
-          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_KEY}`}
+        {/* reCAPTCHA v3 */}
+        <script
+          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
           async
           defer
         />

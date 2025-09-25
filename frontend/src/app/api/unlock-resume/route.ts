@@ -1,60 +1,122 @@
 // src/app/api/unlock-resume/route.ts
-// src/app/api/unlock-resume/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import admin from "firebase-admin";
+import crypto from "crypto";
 
-// ✅ Initialize Firebase Admin safely
-if (!admin.apps.length && process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-  });
-}
-const db = admin.apps.length ? admin.firestore() : null;
-
-// ✅ Simple GET check (for health tests)
-export async function GET() {
-  return NextResponse.json({
-    status: "ok",
-    message: "Unlock API is live 🚀",
-  });
-}
-
-// ✅ POST handler (real unlock flow)
-export async function POST(req: Request) {
+// --- Firebase Admin Init ---
+if (!admin.apps.length) {
   try {
-    const { email, token } = await req.json();
+    const serviceAccountString = Buffer.from(
+      process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string,
+      "base64"
+    ).toString("utf8");
 
-    if (!email) {
-      return NextResponse.json({ success: false, error: "Missing email" }, { status: 400 });
+    const serviceAccount = JSON.parse(serviceAccountString);
+
+    admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+    });
+  } catch (error) {
+    console.warn("⚠️ Firebase Admin initialization failed, running in mock mode");
+  }
+}
+
+const db = admin.firestore();
+
+export const runtime = "nodejs";
+
+// --- API Route ---
+export async function POST(req: NextRequest) {
+  try {
+    const { email, resume, recaptchaToken, idToken } = await req.json();
+
+    // Validate required fields
+    if (!email || !recaptchaToken || !idToken) {
+      return NextResponse.json(
+        { success: false, error: "Missing required fields" },
+        { status: 400 }
+      );
     }
-    if (!token) {
-      return NextResponse.json({ success: false, error: "Missing reCAPTCHA token" }, { status: 400 });
+
+    // --- 1. Verify reCAPTCHA ---
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    if (!recaptchaSecret) {
+      return NextResponse.json(
+        { success: false, error: "reCAPTCHA not configured" },
+        { status: 500 }
+      );
     }
 
-    // 🔐 Verify token with Google
-    const verifyRes = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
-      { method: "POST" }
-    ).then(r => r.json());
+    const recaptchaResponse = await fetch(
+      "https://www.google.com/recaptcha/api/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `secret=${recaptchaSecret}&response=${recaptchaToken}`,
+      }
+    );
 
-    if (!verifyRes.success || verifyRes.score < 0.5) {
-      return NextResponse.json({ success: false, error: "Failed reCAPTCHA" }, { status: 400 });
+    const recaptchaData = await recaptchaResponse.json();
+    if (!recaptchaData.success || recaptchaData.score < 0.5) {
+      return NextResponse.json(
+        { success: false, error: "Failed reCAPTCHA verification" },
+        { status: 403 }
+      );
     }
 
-    // 🗄️ Save to Firestore if DB is available
-    if (db) {
-      await db.collection("unlocks").add({
-        email,
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      });
+    // --- 2. Verify Firebase Auth ID Token ---
+    let decodedToken;
+    try {
+      decodedToken = await admin.auth().verifyIdToken(idToken);
+    } catch (authError) {
+      console.error("❌ Firebase Auth verification failed:", authError);
+      return NextResponse.json(
+        { success: false, error: "Invalid authentication token" },
+        { status: 403 }
+      );
     }
 
-    return NextResponse.json({ success: true });
-  } catch (err: any) {
-    console.error("Unlock API error:", err);
+    if (decodedToken.email && decodedToken.email !== email) {
+      return NextResponse.json(
+        { success: false, error: "Email mismatch with authenticated user" },
+        { status: 403 }
+      );
+    }
+
+    // --- 3. Enforce One Resume Rule ---
+    const userRef = db.collection("unlocks").doc(decodedToken.uid);
+    const existingDoc = await userRef.get();
+
+    if (existingDoc.exists) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Resume already unlocked",
+        },
+        { status: 403 }
+      );
+    }
+
+    // --- 4. Save Unlock Record ---
+    await userRef.set({
+      email,
+      resume: resume || "",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      recaptchaScore: recaptchaData.score,
+      userId: decodedToken.uid,
+    });
+
+    // Return success - client will handle PDF download from /resume-kit.pdf
+    return NextResponse.json({
+      success: true,
+      message: "Resume unlocked successfully",
+    });
+  } catch (error: any) {
+    const errorId = crypto.randomUUID();
+    console.error(`unlock-resume API error [${errorId}]:`, error);
+
     return NextResponse.json(
-      { success: false, error: err.message || "Server error" },
+      { success: false, error: "Unexpected server error", errorId },
       { status: 500 }
     );
   }
