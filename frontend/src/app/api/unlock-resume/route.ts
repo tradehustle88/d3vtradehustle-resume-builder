@@ -31,12 +31,25 @@ export async function POST(req: Request) {
     if (!token) {
       return NextResponse.json({ success: false, error: "Missing reCAPTCHA token" }, { status: 400 });
     }
+    if (!process.env.RECAPTCHA_SECRET_KEY) {
+      return NextResponse.json({ success: false, error: "reCAPTCHA not configured" }, { status: 400 });
+    }
 
     // 🔐 Verify token with Google
-    const verifyRes = await fetch(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
-      { method: "POST" }
-    ).then(r => r.json());
+    let verifyRes;
+    try {
+      const response = await fetch(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${token}`,
+        { method: "POST" }
+      );
+      verifyRes = await response.json();
+    } catch (networkError) {
+      console.error("reCAPTCHA verification network error:", networkError);
+      return NextResponse.json(
+        { success: false, error: "reCAPTCHA verification unavailable" },
+        { status: 400 }
+      );
+    }
 
     if (!verifyRes.success || verifyRes.score < 0.5) {
       return NextResponse.json({ success: false, error: "Failed reCAPTCHA" }, { status: 400 });
