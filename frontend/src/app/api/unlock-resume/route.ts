@@ -3,31 +3,54 @@ import { NextRequest, NextResponse } from "next/server";
 import admin from "firebase-admin";
 import crypto from "crypto";
 
-// --- Firebase Admin Init ---
-if (!admin.apps.length) {
-  try {
-    const serviceAccountString = Buffer.from(
-      process.env.FIREBASE_SERVICE_ACCOUNT_KEY as string,
-      "base64"
-    ).toString("utf8");
+export const runtime = "nodejs";
 
-    const serviceAccount = JSON.parse(serviceAccountString);
-
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-    });
-  } catch (error) {
-    console.warn("⚠️ Firebase Admin initialization failed, running in mock mode");
-  }
+// GET handler to prevent build-time errors
+export async function GET() {
+  return NextResponse.json({ 
+    message: "Resume unlock API endpoint - POST requests only" 
+  }, { status: 405 });
 }
 
-const db = admin.firestore();
+// --- Firebase Admin Init Function ---
+function initializeFirebaseAdmin() {
+  if (!admin.apps.length) {
+    try {
+      const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+      
+      if (!serviceAccountKey) {
+        throw new Error("Firebase service account key not found");
+      }
 
-export const runtime = "nodejs";
+      const serviceAccountString = Buffer.from(serviceAccountKey, "base64").toString("utf8");
+      const serviceAccount = JSON.parse(serviceAccountString);
+
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+    } catch (error) {
+      console.warn("⚠️ Firebase Admin initialization failed:", error);
+      throw error;
+    }
+  }
+  return admin.firestore();
+}
 
 // --- API Route ---
 export async function POST(req: NextRequest) {
   try {
+    // Initialize Firebase Admin SDK
+    let db;
+    try {
+      db = initializeFirebaseAdmin();
+    } catch (initError) {
+      console.error("Firebase initialization failed:", initError);
+      return NextResponse.json(
+        { success: false, error: "Service temporarily unavailable" },
+        { status: 503 }
+      );
+    }
+
     const { email, resume, recaptchaToken, idToken } = await req.json();
 
     // Validate required fields
