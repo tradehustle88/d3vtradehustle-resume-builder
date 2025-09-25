@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { User, onAuthStateChanged, signOut } from "firebase/auth";
-import { auth, signInWithGoogle, signUpWithEmailPassword, signInWithEmailPassword } from "@/firebase";
+import { getFirebaseAuth, signInWithGoogle, signUpWithEmailPassword, signInWithEmailPassword } from "@/firebase";
 
 interface AuthComponentProps {
   onUserAuthenticated: (user: User) => void;
@@ -17,6 +17,14 @@ export default function AuthComponent({ onUserAuthenticated }: AuthComponentProp
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
+    // Check if Firebase is available before setting up auth listener
+    const auth = getFirebaseAuth();
+    if (!auth) {
+      console.warn("Firebase auth not available");
+      setLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
@@ -81,8 +89,11 @@ export default function AuthComponent({ onUserAuthenticated }: AuthComponentProp
 
   const handleSignOut = async () => {
     try {
-      await signOut(auth);
-      setUser(null);
+      const auth = getFirebaseAuth();
+      if (auth) {
+        await signOut(auth);
+        setUser(null);
+      }
     } catch (error) {
       console.error('Sign out failed:', error);
     }

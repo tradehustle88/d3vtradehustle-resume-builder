@@ -1,6 +1,5 @@
 // src/app/api/unlock-resume/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import admin from "firebase-admin";
 import crypto from "crypto";
 
 export const runtime = "nodejs";
@@ -12,14 +11,17 @@ export async function GET() {
   }, { status: 405 });
 }
 
-// --- Firebase Admin Init Function ---
-function initializeFirebaseAdmin() {
-  if (!admin.apps.length) {
-    try {
+// --- Firebase Admin Lazy Initialization ---
+function getFirebase() {
+  try {
+    const admin = require("firebase-admin");
+    
+    if (!admin.apps.length) {
       const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+      const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
       
-      if (!serviceAccountKey) {
-        throw new Error("Firebase service account key not found");
+      if (!serviceAccountKey || !storageBucket) {
+        throw new Error("Missing Firebase environment variables");
       }
 
       const serviceAccountString = Buffer.from(serviceAccountKey, "base64").toString("utf8");
@@ -27,22 +29,28 @@ function initializeFirebaseAdmin() {
 
       admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
+        storageBucket: storageBucket,
       });
-    } catch (error) {
-      console.warn("⚠️ Firebase Admin initialization failed:", error);
-      throw error;
     }
+
+    return {
+      db: admin.firestore(),
+      bucket: admin.storage().bucket(),
+      auth: admin.auth(),
+    };
+  } catch (error) {
+    console.error("Firebase initialization error:", error);
+    throw error;
   }
-  return admin.firestore();
 }
 
 // --- API Route ---
 export async function POST(req: NextRequest) {
   try {
-    // Initialize Firebase Admin SDK
-    let db;
+    // Initialize Firebase Admin SDK only when called
+    let db, bucket, auth;
     try {
-      db = initializeFirebaseAdmin();
+      ({ db, bucket, auth } = getFirebase());
     } catch (initError) {
       console.error("Firebase initialization failed:", initError);
       return NextResponse.json(
@@ -90,7 +98,7 @@ export async function POST(req: NextRequest) {
     // --- 2. Verify Firebase Auth ID Token ---
     let decodedToken;
     try {
-      decodedToken = await admin.auth().verifyIdToken(idToken);
+      decodedToken = await auth.verifyIdToken(idToken);
     } catch (authError) {
       console.error("❌ Firebase Auth verification failed:", authError);
       return NextResponse.json(
@@ -107,32 +115,36 @@ export async function POST(req: NextRequest) {
     }
 
     // --- 3. Enforce One Resume Rule ---
-    const userRef = db.collection("unlocks").doc(decodedToken.uid);
-    const existingDoc = await userRef.get();
-
-    if (existingDoc.exists) {
+    const ref = db.collection("unlocks").doc(decodedToken.uid);
+    if ((await ref.get()).exists) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Resume already unlocked",
-        },
+        { success: false, error: "Resume already unlocked" },
         { status: 403 }
       );
     }
 
-    // --- 4. Save Unlock Record ---
-    await userRef.set({
-      email,
-      resume: resume || "",
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      recaptchaScore: recaptchaData.score,
-      userId: decodedToken.uid,
+    // --- 4. Generate signed download URL ---
+    const file = bucket.file("resume-kit.pdf");
+    const [signedUrl] = await file.getSignedUrl({
+      action: "read",
+      expires: Date.now() + 60 * 60 * 1000, // 1 hour
     });
 
-    // Return success - client will handle PDF download from /resume-kit.pdf
+    // --- 5. Save Unlock Record ---
+    await ref.set({
+      email,
+      resume: resume || "",
+      createdAt: new Date(),
+      recaptchaScore: recaptchaData.score,
+      userId: decodedToken.uid,
+      downloadUrl: signedUrl,
+    });
+
+    // Return success with download URL
     return NextResponse.json({
       success: true,
       message: "Resume unlocked successfully",
+      downloadUrl: signedUrl,
     });
   } catch (error: any) {
     const errorId = crypto.randomUUID();
