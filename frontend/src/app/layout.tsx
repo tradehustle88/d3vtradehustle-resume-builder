@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+// Temporarily disable Google Fonts for build compatibility
 // import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 
-// Load fonts - temporarily disabled for build testing
+// Load fonts - disabled due to network restrictions in build environment
 // const inter = Inter({
 //   variable: "--font-inter",
 //   subsets: ["latin"],
