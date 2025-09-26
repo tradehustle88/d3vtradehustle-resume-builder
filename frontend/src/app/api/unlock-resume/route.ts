@@ -1,64 +1,21 @@
 // src/app/api/unlock-resume/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { admin, db, auth, bucket } from "@/lib/firebaseAdmin"; // ✅ use your firebaseAdmin.ts
 
 export const runtime = "nodejs";
 
-// GET handler to prevent build-time errors
+// Block accidental GET requests
 export async function GET() {
-  return NextResponse.json({ 
-    message: "Resume unlock API endpoint - POST requests only" 
-  }, { status: 405 });
-}
-
-// --- Firebase Admin Lazy Initialization ---
-function getFirebase() {
-  try {
-    const admin = require("firebase-admin");
-    
-    if (!admin.apps.length) {
-      const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-      const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
-      
-      if (!serviceAccountKey || !storageBucket) {
-        throw new Error("Missing Firebase environment variables");
-      }
-
-      const serviceAccountString = Buffer.from(serviceAccountKey, "base64").toString("utf8");
-      const serviceAccount = JSON.parse(serviceAccountString);
-
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        storageBucket: storageBucket,
-      });
-    }
-
-    return {
-      db: admin.firestore(),
-      bucket: admin.storage().bucket(),
-      auth: admin.auth(),
-    };
-  } catch (error) {
-    console.error("Firebase initialization error:", error);
-    throw error;
-  }
+  return NextResponse.json(
+    { message: "Resume unlock API endpoint - POST requests only" },
+    { status: 405 }
+  );
 }
 
 // --- API Route ---
 export async function POST(req: NextRequest) {
   try {
-    // Initialize Firebase Admin SDK only when called
-    let db, bucket, auth;
-    try {
-      ({ db, bucket, auth } = getFirebase());
-    } catch (initError) {
-      console.error("Firebase initialization failed:", initError);
-      return NextResponse.json(
-        { success: false, error: "Service temporarily unavailable" },
-        { status: 503 }
-      );
-    }
-
     const { email, resume, recaptchaToken, idToken } = await req.json();
 
     // Validate required fields
@@ -107,7 +64,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (decodedToken.email && decodedToken.email !== email) {
+    if (decodedToken.email !== email) {
       return NextResponse.json(
         { success: false, error: "Email mismatch with authenticated user" },
         { status: 403 }
@@ -116,19 +73,30 @@ export async function POST(req: NextRequest) {
 
     // --- 3. Enforce One Resume Rule ---
     const ref = db.collection("unlocks").doc(decodedToken.uid);
-    if ((await ref.get()).exists) {
+    const existingDoc = await ref.get();
+    if (existingDoc.exists) {
       return NextResponse.json(
         { success: false, error: "Resume already unlocked" },
         { status: 403 }
       );
     }
 
-    // --- 4. Generate signed download URL ---
-    const file = bucket.file("resume-kit.pdf");
-    const [signedUrl] = await file.getSignedUrl({
-      action: "read",
-      expires: Date.now() + 60 * 60 * 1000, // 1 hour
-    });
+    // --- 4. Generate Signed Download URL ---
+    let signedUrl: string;
+    try {
+      const file = bucket.file("resume-kit.pdf");
+      const [url] = await file.getSignedUrl({
+        action: "read",
+        expires: Date.now() + 60 * 60 * 1000, // 1 hour
+      });
+      signedUrl = url;
+    } catch (storageError) {
+      console.error("❌ Firebase Storage signed URL generation failed:", storageError);
+      return NextResponse.json(
+        { success: false, error: "Failed to generate download link" },
+        { status: 500 }
+      );
+    }
 
     // --- 5. Save Unlock Record ---
     await ref.set({
@@ -140,7 +108,7 @@ export async function POST(req: NextRequest) {
       downloadUrl: signedUrl,
     });
 
-    // Return success with download URL
+    // ✅ Return success
     return NextResponse.json({
       success: true,
       message: "Resume unlocked successfully",
