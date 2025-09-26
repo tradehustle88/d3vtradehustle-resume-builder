@@ -101,7 +101,25 @@
   transform: translateY(-2px);
 }
 
-/* Optional paint splatters */
+/* Brick wall overlay styles */
+.brick-block-overlay {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+}
+
+/* Custom animations for paint effects */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* Enhanced paint splatter effects */
 .paint-red,
 .paint-yellow,
 .paint-blue {
@@ -120,4 +138,13 @@
   0% { opacity: 0.1; transform: rotate(0deg) scale(1); }
   50% { opacity: 0.25; transform: rotate(180deg) scale(1.05); }
   100% { opacity: 0.1; transform: rotate(360deg) scale(1); }
+}
+
+/* Gritty texture overlay */
+.gritty-overlay {
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(30, 144, 255, 0.1) 0%, transparent 50%);
+  mix-blend-mode: overlay;
 }

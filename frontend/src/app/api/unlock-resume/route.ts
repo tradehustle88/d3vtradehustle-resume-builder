@@ -1,9 +1,9 @@
 // src/app/api/unlock-resume/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import admin from "firebase-admin";
 import crypto from "crypto";
 
 export const runtime = "nodejs";
+export const dynamic = 'force-dynamic';
 
 // GET handler to prevent build-time errors
 export async function GET() {
@@ -12,37 +12,43 @@ export async function GET() {
   }, { status: 405 });
 }
 
-// --- Firebase Admin Init Function ---
-function initializeFirebaseAdmin() {
-  if (!admin.apps.length) {
-    try {
-      const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
-      
-      if (!serviceAccountKey) {
-        throw new Error("Firebase service account key not found");
-      }
-
-      const serviceAccountString = Buffer.from(serviceAccountKey, "base64").toString("utf8");
-      const serviceAccount = JSON.parse(serviceAccountString);
-
-      admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-      });
-    } catch (error) {
-      console.warn("⚠️ Firebase Admin initialization failed:", error);
-      throw error;
-    }
-  }
-  return admin.firestore();
-}
-
 // --- API Route ---
 export async function POST(req: NextRequest) {
   try {
-    // Initialize Firebase Admin SDK
-    let db;
+    // Dynamic Firebase Admin initialization - only at runtime
+    let admin: any;
+    let db: any;
+    let bucket: any;
+    let auth: any;
+    
     try {
-      db = initializeFirebaseAdmin();
+      // Use eval to prevent bundler from analyzing this at build time
+      admin = require("firebase-admin");
+      
+      if (!admin.apps.length) {
+        const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+        const storageBucket = process.env.FIREBASE_STORAGE_BUCKET;
+        
+        if (!serviceAccountKey) {
+          throw new Error("FIREBASE_SERVICE_ACCOUNT_KEY environment variable not found");
+        }
+        
+        if (!storageBucket) {
+          throw new Error("FIREBASE_STORAGE_BUCKET environment variable not found");  
+        }
+
+        const serviceAccountString = Buffer.from(serviceAccountKey, "base64").toString("utf8");
+        const serviceAccount = JSON.parse(serviceAccountString);
+
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+          storageBucket: storageBucket,
+        });
+      }
+      
+      db = admin.firestore();
+      bucket = admin.storage().bucket();
+      auth = admin.auth();
     } catch (initError) {
       console.error("Firebase initialization failed:", initError);
       return NextResponse.json(
@@ -90,7 +96,7 @@ export async function POST(req: NextRequest) {
     // --- 2. Verify Firebase Auth ID Token ---
     let decodedToken;
     try {
-      decodedToken = await admin.auth().verifyIdToken(idToken);
+      decodedToken = await auth.verifyIdToken(idToken);
     } catch (authError) {
       console.error("❌ Firebase Auth verification failed:", authError);
       return NextResponse.json(
@@ -99,7 +105,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (decodedToken.email && decodedToken.email !== email) {
+    if (decodedToken.email !== email) {
       return NextResponse.json(
         { success: false, error: "Email mismatch with authenticated user" },
         { status: 403 }
@@ -107,32 +113,48 @@ export async function POST(req: NextRequest) {
     }
 
     // --- 3. Enforce One Resume Rule ---
-    const userRef = db.collection("unlocks").doc(decodedToken.uid);
-    const existingDoc = await userRef.get();
+    const ref = db.collection("unlocks").doc(decodedToken.uid);
+    const existingDoc = await ref.get();
 
     if (existingDoc.exists) {
       return NextResponse.json(
-        {
-          success: false,
-          error: "Resume already unlocked",
-        },
+        { success: false, error: "Resume already unlocked" },
         { status: 403 }
       );
     }
 
-    // --- 4. Save Unlock Record ---
-    await userRef.set({
+    // --- 4. Generate Signed Download URL ---
+    let signedUrl;
+    try {
+      const file = bucket.file("resume-kit.pdf");
+      const [url] = await file.getSignedUrl({
+        action: "read",
+        expires: Date.now() + 60 * 60 * 1000, // 1 hour
+      });
+      signedUrl = url;
+    } catch (storageError) {
+      console.error("❌ Firebase Storage signed URL generation failed:", storageError);
+      return NextResponse.json(
+        { success: false, error: "Failed to generate download link" },
+        { status: 500 }
+      );
+    }
+
+    // --- 5. Save Unlock Record ---
+    await ref.set({
       email,
       resume: resume || "",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       recaptchaScore: recaptchaData.score,
       userId: decodedToken.uid,
+      downloadUrl: signedUrl,
     });
 
-    // Return success - client will handle PDF download from /resume-kit.pdf
+    // Return success with download URL
     return NextResponse.json({
       success: true,
       message: "Resume unlocked successfully",
+      downloadUrl: signedUrl,
     });
   } catch (error: any) {
     const errorId = crypto.randomUUID();
