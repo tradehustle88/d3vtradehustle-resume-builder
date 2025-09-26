@@ -8,7 +8,7 @@ export default function HeroBrickWall() {
       {/* Brick Wall Background */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/assets/brickwall.webp"
+          src="/assets/brickwall-background.webp"
           alt="Brick Wall Background"
           fill
           className="object-cover"
