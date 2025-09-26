@@ -3,8 +3,6 @@ import type { Metadata } from "next";
 // import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react";
 
 // Load fonts - disabled due to network restrictions in build environment
 // const inter = Inter({
@@ -19,6 +17,7 @@ import { Analytics } from "@vercel/analytics/react";
 
 // Metadata (SEO + OG + Social)
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://resume.nexxgennhustle.com'),
   title: "Trade Hustle Resume Builder",
   description:
     "ATS-optimized trade resumes powered by Enhanced Intelligence. Built for the trade. Backed by Hustle.",
@@ -82,9 +81,6 @@ export default function RootLayout({
         className="antialiased"
       >
         {children}
-        {/* Vercel performance + analytics */}
-        <SpeedInsights />
-        <Analytics />
       </body>
     </html>
   );
