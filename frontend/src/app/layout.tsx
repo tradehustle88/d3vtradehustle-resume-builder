@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+// Temporarily disable Google Fonts for build compatibility
+// import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-// Load fonts
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
+// Load fonts - disabled due to network restrictions in build environment
+// const inter = Inter({
+//   variable: "--font-inter",
+//   subsets: ["latin"],
+// });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-});
+// const jetbrainsMono = JetBrains_Mono({
+//   variable: "--font-jetbrains-mono",
+//   subsets: ["latin"],
+// });
 
 // Metadata (SEO + OG + Social)
 export const metadata: Metadata = {
@@ -77,7 +78,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
+        className="antialiased"
       >
         {children}
       </body>
