@@ -90,7 +90,7 @@ if (!admin.apps.length && process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
 
 ### SEO & Performance
 - Comprehensive metadata in `layout.tsx` including OpenGraph and Twitter cards
-- Vercel Analytics and Speed Insights integrated
+
 - Font optimization with `next/font`
 - Image optimization for logo and textures
 
