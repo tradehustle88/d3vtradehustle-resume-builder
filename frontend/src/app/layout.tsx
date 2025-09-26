@@ -18,6 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 // Metadata (SEO + OG + Social)
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://resume.nexxgennhustle.com'),
   title: "Trade Hustle Resume Builder",
   description:
     "ATS-optimized trade resumes powered by Enhanced Intelligence. Built for the trade. Backed by Hustle.",

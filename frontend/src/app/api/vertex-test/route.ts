@@ -12,33 +12,58 @@ const location = process.env.GCP_LOCATION || "us-central1";
 
 export async function GET() {
   try {
-    // If no creds, mock the response
-    if (!process.env.GCP_PROJECT_ID || !process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+    // Always return mocked response during build or if no proper credentials
+    if (!process.env.GCP_PROJECT_ID || !process.env.FIREBASE_SERVICE_ACCOUNT_KEY || process.env.NODE_ENV !== "development") {
       return NextResponse.json({
         success: true,
         mocked: true,
+        reason: "No GCP credentials or not in development mode",
         predictions: ["⚡ Mocked Vertex response: Hello Hustler!"],
       });
     }
 
-    // Otherwise, real client call
+    // Only make real API calls in development with proper credentials
     const client = new PredictionServiceClient();
-    const response = await client.predict({
-      endpoint: `projects/${project}/locations/${location}/publishers/google/models/gemini-1.5-flash`,
-      instances: [{ prompt: "Hello from Vertex AI + Next.js API route!" }],
-    });
+    
+    // Correct model path for Google's hosted Gemini models
+    const modelPath = `projects/google/locations/${location}/publishers/google/models/gemini-1.5-flash`;
+    
+    // Prepare the request in the correct format for Vertex AI Generative models
+    const request = {
+      endpoint: modelPath,
+      instances: [
+        {
+          content: "Hello from Vertex AI + Next.js API route!"
+        }
+      ],
+      parameters: {
+        temperature: 0.7,
+        maxOutputTokens: 256,
+        topP: 0.8,
+        topK: 40
+      }
+    };
+
+    const response = await client.predict(request);
 
     // If response is wrapped, handle it safely:
     console.log("Vertex raw response:", response);
 
     return NextResponse.json({
       success: true,
+      modelPath,
       predictions: response[0]?.predictions ?? null,
+      rawResponse: response[0] // Include for debugging
     });
   } catch (error: any) {
     console.error("Vertex API error:", error);
     return NextResponse.json(
-      { success: false, error: error.message },
+      { 
+        success: false, 
+        error: error.message,
+        details: error.details || "No additional details",
+        code: error.code || "UNKNOWN"
+      },
       { status: 500 }
     );
   }
