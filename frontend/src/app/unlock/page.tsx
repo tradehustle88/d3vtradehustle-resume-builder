@@ -72,9 +72,10 @@ export default function UnlockPage() {
 
       if (data.success) {
         setSuccess(true);
-        // Download PDF
+        // Download PDF - use signed URL if available, fallback to public file
         setTimeout(() => {
-          window.location.href = "/resume-kit.pdf";
+          const downloadUrl = data.downloadUrl || "/resume-kit.pdf";
+          window.location.href = downloadUrl;
         }, 1500);
       } else {
         setError(data.error || "Failed to unlock resume");
