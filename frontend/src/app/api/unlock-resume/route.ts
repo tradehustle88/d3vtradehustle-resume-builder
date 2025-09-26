@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
     let auth: any;
     
     try {
-      // Use eval to prevent bundler from analyzing this at build time
+      // Use require() for dynamic import to prevent bundler from analyzing this at build time
       admin = require("firebase-admin");
       
       if (!admin.apps.length) {
