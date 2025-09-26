@@ -1,20 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/react";
 
-// Load fonts
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-});
+// Note: Google Fonts temporarily disabled due to network issues
+// TODO: Re-enable Google Fonts imports once network access is restored
+// import { Inter, JetBrains_Mono } from "next/font/google";
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
-  subsets: ["latin"],
-});
+// Fallback CSS variables for fonts
+const fontVars = "font-sans";
 
 // Metadata (SEO + OG + Social)
 export const metadata: Metadata = {
@@ -78,7 +73,7 @@ export default function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`${fontVars} antialiased`}
       >
         {children}
         {/* Vercel performance + analytics */}
