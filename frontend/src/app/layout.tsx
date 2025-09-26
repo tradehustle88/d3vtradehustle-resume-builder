@@ -1,84 +1,22 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/react";
 
-// Note: Google Fonts temporarily disabled due to network issues
-// TODO: Re-enable Google Fonts imports once network access is restored
-// import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
+const inter = Inter({ subsets: ["latin"], display: "swap" });
 
-// Fallback CSS variables for fonts
-const fontVars = "font-sans";
-
-// Metadata (SEO + OG + Social)
 export const metadata: Metadata = {
-  title: "Trade Hustle Resume Builder",
-  description:
-    "ATS-optimized trade resumes powered by Enhanced Intelligence. Built for the trade. Backed by Hustle.",
-  icons: {
-    icon: "/favicon.ico", // drop your favicon into /public
-  },
-  openGraph: {
-    title: "Trade Hustle Resume Builder",
-    description:
-      "Turn ambition into income. ATS-optimized trade resumes built for the grind, powered by Enhanced Intelligence.",
-    url: "https://resume.nexxgennhustle.com",
-    siteName: "Trade Hustle",
-    images: [
-      {
-        url: "/resume-logo.png", // hosted in /public
-        width: 1024,
-        height: 1536,
-        alt: "Trade Hustle Builder Logo",
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Trade Hustle Resume Builder",
-    description:
-      "Get hired faster with ATS-optimized trade resumes. Built for the trade. Backed by Hustle.",
-    images: ["/resume-logo.png"],
-  },
+  title: "Trade Hustle",
+  description: "Unlock the hustle. Built for the Trade. Backed by Hustle.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        {/* Favicon fallback */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        
-        {/* Font Awesome for social media icons */}
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        />
-        
-        {/* reCAPTCHA v3 */}
-        <script
-          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-          async
-          defer
-        />
-      </head>
       <body
-        className={`${fontVars} antialiased`}
+        className={`${inter.className} bg-gradient-to-b from-[#141414] to-[#0a0a0a] text-white`}
       >
         {children}
-        {/* Vercel performance + analytics */}
-        <SpeedInsights />
-        <Analytics />
       </body>
     </html>
   );
