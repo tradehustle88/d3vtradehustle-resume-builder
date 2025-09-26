@@ -11,24 +11,25 @@ const project = process.env.GCP_PROJECT_ID || "demo-project";
 const location = process.env.GCP_LOCATION || "us-central1";
 
 export async function GET() {
+  // Guard: Only allow real Vertex calls in production; skip in dev/build
+  if (process.env.NODE_ENV !== "production") {
+    return NextResponse.json({
+      success: true,
+      message: "Vertex test skipped in dev/build."
+    }, { status: 200 });
+  }
   try {
-    // Always return mocked response during build or if no proper credentials
-    if (!process.env.GCP_PROJECT_ID || !process.env.FIREBASE_SERVICE_ACCOUNT_KEY || process.env.NODE_ENV !== "development") {
+    // Only make real API calls in preview/prod with proper credentials
+    if (!process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
       return NextResponse.json({
-        success: true,
-        mocked: true,
-        reason: "No GCP credentials or not in development mode",
-        predictions: ["⚡ Mocked Vertex response: Hello Hustler!"],
-      });
+        success: false,
+        error: "Missing FIREBASE_SERVICE_ACCOUNT_KEY."
+      }, { status: 500 });
     }
 
-    // Only make real API calls in development with proper credentials
     const client = new PredictionServiceClient();
-    
-    // Correct model path for Google's hosted Gemini models
-    const modelPath = `projects/google/locations/${location}/publishers/google/models/gemini-1.5-flash`;
-    
-    // Prepare the request in the correct format for Vertex AI Generative models
+    // Use the correct model path for Google's hosted Gemini models
+    const modelPath = `projects/google/locations/us-central1/publishers/google/models/gemini-1.5-flash`;
     const request = {
       endpoint: modelPath,
       instances: [
@@ -43,23 +44,19 @@ export async function GET() {
         topK: 40
       }
     };
-
     const response = await client.predict(request);
-
-    // If response is wrapped, handle it safely:
     console.log("Vertex raw response:", response);
-
     return NextResponse.json({
       success: true,
       modelPath,
       predictions: response[0]?.predictions ?? null,
-      rawResponse: response[0] // Include for debugging
+      rawResponse: response[0]
     });
   } catch (error: any) {
     console.error("Vertex API error:", error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: error.message,
         details: error.details || "No additional details",
         code: error.code || "UNKNOWN"

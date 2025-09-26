@@ -62,7 +62,7 @@ The project uses a sophisticated environment variable system supporting both dev
 FIREBASE_SERVICE_ACCOUNT_KEY='{"type":"service_account",...}'  # JSON string
 ```
 
-**Production** (Vercel):
+**Production** (Firebase):
 ```bash
 FIREBASE_SERVICE_ACCOUNT_KEY=base64_encoded_json  # Base64-encoded
 ```
@@ -145,7 +145,7 @@ match /unlocks/{docId} {
 ### Performance Optimizations
 - Next.js Image optimization for logos and backgrounds
 - Font optimization with `next/font`
-- Vercel Analytics and Speed Insights integrated
+
 - Lazy loading for heavy components and external scripts
 
 ### Error Handling Standards
@@ -161,12 +161,12 @@ match /unlocks/{docId} {
 - Font Awesome CDN (social media icons)
 - Firebase (Auth/Firestore/Storage/Admin)
 - Google Cloud Vertex AI (production environment only)
-- Vercel (hosting + analytics)
+- Firebase Hosting (hosting + analytics)
 
 **Critical Configuration Files**:
 - `firestore.rules` - Database security
 - `ENVIRONMENT_SETUP.md` - Complete setup guide
-- `VERCEL_DEPLOYMENT.md` - Production deployment checklist
+- `FIREBASE_DEPLOYMENT.md` - Production deployment checklist
 - `test-flow.sh` - Integration testing script
 
 ## Helpful Constraints for Code Changes
