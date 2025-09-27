@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { localVerifyRecaptcha } from "@/lib/api";
 
 export default function RecaptchaTest() {
   useEffect(() => {
@@ -11,15 +12,13 @@ export default function RecaptchaTest() {
           .then(async (token: string) => {
             console.log("Got reCAPTCHA token:", token);
 
-            // Send token to backend for verification
-            const res = await fetch("/api/verify-recaptcha", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ token }),
-            });
-
-            const data = await res.json();
-            console.log("Verification result:", data);
+            try {
+              // Use our centralized API client
+              const data = await localVerifyRecaptcha(token);
+              console.log("Verification result:", data);
+            } catch (error: any) {
+              console.error("reCAPTCHA verification error:", error.message);
+            }
           })
           .catch((err: any) => {
             console.error("reCAPTCHA error:", err);
