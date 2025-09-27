@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import { User } from "firebase/auth";
 import AuthComponent from "@/components/AuthComponent";
 import { getIdToken } from "@/firebase";
+import { localUnlockResume, localVerifyRecaptcha } from "@/lib/api";
 
 export default function UnlockPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -50,25 +51,20 @@ export default function UnlockPage() {
       // 1. Get reCAPTCHA token
       const recaptchaToken = await executeRecaptcha();
 
-      // 2. Get Firebase ID token
+      // 2. Verify reCAPTCHA first (optional step for extra validation)
+      const recaptchaResult = await localVerifyRecaptcha(recaptchaToken);
+      if (!recaptchaResult.success) {
+        throw new Error("reCAPTCHA verification failed");
+      }
+
+      // 3. Get Firebase ID token
       const idToken = await getIdToken();
       if (!idToken) {
         throw new Error("Failed to get authentication token");
       }
 
-      // 3. Call API
-      const response = await fetch("/api/unlock-resume", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: user.email,
-          resume: "Trade Resume Kit Request",
-          recaptchaToken,
-          idToken,
-        }),
-      });
-
-      const data = await response.json();
+      // 4. Call unlock resume API using our centralized client
+      const data = await localUnlockResume(user.email!, recaptchaToken);
 
       if (data.success) {
         setSuccess(true);
@@ -77,7 +73,7 @@ export default function UnlockPage() {
           window.location.href = "/resume-kit.pdf";
         }, 1500);
       } else {
-        setError(data.error || "Failed to unlock resume");
+        setError("Failed to unlock resume");
       }
     } catch (err: any) {
       console.error("Unlock error:", err);
