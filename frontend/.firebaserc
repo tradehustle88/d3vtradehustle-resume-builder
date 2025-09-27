@@ -5,11 +5,11 @@
   "targets": {
     "tradehustleresumebuilder": {
       "hosting": {
-        "api": [
-          "api-nexxgennhustle"
-        ],
         "frontend": [
           "tradehustleresumebuilder"
+        ],
+        "api": [
+          "api-nexxgennhustle"
         ]
       }
     }

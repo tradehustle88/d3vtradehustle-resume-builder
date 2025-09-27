@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/firebaseAdmin";
+import nodemailer from "nodemailer";
+import fs from "fs";
+import path from "path";
 
 export async function POST(req: Request) {
   try {
@@ -21,14 +24,37 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "reCAPTCHA failed" }, { status: 400 });
     }
 
-    // Save to Firestore
+    // Save signup to Firestore
     await db.collection("signups").add({
       email,
       createdAt: new Date(),
       recaptchaScore: data.score,
     });
 
-    // TODO: Call ActiveCampaign API OR send email w/ PDF link
+    // --- Gmail API Setup with Nodemailer ---
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER, // your Gmail
+        pass: process.env.GMAIL_PASS, // app password (not your main Gmail pw)
+      },
+    });
+
+    // Attach your PDF
+    const pdfPath = path.join(process.cwd(), "public", "resume-kit.pdf");
+
+    await transporter.sendMail({
+      from: `"Trade Hustle" <${process.env.GMAIL_USER}>`,
+      to: email,
+      subject: "Your Free Resume Kit",
+      text: "Thanks for signing up! Attached is your free resume kit.",
+      attachments: [
+        {
+          filename: "resume-kit.pdf",
+          path: pdfPath,
+        },
+      ],
+    });
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
@@ -36,3 +62,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+

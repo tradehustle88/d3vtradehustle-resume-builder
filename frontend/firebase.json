@@ -1,16 +1,20 @@
 {
-  "hosting": {
-    "public": "out",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
-  }
+  "hosting": [
+    {
+      "target": "frontend",
+      "public": "frontend/out",
+      "rewrites": [
+        { "source": "**", "destination": "/index.html" }
+      ]
+    },
+    {
+      "target": "api",
+      "rewrites": [
+        { "source": "/signup", "function": "signup" },
+        { "source": "/unlock-resume", "function": "unlockResume" }
+      ]
+    }
+  ]
 }
+
+
