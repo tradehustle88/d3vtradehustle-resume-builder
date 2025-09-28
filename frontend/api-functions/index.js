@@ -1,0 +1,76 @@
+// Load environment variables from .env
+require("dotenv").config();
+
+const functions = require("firebase-functions");
+const axios = require("axios");
+
+// Read reCAPTCHA secret from environment
+const SECRET_KEY = process.env.RECAPTCHA_SECRET;
+
+if (!SECRET_KEY) {
+  console.warn("⚠️ Missing RECAPTCHA_SECRET in .env file or CI/CD secrets.");
+}
+
+// ======================================================
+// reCAPTCHA Verification Function
+// ======================================================
+exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
+  // Allow CORS for testing/demo
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    // Handle CORS preflight
+    return res.status(204).send("");
+  }
+
+  try {
+    const { token } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ success: false, error: "Missing reCAPTCHA token" });
+    }
+
+    // Verify token with Google reCAPTCHA
+    const verifyRes = await axios.post(
+      `https://www.google.com/recaptcha/api/siteverify`,
+      null,
+      {
+        params: {
+          secret: SECRET_KEY,
+          response: token,
+        },
+      }
+    );
+
+    const data = verifyRes.data;
+
+    if (!data.success || (data.score !== undefined && data.score < 0.5)) {
+      return res.status(403).json({
+        success: false,
+        error: "reCAPTCHA verification failed",
+        details: data,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: "reCAPTCHA verified successfully",
+      score: data.score,
+    });
+  } catch (err) {
+    console.error("reCAPTCHA error:", err.message);
+    return res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+});
+
+// ======================================================
+// Example placeholder function for other endpoints
+// ======================================================
+exports.healthCheck = functions.https.onRequest((req, res) => {
+  res.json({
+    status: "ok",
+    message: "🔥 Trade Hustle Functions Running",
+    timestamp: new Date().toISOString(),
+  });
+});
