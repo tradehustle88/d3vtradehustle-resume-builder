@@ -1,7 +1,6 @@
 {
   "functions": {
-    "source": "api-functions",
-    "runtime": "nodejs20"
+    "source": "api-functions"
   },
   "hosting": [
     {
