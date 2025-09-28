@@ -1,34 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { localSignup, localVerifyRecaptcha } from "@/lib/api";
+import { getRecaptchaToken } from "@/lib/recaptcha";
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
-
-  const executeRecaptcha = async (): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (!window.grecaptcha) {
-        reject(new Error("reCAPTCHA not loaded"));
-        return;
-      }
-
-      window.grecaptcha.ready(() => {
-        const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-        if (!siteKey) {
-          reject(new Error("reCAPTCHA site key not configured"));
-          return;
-        }
-
-        window.grecaptcha
-          .execute(siteKey, { action: "signup" })
-          .then(resolve)
-          .catch(reject);
-      });
-    });
-  };
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,23 +21,29 @@ export default function SignupForm() {
 
     try {
       // 1. Get reCAPTCHA token
-      const recaptchaToken = await executeRecaptcha();
-      
-      // 2. Verify reCAPTCHA (optional extra validation step)
-      const recaptchaResult = await localVerifyRecaptcha(recaptchaToken);
-      if (!recaptchaResult.success) {
-        throw new Error("reCAPTCHA verification failed");
+      const token = await getRecaptchaToken("signup");
+      if (!token) {
+        throw new Error("Failed to verify reCAPTCHA");
       }
 
-      // 3. Sign up user using our centralized API client
-      const result = await localSignup(email, recaptchaToken);
+      // 2. Send token + email directly to Firebase Cloud Function
+      const res = await fetch(
+        "https://us-central1-tradehustleresumebuilder.cloudfunctions.net/verifyRecaptcha",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, token }),
+        }
+      );
 
-      if (result.success) {
-        setStatus("✅ Success! Check your email for the resume kit.");
-        setEmail(""); // Clear form
-      } else {
-        setStatus(result.message || "Signup failed");
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Verification failed");
       }
+
+      setStatus("✅ Success! Check your email for the resume kit.");
+      setEmail(""); // Clear form
     } catch (error: any) {
       console.error("Signup error:", error);
       setStatus(`❌ Error: ${error.message}`);
