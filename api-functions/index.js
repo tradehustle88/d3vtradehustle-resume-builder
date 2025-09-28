@@ -18,7 +18,6 @@ const crypto = require("crypto");
 const cors = require("cors");
 const {GoogleGenerativeAI} = require("@google/generative-ai");
 const axios = require("axios");
-const functions = require("firebase-functions");
 
 // Set global options
 setGlobalOptions({maxInstances: 10});
@@ -283,7 +282,17 @@ exports.editResume = onRequest((req, res) => {
 
 const SECRET_KEY = process.env.RECAPTCHA_SECRET;
 
-exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
+// Updated to v2 function to fix deployment migration issues
+exports.verifyRecaptcha = onRequest(async (req, res) => {
+  // Allow CORS for testing/demo
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    // Handle CORS preflight
+    return res.status(204).send("");
+  }
+
   const token = req.body.token;
   try {
     const verifyRes = await axios.post(
