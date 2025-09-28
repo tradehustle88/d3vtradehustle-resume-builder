@@ -12,7 +12,7 @@ if (!SECRET_KEY) {
 }
 
 // ======================================================
-// reCAPTCHA Verification Function
+// reCAPTCHA Verification Function with Signup Handling
 // ======================================================
 exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
   // Allow CORS for testing/demo
@@ -25,7 +25,7 @@ exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
   }
 
   try {
-    const { token } = req.body;
+    const { email, token } = req.body;
 
     if (!token) {
       return res.status(400).json({ success: false, error: "Missing reCAPTCHA token" });
@@ -53,6 +53,26 @@ exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
       });
     }
 
+    // ✅ reCAPTCHA passed — handle signup logic here
+    if (email) {
+      console.log("New signup:", email);
+      console.log("reCAPTCHA score:", data.score);
+      
+      // TODO: Add your signup logic here:
+      // - Save email to Firestore database
+      // - Send welcome email with resume kit
+      // - Log analytics event
+      // - Add to mailing list
+      
+      return res.json({
+        success: true,
+        message: "Verification passed and signup processed",
+        email: email,
+        score: data.score,
+      });
+    }
+
+    // If no email provided, just return verification result
     return res.json({
       success: true,
       message: "reCAPTCHA verified successfully",
