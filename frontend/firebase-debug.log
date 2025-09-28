@@ -1,0 +1,62 @@
+[debug] [2025-09-28T01:08:18.834Z] ----------------------------------------------------------------------
+[debug] [2025-09-28T01:08:18.836Z] Command:       /usr/local/share/nvm/versions/node/v22.17.0/bin/node /home/codespace/nvm/current/bin/firebase init functions
+[debug] [2025-09-28T01:08:18.836Z] CLI Version:   14.17.0
+[debug] [2025-09-28T01:08:18.836Z] Platform:      linux
+[debug] [2025-09-28T01:08:18.837Z] Node Version:  v22.17.0
+[debug] [2025-09-28T01:08:18.837Z] Time:          Sun Sep 28 2025 01:08:18 GMT+0000 (Coordinated Universal Time)
+[debug] [2025-09-28T01:08:18.837Z] Env Overrides: GITHUB_API_URL, GITHUB_API_URL
+[debug] [2025-09-28T01:08:18.837Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-09-28T01:08:19.102Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-09-28T01:08:19.102Z] > authorizing via signed-in user (ellisgang8819@gmail.com)
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  /workspaces/d3vtradehustle-resume-builder/frontend
+
+Before we get started, keep in mind:
+
+  * You are currently outside your home directory
+  * You are initializing within an existing Firebase project directory
+
+[info] 
+=== Project Setup
+[info] 
+[info] First, let's associate this project directory with a Firebase project.
+[info] You can create multiple project aliases by running firebase use --add, 
+[info] but for now we'll just set up a default project.
+[info] 
+[debug] [2025-09-28T01:08:19.106Z] Using project from CLI flag: tradehustleresumebuilder
+[debug] [2025-09-28T01:08:19.107Z] Checked if tokens are valid: true, expires at: 1759024939564
+[debug] [2025-09-28T01:08:19.107Z] Checked if tokens are valid: true, expires at: 1759024939564
+[debug] [2025-09-28T01:08:19.108Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/tradehustleresumebuilder [none]
+[debug] [2025-09-28T01:08:19.352Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/tradehustleresumebuilder 200
+[debug] [2025-09-28T01:08:19.352Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/tradehustleresumebuilder {"projectId":"tradehustleresumebuilder","projectNumber":"190054658629","displayName":"TradeHustleResumeBuilder","name":"projects/tradehustleresumebuilder","resources":{"hostingSite":"tradehustleresumebuilder"},"state":"ACTIVE","etag":"1_f1ea31ae-3b3d-4249-bb9b-953c290b79eb"}
+[info] i  Using project tradehustleresumebuilder (TradeHustleResumeBuilder) 
+[info] 
+=== Functions Setup
+[debug] [2025-09-28T01:08:19.360Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-09-28T01:08:19.360Z] > authorizing via signed-in user (ellisgang8819@gmail.com)
+[debug] [2025-09-28T01:08:19.360Z] [iam] checking project tradehustleresumebuilder for permissions ["firebase.projects.get"]
+[debug] [2025-09-28T01:08:19.361Z] Checked if tokens are valid: true, expires at: 1759024939564
+[debug] [2025-09-28T01:08:19.361Z] Checked if tokens are valid: true, expires at: 1759024939564
+[debug] [2025-09-28T01:08:19.361Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/tradehustleresumebuilder:testIamPermissions [none]
+[debug] [2025-09-28T01:08:19.361Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/tradehustleresumebuilder:testIamPermissions x-goog-quota-user=projects/tradehustleresumebuilder
+[debug] [2025-09-28T01:08:19.361Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/tradehustleresumebuilder:testIamPermissions {"permissions":["firebase.projects.get"]}
+[debug] [2025-09-28T01:08:19.444Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/tradehustleresumebuilder:testIamPermissions 200
+[debug] [2025-09-28T01:08:19.445Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/tradehustleresumebuilder:testIamPermissions {"permissions":["firebase.projects.get"]}
+[info] Let's create a new codebase for your functions.
+[info] A directory corresponding to the codebase will be created in your project
+[info] with sample code pre-configured.
+
+[info] See https://firebase.google.com/docs/functions/organize-functions for
+[info] more information on organizing your functions using codebases.
+
+[info] Functions can be deployed with firebase deploy.
+
