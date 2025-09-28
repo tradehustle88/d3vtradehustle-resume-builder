@@ -1,3 +1,5 @@
+require("dotenv").config();
+
 const {onRequest} = require("firebase-functions/v2/https");
 const {setGlobalOptions} = require("firebase-functions/v2");
 const admin = require("firebase-admin");
@@ -6,6 +8,8 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const cors = require("cors");
 const {GoogleGenerativeAI} = require("@google/generative-ai");
+const axios = require("axios");
+const functions = require("firebase-functions");
 
 // --- Firebase Options ---
 setGlobalOptions({maxInstances: 10});
@@ -37,7 +41,7 @@ app.post("/signup", async (req, res) => {
       return res.status(400).json({error: "Missing fields"});
     }
 
-    const secret = process.env.RECAPTCHA_SECRET_KEY;
+    const secret = process.env.RECAPTCHA_SECRET;
     if (!secret) {
       return res.status(500).json({error: "reCAPTCHA not configured"});
     }
@@ -98,7 +102,7 @@ app.post("/unlock-resume", async (req, res) => {
       return res.status(400).json({success: false, error: "Missing fields"});
     }
 
-    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET;
     if (!recaptchaSecret) {
       return res.status(500).json({
         success: false,
@@ -216,6 +220,21 @@ app.post("/edit-resume", async (req, res) => {
 // --- Root ---
 app.get("/", (req, res) => {
   res.send("🚀 Trade Hustle Resume Builder backend is live!");
+});
+
+// --- Standalone reCAPTCHA Verification ---
+const SECRET_KEY = process.env.RECAPTCHA_SECRET;
+
+exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
+  const token = req.body.token;
+  try {
+    const verifyRes = await axios.post(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${SECRET_KEY}&response=${token}`
+    );
+    res.json(verifyRes.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // --- Exports ---

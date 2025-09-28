@@ -7,3 +7,7 @@ node_modules
 # Environment files
 .env.local
 .env
+
+# ignore function env
+api-functions/.env
+functions/.env
