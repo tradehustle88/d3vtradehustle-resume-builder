@@ -7,6 +7,8 @@
  *  - Health check and root routes
  */
 
+require("dotenv").config();
+
 const {onRequest} = require("firebase-functions/v2/https");
 const {setGlobalOptions} = require("firebase-functions/v2");
 const admin = require("firebase-admin");
@@ -15,6 +17,8 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const cors = require("cors");
 const {GoogleGenerativeAI} = require("@google/generative-ai");
+const axios = require("axios");
+const functions = require("firebase-functions");
 
 // Set global options
 setGlobalOptions({maxInstances: 10});
@@ -56,7 +60,7 @@ app.post("/signup", async (req, res) => {
     }
 
     // Verify reCAPTCHA
-    const secret = process.env.RECAPTCHA_SECRET_KEY;
+    const secret = process.env.RECAPTCHA_SECRET;
     if (!secret) {
       return res.status(500).json({error: "reCAPTCHA not configured"});
     }
@@ -120,7 +124,7 @@ app.post("/unlock-resume", async (req, res) => {
     }
 
     // Verify reCAPTCHA
-    const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
+    const recaptchaSecret = process.env.RECAPTCHA_SECRET;
     if (!recaptchaSecret) {
       return res.status(500).json({
         success: false,
@@ -275,6 +279,20 @@ exports.editResume = onRequest((req, res) => {
   }
   const mockReq = {...req, url: "/edit-resume", path: "/edit-resume"};
   return app(mockReq, res);
+});
+
+const SECRET_KEY = process.env.RECAPTCHA_SECRET;
+
+exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
+  const token = req.body.token;
+  try {
+    const verifyRes = await axios.post(
+        `https://www.google.com/recaptcha/api/siteverify?secret=${SECRET_KEY}&response=${token}`,
+    );
+    res.json(verifyRes.data);
+  } catch (err) {
+    res.status(500).json({error: err.message});
+  }
 });
 
 exports.app = onRequest(app);

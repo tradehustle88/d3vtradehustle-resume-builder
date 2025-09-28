@@ -52,7 +52,11 @@ jobs:
 
       # Deploy to Firebase Hosting + Functions
       - name: Deploy to Firebase
+        env:
+          RECAPTCHA_SECRET: ${{ secrets.RECAPTCHA_SECRET }}
         run: |
           npm install -g firebase-tools
           export GOOGLE_APPLICATION_CREDENTIALS="$HOME/firebase-key.json"
+          echo "RECAPTCHA_SECRET=$RECAPTCHA_SECRET" > api-functions/.env
+          echo "RECAPTCHA_SECRET=$RECAPTCHA_SECRET" > functions/.env
           firebase deploy --only hosting,functions --non-interactive --project tradehustleresumebuilder
