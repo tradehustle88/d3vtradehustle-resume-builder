@@ -1,7 +1,7 @@
 // Load environment variables from .env
 require("dotenv").config();
 
-const functions = require("firebase-functions");
+const {onRequest} = require("firebase-functions/v2/https");
 const axios = require("axios");
 
 // Read reCAPTCHA secret from environment
@@ -12,9 +12,9 @@ if (!SECRET_KEY) {
 }
 
 // ======================================================
-// reCAPTCHA Verification Function with Signup Handling
+// reCAPTCHA Verification Function with Signup Handling (Updated to v2)
 // ======================================================
-exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
+exports.verifyRecaptcha = onRequest(async (req, res) => {
   // Allow CORS for testing/demo
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Headers", "Content-Type");
@@ -85,9 +85,9 @@ exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
 });
 
 // ======================================================
-// Example placeholder function for other endpoints
+// Example placeholder function for other endpoints (Updated to v2)
 // ======================================================
-exports.healthCheck = functions.https.onRequest((req, res) => {
+exports.healthCheck = onRequest((req, res) => {
   res.json({
     status: "ok",
     message: "🔥 Trade Hustle Functions Running",

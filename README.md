@@ -102,3 +102,16 @@ This project has been updated to use environment variables instead of service ac
 - Complete setup instructions are provided above
 
 ---
+
+## 🤖 AI Development Assistant
+
+This repository includes comprehensive GitHub Copilot instructions to assist with development:
+
+- **Copilot Instructions**: See `.github/copilot-instructions.md` for detailed AI coding guidelines
+- **Architecture Patterns**: Pre-configured Firebase, Next.js, and deployment patterns
+- **Environment Setup**: Complete environment variable documentation and examples
+- **Common Issues**: Solutions for Firebase deployment and development setup issues
+
+The instructions help AI assistants understand the project structure, coding patterns, and deployment requirements.
+
+---
