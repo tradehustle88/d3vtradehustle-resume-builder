@@ -9,7 +9,6 @@ const crypto = require("crypto");
 const cors = require("cors");
 const {GoogleGenerativeAI} = require("@google/generative-ai");
 const axios = require("axios");
-const functions = require("firebase-functions");
 
 // --- Firebase Options ---
 setGlobalOptions({maxInstances: 10});
@@ -222,10 +221,10 @@ app.get("/", (req, res) => {
   res.send("🚀 Trade Hustle Resume Builder backend is live!");
 });
 
-// --- Standalone reCAPTCHA Verification ---
+// --- Standalone reCAPTCHA Verification (Updated to v2) ---
 const SECRET_KEY = process.env.RECAPTCHA_SECRET;
 
-exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
+exports.verifyRecaptcha = onRequest(async (req, res) => {
   const token = req.body.token;
   try {
     const verifyRes = await axios.post(
