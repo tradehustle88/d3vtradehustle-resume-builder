@@ -283,7 +283,17 @@ exports.editResume = onRequest((req, res) => {
 
 const SECRET_KEY = process.env.RECAPTCHA_SECRET;
 
+// Keep verifyRecaptcha as standard v1 function to avoid migration issues
 exports.verifyRecaptcha = functions.https.onRequest(async (req, res) => {
+  // Allow CORS for testing/demo
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    // Handle CORS preflight
+    return res.status(204).send("");
+  }
+
   const token = req.body.token;
   try {
     const verifyRes = await axios.post(
