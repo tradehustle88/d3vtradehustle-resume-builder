@@ -1,4 +1,8 @@
 {
+  "functions": {
+    "source": "api-functions",
+    "runtime": "nodejs18"
+  },
   "hosting": [
     {
       "target": "frontend",
@@ -10,8 +14,9 @@
     {
       "target": "api",
       "rewrites": [
-        { "source": "/signup", "function": "signup" },
-        { "source": "/unlock-resume", "function": "unlockResume" }
+        { "source": "/api/verify-recaptcha", "function": "verifyRecaptcha" },
+        { "source": "/api/signup", "function": "signup" },
+        { "source": "/api/unlock-resume", "function": "unlockResume" }
       ]
     }
   ]
