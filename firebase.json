@@ -2,7 +2,6 @@
   "functions": [
     {
       "codebase": "api",
-      "source": "api-functions",
       "ignore": [
         "node_modules",
         ".git",
@@ -12,6 +11,22 @@
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ],
+      "source": "api-functions"
+    },
+    {
+      "source": "backend",
+      "codebase": "backend",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
   ],
