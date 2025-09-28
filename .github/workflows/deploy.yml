@@ -43,6 +43,13 @@ jobs:
           cd api-functions
           npm install
 
+      # Build and export Next.js frontend
+      - name: Build and export Next.js frontend
+        run: |
+          cd frontend
+          npm install
+          npm run build
+
       # Deploy to Firebase Hosting + Functions
       - name: Deploy to Firebase
         run: |
