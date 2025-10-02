@@ -60,7 +60,7 @@ export default function RootLayout({
       <head>
         {/* Favicon fallback */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
-        
+
         {/* Font Awesome for social media icons */}
         <link
           rel="stylesheet"
@@ -69,6 +69,22 @@ export default function RootLayout({
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
+
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-WV2HHYYKCL"
+          strategy="afterInteractive"
+        />
+        <Script id="ga" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-WV2HHYYKCL', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
       </head>
       <body
         className="antialiased"

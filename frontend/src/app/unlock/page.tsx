@@ -2,9 +2,10 @@
 
 import { useState, useCallback } from "react";
 import { User } from "firebase/auth";
-import AuthComponent from "@/components/AuthComponent";
+import AuthForm from "@/components/AuthForm";
 import { getIdToken } from "@/firebase";
 import { localUnlockResume } from "@/lib/api";
+import { trackResumeUnlock, trackResumeDownload } from "@/lib/analytics";
 
 export default function UnlockPage() {
   const [user, setUser] = useState<User | null>(null);
@@ -40,12 +41,18 @@ export default function UnlockPage() {
       }
 
       // 2. Call unlock resume API (no reCAPTCHA needed - server handles bot protection)
-      const data = await localUnlockResume(user.email!, undefined);
+      const data = await localUnlockResume(user.email!, idToken);
 
       if (data.success) {
         setSuccess(true);
+
+        // Track resume unlock event in Google Analytics
+        trackResumeUnlock(user.email!);
+
         // Download PDF
         setTimeout(() => {
+          // Track download event
+          trackResumeDownload('Trade Hustle Resume Kit');
           window.location.href = "/resume-kit.pdf";
         }, 1500);
       } else {
@@ -74,7 +81,7 @@ export default function UnlockPage() {
         </div>
 
         {/* Authentication Component */}
-        <AuthComponent onUserAuthenticated={handleUserAuthenticated} />
+        <AuthForm onUserAuthenticated={handleUserAuthenticated} />
 
         {/* Unlock Button */}
         {user && !success && (
