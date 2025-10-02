@@ -9,26 +9,26 @@
 
 require("dotenv").config();
 
-const { onRequest } = require("firebase-functions/v2/https");
-const { setGlobalOptions } = require("firebase-functions/v2");
+const {onRequest} = require("firebase-functions/v2/https");
+const {setGlobalOptions} = require("firebase-functions/v2");
 const admin = require("firebase-admin");
 const express = require("express");
 const rateLimit = require("express-rate-limit");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const cors = require("cors");
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const {GoogleGenerativeAI} = require("@google/generative-ai");
 const axios = require("axios");
 
 // Set global options
-setGlobalOptions({ maxInstances: 10 });
+setGlobalOptions({maxInstances: 10});
 
 // Firebase + Express setup
 admin.initializeApp();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: true }));
+app.use(cors({origin: true}));
 app.use(express.json());
 
 // Rate limiting: 30 requests per minute per IP
@@ -45,7 +45,7 @@ app.use(limiter);
 const honeypotCheck = (req, res, next) => {
   if (req.body.company) {
     console.warn("🍯 Honeypot triggered - likely bot activity");
-    return res.status(400).json({ success: false, error: "Invalid request" });
+    return res.status(400).json({success: false, error: "Invalid request"});
   }
   next();
 };
@@ -74,18 +74,18 @@ app.get("/api/status", (req, res) => {
 //
 app.post("/signup", async (req, res) => {
   try {
-    const { email, token } = req.body;
+    const {email, token} = req.body;
     if (!email) {
-      return res.status(400).json({ error: "Missing email" });
+      return res.status(400).json({error: "Missing email"});
     }
 
     // Verify reCAPTCHA (bypasses if not configured)
-    let recaptchaData = { success: true, score: 1.0 };
+    let recaptchaData = {success: true, score: 1.0};
     if (token) {
       try {
         recaptchaData = await verifyRecaptcha(token);
         if (!recaptchaData.success || (recaptchaData.score && recaptchaData.score < 0.5)) {
-          return res.status(400).json({ error: "reCAPTCHA failed" });
+          return res.status(400).json({error: "reCAPTCHA failed"});
         }
       } catch (err) {
         console.error("❌ reCAPTCHA verification failed:", err);
@@ -107,7 +107,7 @@ app.post("/signup", async (req, res) => {
     if (gmailUser && gmailPass) {
       const transporter = nodemailer.createTransport({
         service: "gmail",
-        auth: { user: gmailUser, pass: gmailPass },
+        auth: {user: gmailUser, pass: gmailPass},
       });
 
       await transporter.sendMail({
@@ -123,10 +123,10 @@ app.post("/signup", async (req, res) => {
       });
     }
 
-    res.json({ success: true });
+    res.json({success: true});
   } catch (err) {
     console.error("Signup API error:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({error: err.message});
   }
 });
 
@@ -135,7 +135,7 @@ app.post("/signup", async (req, res) => {
 //
 app.post("/unlock-resume", async (req, res) => {
   try {
-    const { email, resume, recaptchaToken, idToken } = req.body;
+    const {email, resume, recaptchaToken, idToken} = req.body;
     if (!email || !recaptchaToken || !idToken) {
       return res.status(400).json({
         success: false,
@@ -144,7 +144,7 @@ app.post("/unlock-resume", async (req, res) => {
     }
 
     // Verify reCAPTCHA (bypasses if not configured)
-    let recaptchaData = { success: true, score: 1.0 };
+    let recaptchaData = {success: true, score: 1.0};
     if (recaptchaToken) {
       try {
         recaptchaData = await verifyRecaptcha(recaptchaToken);
@@ -200,8 +200,8 @@ app.post("/unlock-resume", async (req, res) => {
       signedUrl = url;
     } catch (storageError) {
       console.error(
-        "❌ Firebase Storage signed URL generation failed:",
-        storageError,
+          "❌ Firebase Storage signed URL generation failed:",
+          storageError,
       );
       return res.status(500).json({
         success: false,
@@ -241,9 +241,9 @@ app.post("/unlock-resume", async (req, res) => {
 //
 app.post("/edit-resume", async (req, res) => {
   try {
-    const { prompt } = req.body;
+    const {prompt} = req.body;
     if (!prompt) {
-      return res.status(400).json({ error: "Missing prompt" });
+      return res.status(400).json({error: "Missing prompt"});
     }
 
     const model = genAI.getGenerativeModel({
@@ -253,10 +253,10 @@ app.post("/edit-resume", async (req, res) => {
     const result = await model.generateContent(prompt);
     const text = result.response.text();
 
-    res.json({ success: true, result: text });
+    res.json({success: true, result: text});
   } catch (err) {
     console.error("❌ Gemini error:", err);
-    res.status(500).json({ error: err.message });
+    res.status(500).json({error: err.message});
   }
 });
 
@@ -272,25 +272,25 @@ app.get("/", (req, res) => {
 //
 exports.signup = onRequest((req, res) => {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({error: "Method not allowed"});
   }
-  const mockReq = { ...req, url: "/signup", path: "/signup" };
+  const mockReq = {...req, url: "/signup", path: "/signup"};
   return app(mockReq, res);
 });
 
 exports.unlockResume = onRequest((req, res) => {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({error: "Method not allowed"});
   }
-  const mockReq = { ...req, url: "/unlock-resume", path: "/unlock-resume" };
+  const mockReq = {...req, url: "/unlock-resume", path: "/unlock-resume"};
   return app(mockReq, res);
 });
 
 exports.editResume = onRequest((req, res) => {
   if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
+    return res.status(405).json({error: "Method not allowed"});
   }
-  const mockReq = { ...req, url: "/edit-resume", path: "/edit-resume" };
+  const mockReq = {...req, url: "/edit-resume", path: "/edit-resume"};
   return app(mockReq, res);
 });
 
@@ -305,12 +305,12 @@ const SECRET_KEY = process.env.RECAPTCHA_SECRET;
 async function verifyRecaptcha(token) {
   if (!SECRET_KEY) {
     // No secret configured - bypass for dev/staging
-    return { success: true, score: 1.0, bypass: true };
+    return {success: true, score: 1.0, bypass: true};
   }
 
   try {
     const verifyRes = await axios.post(
-      `https://www.google.com/recaptcha/api/siteverify?secret=${SECRET_KEY}&response=${token}`,
+        `https://www.google.com/recaptcha/api/siteverify?secret=${SECRET_KEY}&response=${token}`,
     );
     return verifyRes.data;
   } catch (err) {
@@ -335,7 +335,7 @@ exports.verifyRecaptcha = onRequest(async (req, res) => {
     const result = await verifyRecaptcha(token);
     res.json(result);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({error: err.message});
   }
 });
 
