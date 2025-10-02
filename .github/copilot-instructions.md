@@ -1,46 +1,67 @@
 # Trade Hustle Resume Builder - AI Coding Instructions
 
 ## Project Overview
-A Next.js 14 (App Router) resume builder targeting trade professionals, integrating Firebase (Auth/Firestore/Storage), Google reCAPTCHA v3, and Google Cloud Vertex AI. Built with TypeScript, Tailwind CSS, and a trade-focused "hustle" brand identity. The project follows a monorepo structure with the main application in `/frontend/`.
+A Next.js 14 (App Router) resume builder targeting trade professionals, integrating Firebase Cloud Functions, Google reCAPTCHA v3, and Google Gemini AI. Built with TypeScript, Tailwind CSS, and a trade-focused "hustle" brand identity. 
+
+**CRITICAL ARCHITECTURE**: 
+- **App Router**: All routes are in `frontend/src/app/` with `page.tsx` files (NOT Pages Router with `pages/`)
+- **Firebase Functions-First**: API routes are handled by Firebase Cloud Functions, NOT Next.js API routes
+- **Static Export**: Configured for static builds with `output: 'export'` (commented in `next.config.js` for dev)
 
 ## Architecture & Key Components
 
 ### Directory Structure Pattern
 ```
 /
-├── frontend/                 # Main Next.js 14 application
-│   ├── src/app/             # App Router pages and API routes
-│   ├── src/components/      # Reusable React components
-│   ├── src/lib/             # Utility libraries (Firebase admin/client)
-│   └── public/              # Static assets including trade-themed textures/icons
-├── api-functions/           # Firebase Cloud Functions (production)
-├── functions/               # Firebase Cloud Functions (legacy/backup)
-└── resume/                  # Static resume templates and guides
+├── frontend/                 # Next.js 14 frontend (static hosting)
+│   ├── src/app/             # App Router pages (NO API routes)
+│   ├── src/components/      # React components with "use client" 
+│   ├── src/lib/             # Client utilities (Firebase client, API calls)
+│   └── public/              # Static assets, resume PDFs, textures
+├── api-functions/           # Firebase Cloud Functions v2 (PRIMARY API)
+├── backend/                 # Alternative Firebase Functions (secondary)
+├── functions/               # Legacy Firebase Functions (backup)
+└── resume/                  # Static resume templates (.docx, .pdf)
 ```
+
+### Critical Architecture Decisions
+
+**Next.js App Router (NOT Pages Router)**: Routes use App Router pattern
+- Routes: `frontend/src/app/[route]/page.tsx` (NOT `pages/[route].tsx`)
+- Config: `next.config.js` has NO `appDir: false` - App Router is enabled by default in Next.js 14
+- Layout: Global layout in `app/layout.tsx` with metadata exports
+- NO `pages/` directory - this is pure App Router architecture
+
+**Firebase Functions-First**: All backend logic lives in Firebase Cloud Functions (`/api-functions/index.js`), not Next.js API routes
+- Frontend calls Firebase Functions via CORS-enabled endpoints
+- All authentication, reCAPTCHA verification, and Firestore operations handled server-side
+- Functions use Express.js routing with `onRequest` from `firebase-functions/v2/https`
+- NO `app/api/` routes - API functionality is in Firebase Functions
 
 ### Core Service Integrations
 
-**Firebase Dual Setup**: Critical pattern with separate client/admin configurations
-- Client (`src/firebase.ts`): Authentication and real-time features
-- Admin (`src/lib/firebaseAdmin.ts`): Server-side operations in API routes  
-- Environment handling: `FIREBASE_SERVICE_ACCOUNT_KEY` supports both base64-encoded JSON string and individual variables
-- Firestore collection: `unlocks` for email capture with strict security rules
+**Firebase Client-Only Setup**: Frontend uses client SDK only - no server-side Firebase in Next.js
+- Client (`frontend/src/firebase.ts`): Safe initialization with browser checks and fallbacks
+- NO Firebase Admin in frontend - all server operations in Cloud Functions
+- Environment handling: Functions use `dotenv` + individual env vars OR base64 JSON string
+- Firestore collections: `unlocks` for email capture, `users` for authentication
 
-**reCAPTCHA v3 Flow**: Seamless verification pattern
-- Global script loaded in `layout.tsx` with `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`
-- Window interface defined in `src/global.d.ts`
-- Verification flow: `/unlock` page → `/api/unlock-resume` → reCAPTCHA verify → Firestore save → PDF download
+**Bot Protection**: Multi-layer defense without reCAPTCHA dependency
+- Rate limiting: 30 requests/minute per IP via `express-rate-limit` in Cloud Functions
+- Honeypot field: Hidden "company" input that bots fill but humans don't
+- Optional reCAPTCHA: Bypasses when `RECAPTCHA_SECRET` not set (dev-friendly)
+- Flow: `/unlock` page → Firebase Auth → `/api-functions/unlockResume` → Firestore save → PDF download
 
-**Google Cloud Vertex AI**: Production-ready AI integration
-- Configured in `/api/vertex-test/route.ts`
-- Conditional imports prevent development build errors: `require()` vs `import`
-- Environment variables: `GCP_PROJECT_ID`, `GCP_LOCATION`
+**Google Gemini AI**: Resume editing with AI assistance  
+- Integrated in `api-functions/index.js` using `@google/generative-ai`
+- Uses `GOOGLE_API_KEY` environment variable
+- Endpoint: `/editResume` for AI-powered resume content generation
 
-**Firebase Cloud Functions**: All functions use v2 syntax
-- Main functions in `/api-functions/` directory
-- All exports use `onRequest` from `firebase-functions/v2/https`
-- Environment variables loaded via `dotenv` for local development
-- Functions: `verifyRecaptcha`, `signup`, `unlockResume`, `editResume`, `app`
+**Firebase Cloud Functions v2**: Single Express app serving all endpoints
+- Main function: `api-functions/index.js` exports single Express app
+- Uses `onRequest` from `firebase-functions/v2/https`  
+- Endpoints: `/health`, `/signup`, `/unlockResume`, `/editResume`, `/verifyRecaptcha`
+- CORS enabled for frontend requests
 
 ## Build / Run / Debug Commands
 
@@ -55,18 +76,19 @@ npm run lint                # ESLint checking
 npm run type-check          # TypeScript type checking
 ```
 
-### Firebase Commands
+### Firebase Commands  
 ```bash
-firebase deploy --only functions  # Deploy Cloud Functions
-firebase deploy --only hosting    # Deploy Next.js static build
-firebase serve                    # Local Firebase emulator
+firebase deploy --only functions:api    # Deploy api-functions codebase
+firebase deploy --only functions:backend # Deploy backend codebase  
+firebase deploy --only hosting          # Deploy Next.js static build
+firebase serve                          # Local Firebase emulator
 ```
 
 ### Testing Commands
 ```bash
-cd frontend && npm run test        # Run tests (if configured)
-./test-flow.sh                     # Comprehensive flow testing script
-node src/adminTest.js              # Test Firebase Admin SDK
+cd frontend && ./test-flow.sh     # Comprehensive API flow testing script
+node src/adminTest.js              # Test Firebase Admin SDK (root level)
+cd frontend && npm run export      # Build static Next.js export
 ```
 
 ## Environment Variables
@@ -88,8 +110,7 @@ FIREBASE_PRIVATE_KEY_ID=
 FIREBASE_PRIVATE_KEY=
 FIREBASE_CLIENT_EMAIL=
 
-# reCAPTCHA
-NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
+# reCAPTCHA (Optional - bypasses when not set)
 RECAPTCHA_SECRET=
 
 # Google Cloud AI
@@ -104,36 +125,66 @@ GMAIL_PASS=
 
 ## Development Patterns
 
-### API Route Standards
-```typescript
-// Standard Next.js API route pattern
-export const runtime = "nodejs";
-export const dynamic = 'force-dynamic';
+### Firebase Functions API Pattern with Bot Protection
+```javascript
+// Bot protection middleware in api-functions/index.js
+const rateLimit = require("express-rate-limit");
+const limiter = rateLimit({
+  windowMs: 60_000,
+  max: 30, // 30 req/min per IP
+});
+app.use(limiter);
 
-export async function POST(request: Request) {
-  try {
-    // API logic
-    return NextResponse.json({ success: true, data });
-  } catch (err: any) {
-    console.error("API error:", err);
-    return NextResponse.json(
-      { success: false, error: err.message },
-      { status: 500 }
-    );
+// Honeypot check - rejects if "company" field is filled
+const honeypotCheck = (req, res, next) => {
+  if (req.body.company) {
+    return res.status(400).json({success: false, error: "Invalid request"});
   }
+  next();
+};
+app.use(honeypotCheck);
+
+// Helper function for optional reCAPTCHA (bypasses when not configured)
+async function verifyRecaptcha(token) {
+  if (!process.env.RECAPTCHA_SECRET) {
+    return {success: true, score: 1.0, bypass: true};
+  }
+  // ...call siteverify if configured
 }
+
+// API endpoint example
+app.post('/unlockResume', async (req, res) => {
+  try {
+    const { email, recaptchaToken } = req.body;
+    
+    // Optional reCAPTCHA verification (bypasses in dev)
+    const recaptchaData = await verifyRecaptcha(recaptchaToken);
+    
+    // Save to Firestore using admin SDK
+    await admin.firestore().collection('unlocks').add({ 
+      email, 
+      timestamp: new Date(),
+      recaptchaBypassed: recaptchaData.bypass || false
+    });
+    
+    res.json({ success: true, message: 'Resume unlocked' });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 ```
 
-### Firebase Admin Initialization Pattern
+### Frontend API Calls Pattern
 ```typescript
-// Lazy Firebase admin initialization with fallback
-if (!admin.apps.length && process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-  const serviceAccount = JSON.parse(
-    Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_KEY, "base64").toString("utf8")
-  );
-  admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+// Frontend calls Firebase Functions directly (src/lib/api.ts)
+export async function unlockResume(email: string, recaptchaToken: string) {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/unlockResume`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, recaptchaToken })
   });
+  return response.json();
 }
 ```
 
@@ -243,6 +294,12 @@ Maintain consistent "trade professional hustle" messaging:
 - Use `firebase serve` for local testing with functions
 - Test environment loading with provided scripts
 - Check `.env.example` files for required variables
+
+### Next.js Configuration Notes
+- `next.config.js` has `output: 'export'` COMMENTED OUT for development
+- Enable `output: 'export'` only for production static builds
+- `images.unoptimized: true` required for Firebase Hosting compatibility
+- App Router is enabled by default (no `experimental.appDir` needed in Next.js 14)
 
 ## Testing Strategy
 - Manual testing via `/api-demo` page for comprehensive API testing

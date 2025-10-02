@@ -69,13 +69,6 @@ export default function RootLayout({
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
-        
-        {/* reCAPTCHA v3 */}
-        <script
-          src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
-          async
-          defer
-        />
       </head>
       <body
         className="antialiased"

@@ -5,7 +5,7 @@ import { User, onAuthStateChanged, signOut } from "firebase/auth";
 import { getFirebaseAuth, signInWithGoogle, signUpWithEmailPassword, signInWithEmailPassword } from "@/firebase";
 
 interface AuthComponentProps {
-  onUserAuthenticated: (user: User) => void;
+  onUserAuthenticated?: (user: User) => void;
 }
 
 export default function AuthComponent({ onUserAuthenticated }: AuthComponentProps) {
@@ -28,7 +28,7 @@ export default function AuthComponent({ onUserAuthenticated }: AuthComponentProp
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setLoading(false);
-      if (user) {
+      if (user && onUserAuthenticated) {
         onUserAuthenticated(user);
       }
     });
@@ -41,7 +41,9 @@ export default function AuthComponent({ onUserAuthenticated }: AuthComponentProp
       setIsSubmitting(true);
       setError('');
       const user = await signInWithGoogle();
-      onUserAuthenticated(user);
+      if (onUserAuthenticated) {
+        onUserAuthenticated(user);
+      }
     } catch (error: any) {
       setError(error.message || 'Google sign-in failed');
     } finally {
@@ -64,7 +66,9 @@ export default function AuthComponent({ onUserAuthenticated }: AuthComponentProp
         ? await signUpWithEmailPassword(formData.email, formData.password)
         : await signInWithEmailPassword(formData.email, formData.password);
       
-      onUserAuthenticated(user);
+      if (onUserAuthenticated) {
+        onUserAuthenticated(user);
+      }
     } catch (error: any) {
       let errorMessage = 'Authentication failed';
       

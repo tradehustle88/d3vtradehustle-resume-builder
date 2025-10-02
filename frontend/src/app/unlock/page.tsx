@@ -4,39 +4,18 @@ import { useState, useCallback } from "react";
 import { User } from "firebase/auth";
 import AuthComponent from "@/components/AuthComponent";
 import { getIdToken } from "@/firebase";
-import { localUnlockResume, localVerifyRecaptcha } from "@/lib/api";
+import { localUnlockResume } from "@/lib/api";
 
 export default function UnlockPage() {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
 
   const handleUserAuthenticated = useCallback((authenticatedUser: User) => {
     setUser(authenticatedUser);
   }, []);
-
-  const executeRecaptcha = async (): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      if (!window.grecaptcha) {
-        reject(new Error("reCAPTCHA not loaded"));
-        return;
-      }
-
-      window.grecaptcha.ready(() => {
-        const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-        if (!siteKey) {
-          reject(new Error("reCAPTCHA site key not configured"));
-          return;
-        }
-
-        window.grecaptcha
-          .execute(siteKey, { action: "unlock_resume" })
-          .then(resolve)
-          .catch(reject);
-      });
-    });
-  };
 
   const handleUnlockResume = async () => {
     if (!user) {
@@ -44,27 +23,24 @@ export default function UnlockPage() {
       return;
     }
 
+    // Honeypot check - if filled, it's likely a bot
+    if (honeypot) {
+      setError("Invalid request");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
-      // 1. Get reCAPTCHA token
-      const recaptchaToken = await executeRecaptcha();
-
-      // 2. Verify reCAPTCHA first (optional step for extra validation)
-      const recaptchaResult = await localVerifyRecaptcha(recaptchaToken);
-      if (!recaptchaResult.success) {
-        throw new Error("reCAPTCHA verification failed");
-      }
-
-      // 3. Get Firebase ID token
+      // 1. Get Firebase ID token
       const idToken = await getIdToken();
       if (!idToken) {
         throw new Error("Failed to get authentication token");
       }
 
-      // 4. Call unlock resume API using our centralized client
-      const data = await localUnlockResume(user.email!, recaptchaToken);
+      // 2. Call unlock resume API (no reCAPTCHA needed - server handles bot protection)
+      const data = await localUnlockResume(user.email!, undefined);
 
       if (data.success) {
         setSuccess(true);
@@ -108,9 +84,20 @@ export default function UnlockPage() {
                 Ready to Unlock Your Resume Kit?
               </h3>
               <p className="text-gray-600 mb-6">
-                Click below to verify you're human and download your complete
-                resume package.
+                Click below to download your complete resume package.
               </p>
+
+              {/* Honeypot field - hidden from humans, visible to bots */}
+              <input
+                type="text"
+                name="company"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                style={{ display: 'none' }}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+              />
 
               <button
                 onClick={handleUnlockResume}
@@ -120,7 +107,7 @@ export default function UnlockPage() {
                 {loading ? (
                   <>
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Verifying & Unlocking...
+                    Unlocking...
                   </>
                 ) : (
                   <>🚀 Unlock Resume Kit Now</>
