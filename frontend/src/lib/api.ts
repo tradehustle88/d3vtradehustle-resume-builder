@@ -2,7 +2,7 @@
 // Trade Hustle Resume Builder - API Client Helpers
 
 // Firebase Cloud Functions URL - can be overridden for local development
-const BASE_URL = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL || 
+const BASE_URL = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL ||
   "https://us-central1-tradehustleresumebuilder.cloudfunctions.net";
 
 // Generic fetch helper
@@ -60,11 +60,15 @@ export async function unlockResume(email: string, token: string) {
   });
 }
 
-// Edit resume content
-export async function editResume(resumeId: string, content: string) {
-  return request<{ success: boolean; updatedAt: string }>("/editResume", {
+// Edit resume content - now requires authentication
+export async function editResume(idToken: string, prompt: string, resumeContent?: string) {
+  return request<{ success: boolean; result: string; message: string }>("/api/editResume", {
     method: "POST",
-    body: JSON.stringify({ resumeId, content }),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({ prompt, resumeContent }),
   });
 }
 
@@ -110,10 +114,14 @@ export async function localSignup(email: string, token: string) {
   });
 }
 
-export async function localUnlockResume(email: string, token: string) {
-  return localRequest<{ success: boolean; downloadUrl?: string }>("/unlock-resume", {
+export async function localUnlockResume(idToken: string, additionalData: Record<string, any> = {}) {
+  return request<{ success: boolean; message?: string }>("/api/unlock-resume", {
     method: "POST",
-    body: JSON.stringify({ email, token }),
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${idToken}`,
+    },
+    body: JSON.stringify(additionalData),
   });
 }
 

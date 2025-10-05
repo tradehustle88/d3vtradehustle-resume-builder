@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 // Temporarily disable Google Fonts for build compatibility
 // import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
+import { AuthProvider } from "@/lib/useAuth";
 import "./globals.css";
 
 // Load fonts - disabled due to network restrictions in build environment
@@ -89,7 +90,9 @@ export default function RootLayout({
       <body
         className="antialiased"
       >
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

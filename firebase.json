@@ -1,81 +1,25 @@
 {
-  "functions": [
-    {
-      "codebase": "api",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint"
-      ],
-      "source": "api-functions"
+  "functions": {
+    "source": "api-functions"
+  },
+  "hosting": {
+    "public": "frontend/out",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  },
+  "emulators": {
+    "functions": {
+      "port": 5001
     },
-    {
-      "codebase": "backend",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ],
-      "source": "backend"
+    "hosting": {
+      "port": 5000
     },
-    {
-      "source": "functions",
-      "codebase": "functions",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
+    "ui": {
+      "enabled": true,
+      "port": 4000
     }
-  ],
-  "hosting": [
-    {
-      "target": "frontend",
-      "public": "frontend/out",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "rewrites": [
-        {
-          "source": "/api/status",
-          "function": "app"
-        },
-        {
-          "source": "/api/signup",
-          "function": "signup"
-        },
-        {
-          "source": "/api/unlock-resume",
-          "function": "unlockResume"
-        },
-        {
-          "source": "/api/edit-resume",
-          "function": "editResume"
-        },
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    }
-  ]
+  }
 }

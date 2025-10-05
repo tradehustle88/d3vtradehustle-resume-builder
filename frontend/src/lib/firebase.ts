@@ -1,7 +1,16 @@
 // src/lib/firebase.ts - CLIENT-SIDE Firebase
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  User
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -16,5 +25,35 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
-export { app, auth, db, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword };
+// Configure Google provider
+const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({
+  prompt: 'select_account'
+});
+
+// Auth helper functions
+export const signInWithGoogle = () => {
+  return signInWithPopup(auth, googleProvider);
+};
+
+export const signUpWithEmail = (email: string, password: string) => {
+  return createUserWithEmailAndPassword(auth, email, password);
+};
+
+export const signOut = () => {
+  return auth.signOut();
+};
+
+export {
+  app,
+  auth,
+  db,
+  storage,
+  googleProvider,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  type User
+};
