@@ -128,7 +128,7 @@ export default function ApiTestingDashboard() {
           label: "Unlock Resume (Local)",
           fn: async () => {
             const token = await getRecaptchaToken();
-            return localUnlockResume(email, token);
+            return localUnlockResume(email, { recaptchaToken: token });
           }
         }
       ]

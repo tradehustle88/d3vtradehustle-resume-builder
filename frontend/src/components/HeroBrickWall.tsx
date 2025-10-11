@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import TextLogo from "./TextLogo";
 
 export default function HeroBrickWall() {
   return (
@@ -64,13 +65,13 @@ export default function HeroBrickWall() {
       {/* Content Layer */}
       <div className="relative z-20 flex flex-col items-center justify-center h-full text-center px-6">
         {/* Your existing content goes here */}
-        <h1 className="hero-title mb-8" data-text="WELCOME TO THE GRIND">
+        <h1 className="font-heading text-6xl font-black text-white uppercase mb-8" data-text="WELCOME TO THE GRIND">
           WELCOME TO THE GRIND
         </h1>
         
         <div className="relative">
           <Image
-            src="/resume-logo.png"
+            src="/resumeBuilderlogo.png"
             alt="Trade Hustle Logo"
             width={340}
             height={340}
@@ -80,7 +81,7 @@ export default function HeroBrickWall() {
         </div>
         
         <section className="brick-block-overlay max-w-3xl w-full mt-8 p-8 rounded-lg">
-          <h2 className="hero-subtitle">
+          <h2 className="font-heading text-2xl font-bold text-yellow-400 uppercase">
             BUILT FOR THE TRADE. BACKED BY HUSTLE. POWERED BY ENHANCED INTELLIGENCE.
           </h2>
           

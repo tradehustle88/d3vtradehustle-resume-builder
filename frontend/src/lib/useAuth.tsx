@@ -46,11 +46,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     };
 
+    const handleSignInWithEmail = (email: string, password: string) => {
+        return signInWithEmailAndPassword(auth, email, password);
+    };
+
     const value: AuthContextType = {
         user,
         loading,
         signInWithGoogle,
-        signInWithEmail: signInWithEmailAndPassword,
+        signInWithEmail: handleSignInWithEmail,
         signUpWithEmail,
         signOut,
         getIdToken,

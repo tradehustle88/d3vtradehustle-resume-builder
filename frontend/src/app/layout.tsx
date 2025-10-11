@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 // import { Inter, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import { AuthProvider } from "@/lib/useAuth";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 // Load fonts - disabled due to network restrictions in build environment
@@ -33,7 +34,7 @@ export const metadata: Metadata = {
     siteName: "Trade Hustle",
     images: [
       {
-        url: "/resume-logo.png", // hosted in /public
+        url: "/resumeBuilderlogo.png", // hosted in /public
         width: 1024,
         height: 1536,
         alt: "Trade Hustle Builder Logo",
@@ -47,7 +48,7 @@ export const metadata: Metadata = {
     title: "Trade Hustle Resume Builder",
     description:
       "Get hired faster with ATS-optimized trade resumes. Built for the trade. Backed by Hustle.",
-    images: ["/resume-logo.png"],
+    images: ["/resumeBuilderlogo.png"],
   },
 };
 
@@ -71,6 +72,30 @@ export default function RootLayout({
           referrerPolicy="no-referrer"
         />
 
+        {/* Google Fonts Optimized - display=swap prevents FOIT/FOUT */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link 
+          href="https://fonts.googleapis.com/css2?family=Anton&family=EB+Garamond:wght@400;700&display=swap" 
+          rel="stylesheet" 
+        />
+        
+        {/* Preload critical fonts for better LCP */}
+        <link
+          rel="preload"
+          href="https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          href="https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUA4V-e6yHgQ.woff2"
+          as="font"
+          type="font/woff2"
+          crossOrigin="anonymous"
+        />
+
         {/* Google Analytics */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-WV2HHYYKCL"
@@ -88,10 +113,13 @@ export default function RootLayout({
         </Script>
       </head>
       <body
-        className="antialiased"
+        className="antialiased flex flex-col min-h-screen"
       >
         <AuthProvider>
-          {children}
+          <div className="flex-1">
+            {children}
+          </div>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

@@ -8,8 +8,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-inter)'],
-        mono: ['var(--font-jetbrains-mono)'],
+        heading: ['Anton', 'sans-serif'],
+        body: ['EB Garamond', 'serif'],
+      },
+      colors: {
+        hustleRed: '#8b0000',
+        hustleGold: '#ffd700',
+        hustleNavy: '#001a33',
       },
     },
   },
