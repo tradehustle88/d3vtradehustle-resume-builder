@@ -11,3 +11,4 @@ node_modules
 # ignore function env
 api-functions/.env
 functions/.env
+.firebase/logs/
