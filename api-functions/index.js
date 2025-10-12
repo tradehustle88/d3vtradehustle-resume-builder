@@ -17,6 +17,7 @@ const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const cors = require("cors");
 const {GoogleGenerativeAI} = require("@google/generative-ai");
+const {VertexAI} = require("@google-cloud/vertexai");
 const axios = require("axios");
 
 // Set global options
@@ -95,6 +96,19 @@ const db = admin.firestore();
 // Gemini setup - only initialize if API key is available
 const genAI = process.env.GOOGLE_API_KEY ? new GoogleGenerativeAI(process.env.GOOGLE_API_KEY) : null;
 
+// Vertex AI setup - alternative to direct Gemini API
+let vertexAI = null;
+try {
+  if (process.env.PROJECT_ID) {
+    vertexAI = new VertexAI({
+      project: process.env.PROJECT_ID,
+      location: process.env.REGION || "us-central1",
+    });
+  }
+} catch (error) {
+  console.warn("⚠️ Vertex AI initialization failed:", error.message);
+}
+
 // reCAPTCHA setup
 const SECRET_KEY = process.env.RECAPTCHA_SECRET;
 
@@ -129,6 +143,14 @@ app.get("/api/status", (req, res) => {
     status: "ok",
     message: "🔥 Trade Hustle Functions Running",
     timestamp: new Date().toISOString(),
+    environment: {
+      projectId: process.env.PROJECT_ID || "not-configured",
+      region: process.env.REGION || "not-configured", 
+      googleAI: !!process.env.GOOGLE_API_KEY ? "configured" : "not-configured",
+      vertexAI: !!vertexAI && !!process.env.PROJECT_ID ? "configured" : "not-configured",
+      recaptcha: !!process.env.RECAPTCHA_SECRET ? "configured" : "not-configured",
+      gmail: !!process.env.GMAIL_USER && !!process.env.GMAIL_PASS ? "configured" : "not-configured"
+    }
   });
 });
 
@@ -313,6 +335,100 @@ app.post("/api/editResume", honeypotCheck, verifyUser, async (req, res) => {
 });
 
 //
+// Gemini AI Agent - Flexible AI endpoint with dual provider support
+//
+app.post("/api/geminiAgent", honeypotCheck, verifyUser, async (req, res) => {
+  try {
+    const {uid, email, displayName} = req.user;
+    const {prompt, useVertexAI = false, model = "gemini-1.5-flash"} = req.body;
+
+    console.log(`🤖 AI request from ${email} (${uid}) - Provider: ${useVertexAI ? 'Vertex AI' : 'Gemini API'}`);
+
+    if (!prompt) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing prompt for AI generation",
+      });
+    }
+
+    let result;
+    let aiProvider;
+    let modelUsed;
+
+    if (useVertexAI && vertexAI) {
+      // Use Vertex AI
+      try {
+        const vertexModel = vertexAI.getGenerativeModel({
+          model: model || "gemini-1.5-flash",
+        });
+
+        const input = prompt || "Write a concise summary for a trade professional résumé.";
+        const vertexResult = await vertexModel.generateContent(input);
+        result = vertexResult.response.candidates[0].content.parts[0].text;
+        aiProvider = "Vertex AI";
+        modelUsed = model || "gemini-1.5-flash";
+      } catch (vertexError) {
+        console.warn("⚠️ Vertex AI failed, falling back to Gemini API:", vertexError.message);
+        // Fallback to Gemini API
+        if (!genAI) {
+          throw new Error("Both Vertex AI and Gemini API are unavailable");
+        }
+        const geminiModel = genAI.getGenerativeModel({
+          model: "gemini-1.5-flash",
+        });
+        const geminiResult = await geminiModel.generateContent(prompt);
+        result = geminiResult.response.text();
+        aiProvider = "Gemini API (fallback)";
+        modelUsed = "gemini-1.5-flash";
+      }
+    } else {
+      // Use direct Gemini API
+      if (!genAI) {
+        return res.status(503).json({
+          success: false,
+          message: "AI service not available. Please configure GOOGLE_API_KEY or enable Vertex AI.",
+        });
+      }
+
+      const geminiModel = genAI.getGenerativeModel({
+        model: model || "gemini-1.5-flash",
+      });
+
+      const geminiResult = await geminiModel.generateContent(prompt);
+      result = geminiResult.response.text();
+      aiProvider = "Gemini API";
+      modelUsed = model || "gemini-1.5-flash";
+    }
+
+    // Save AI interaction to user's history
+    await db.collection("aiInteractions").add({
+      userId: uid,
+      email,
+      prompt,
+      result,
+      provider: aiProvider,
+      model: modelUsed,
+      createdAt: new Date(),
+    });
+
+    res.json({
+      success: true,
+      output: result,
+      provider: aiProvider,
+      model: modelUsed,
+      message: `AI generation completed for ${displayName || email}`,
+    });
+
+  } catch (err) {
+    console.error("❌ Gemini Agent error:", err);
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+
+//
 // Root route
 //
 app.get("/", (req, res) => {
@@ -343,6 +459,14 @@ exports.editResume = onRequest((req, res) => {
     return res.status(405).json({error: "Method not allowed"});
   }
   const mockReq = {...req, url: "/edit-resume", path: "/edit-resume"};
+  return app(mockReq, res);
+});
+
+exports.geminiAgent = onRequest((req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).json({error: "Method not allowed"});
+  }
+  const mockReq = {...req, url: "/api/geminiAgent", path: "/api/geminiAgent"};
   return app(mockReq, res);
 });
 

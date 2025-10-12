@@ -11,12 +11,22 @@ This directory contains Firebase Functions with secure environment variable mana
 
 2. **Create your environment file:**
    ```bash
-   cp .env.example .env  # if you have an example, or create manually
+   cp .env.example .env
    ```
 
 3. **Configure your environment variables in `.env`:**
-   ```
-   RECAPTCHA_SECRET=your_actual_recaptcha_secret_key
+   ```properties
+   # Firebase Configuration
+   PROJECT_ID=tradehustleresumebuilder
+   REGION=us-central1
+
+   # API Keys (configure for production)
+   GOOGLE_API_KEY=your_google_gemini_api_key_here
+   RECAPTCHA_SECRET=your_recaptcha_secret_here
+
+   # Gmail Configuration (optional for email notifications)
+   GMAIL_USER=your_gmail_username
+   GMAIL_PASS=your_gmail_app_password
    ```
 
 ## Available Functions
@@ -37,7 +47,7 @@ This directory contains Firebase Functions with secure environment variable mana
 
 Test that environment variables load correctly:
 ```bash
-node -e "require('dotenv').config(); console.log('RECAPTCHA_SECRET:', process.env.RECAPTCHA_SECRET ? 'loaded' : 'missing');"
+node -e "require('dotenv').config(); console.log('✅ Environment Status:'); console.log('PROJECT_ID:', process.env.PROJECT_ID || 'missing'); console.log('GOOGLE_API_KEY:', process.env.GOOGLE_API_KEY ? 'configured' : 'missing');"
 ```
 
 ## Deployment

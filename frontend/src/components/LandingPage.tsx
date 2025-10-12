@@ -1,5 +1,6 @@
 'use client'
 import Image from 'next/image'
+import SimpleAIAssistant from './SimpleAIAssistant'
 
 export default function LandingPage() {
   return (
@@ -68,6 +69,19 @@ export default function LandingPage() {
               LAUNCH BUILDER →
             </a>
             <p className="text-sm text-gray-400 mt-4">AI-powered • ATS-optimized</p>
+          </div>
+        </div>
+
+        {/* AI Assistant Section */}
+        <div className="relative z-10 flex justify-center px-6 mt-16">
+          <div className="max-w-4xl w-full">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl font-bold text-[#ffd700] mb-2">⚡ TRY THE AI ASSISTANT</h2>
+              <p className="text-gray-300 text-lg">
+                Get professional resume content in seconds - powered by advanced AI
+              </p>
+            </div>
+            <SimpleAIAssistant />
           </div>
         </div>
       </div>
