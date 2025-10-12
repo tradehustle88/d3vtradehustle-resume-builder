@@ -95,14 +95,14 @@ function UnlockPageContent() {
       <div className="relative z-10 w-[85%] max-w-5xl rounded-2xl overflow-hidden border border-neutral-800 shadow-[0_0_60px_rgba(22,115,255,0.25)]">
         
         {/* Brick background */}
-        <div className="absolute inset-0 bg-[url('/assets/brickwall-background.webp')] bg-cover bg-center opacity-90" />
+        <div className="absolute inset-0 bg-[url('/assets/brick-bg-v3.webp')] bg-cover bg-center opacity-90" />
 
         {/* Blue-dark gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-[#0A1B3A]/70 to-black/80 mix-blend-overlay" />
 
         {/* Paint splatter accent */}
         <Image
-          src="/fx/paint_splatters_2.png"
+          src="/assets/paint-red-v3.png"
           alt="paint splash"
           width={224}
           height={224}
@@ -110,7 +110,7 @@ function UnlockPageContent() {
           loading="lazy"
         />
         <Image
-          src="/fx/paint_splatters_1.png"
+          src="/assets/paint-drops-v1.png"
           alt="paint splash"
           width={192}
           height={192}
@@ -122,7 +122,7 @@ function UnlockPageContent() {
         <div className="relative z-20 p-8 md:p-12">
           {/* Logo Above Cards */}
           <Image
-            src="/resumeBuilderlogo.png"
+            src="/assets/resumeBuilderLogo-v3.png"
             alt="Trade Hustle Logo"
             width={224}
             height={224}

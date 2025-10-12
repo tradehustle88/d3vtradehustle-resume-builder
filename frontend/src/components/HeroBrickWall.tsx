@@ -9,7 +9,7 @@ export default function HeroBrickWall() {
       {/* Brick Wall Background */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/assets/brickwall-background.webp"
+          src="/assets/brick-bg-v3.webp"
           alt="Brick Wall Background"
           fill
           className="object-cover"
@@ -24,7 +24,7 @@ export default function HeroBrickWall() {
         {/* Red Paint Splatter */}
         <div className="absolute top-16 left-8 w-32 h-32 opacity-20 animate-pulse">
           <Image
-            src="/fx/paint-red.svg"
+            src="/assets/paint-red-v3.png"
             alt=""
             fill
             className="object-contain rotate-12"
@@ -34,7 +34,7 @@ export default function HeroBrickWall() {
         {/* Yellow Paint Splatter */}
         <div className="absolute bottom-20 right-12 w-40 h-40 opacity-25 animate-bounce">
           <Image
-            src="/fx/paint-yellow.svg"
+            src="/assets/paint-yellow-v2.png"
             alt=""
             fill
             className="object-contain -rotate-45"
@@ -44,7 +44,7 @@ export default function HeroBrickWall() {
         {/* Blue Paint Splatter */}
         <div className="absolute top-1/3 right-16 w-28 h-28 opacity-30 animate-spin-slow">
           <Image
-            src="/fx/paint-blue.svg"
+            src="/assets/paint-blue-v2.png"
             alt=""
             fill
             className="object-contain rotate-90"
@@ -54,7 +54,7 @@ export default function HeroBrickWall() {
         {/* Additional paint effects for more grit */}
         <div className="absolute bottom-1/4 left-1/4 w-24 h-24 opacity-15">
           <Image
-            src="/fx/paint-red.svg"
+            src="/assets/paint-red-v3.png"
             alt=""
             fill
             className="object-contain rotate-180"
@@ -71,7 +71,7 @@ export default function HeroBrickWall() {
         
         <div className="relative">
           <Image
-            src="/resumeBuilderlogo.png"
+            src="/assets/resumeBuilderLogo-v3.png"
             alt="Trade Hustle Logo"
             width={340}
             height={340}

@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     siteName: "Trade Hustle",
     images: [
       {
-        url: "/resumeBuilderlogo.png", // hosted in /public
+        url: "/assets/resumeBuilderLogo-v3.png", // hosted in /public
         width: 1024,
         height: 1536,
         alt: "Trade Hustle Builder Logo",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     title: "Trade Hustle Resume Builder",
     description:
       "Get hired faster with ATS-optimized trade resumes. Built for the trade. Backed by Hustle.",
-    images: ["/resumeBuilderlogo.png"],
+    images: ["/assets/resumeBuilderLogo-v3.png"],
   },
 };
 

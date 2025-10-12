@@ -228,7 +228,7 @@
   left: 10%;
   width: 250px;
   height: 250px;
-  background: url('/fx/paint-red.svg') no-repeat center/contain;
+  background: url('/assets/paint-red-v3.png') no-repeat center/contain;
   opacity: 0.6;
   z-index: 0;
   pointer-events: none;
@@ -242,7 +242,7 @@
   right: 15%;
   width: 200px;
   height: 200px;
-  background: url('/fx/paint-yellow.svg') no-repeat center/contain;
+  background: url('/assets/paint-yellow-v2.png') no-repeat center/contain;
   opacity: 0.5;
   z-index: 0;
   pointer-events: none;
@@ -421,5 +421,14 @@
 
 .skip-link:focus {
   top: 0;
+}
+
+/* Float animation for logo */
+@keyframes float-slow {
+  0%,100% {transform: translateY(0);}
+  50% {transform: translateY(-8px);}
+}
+.animate-float-slow {
+  animation: float-slow 10s ease-in-out infinite;
 }
 
