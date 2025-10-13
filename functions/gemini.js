@@ -14,4 +14,4 @@ export const textModel = vertex.getGenerativeModel({
 /** Image generation / editing */
 export const imageModel = vertex.getGenerativeModel({
   model: "projects/google/models/gemini-2.5-flash-image-001",
-});
+});d
