@@ -1,6 +1,6 @@
 {
   "functions": {
-    "source": "api-functions"
+    "source": "functions"
   },
   "hosting": {
     "public": "frontend/out",
