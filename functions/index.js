@@ -1,6 +1,7 @@
 // functions/index.js
 import { onRequest } from "firebase-functions/v2/https";
 import { getAuth } from "firebase-admin/auth";
+import { getFirestore } from "firebase-admin/firestore";
 import { textModel, imageModel } from "./gemini.js";
 import { getStripe, stripeSecretKey } from "./config.js";
 
@@ -96,6 +97,78 @@ export const createCheckout = onRequest(
         success: false,
         error: 'Failed to create checkout session',
         message: error.message 
+      });
+    }
+  }
+);
+
+/* --- Stripe Webhook: handle payment confirmations --- */
+export const stripeWebhook = onRequest(
+  {
+    secrets: [stripeSecretKey],
+  },
+  async (req, res) => {
+    const stripe = getStripe();
+    const sig = req.headers['stripe-signature'];
+    
+    // TODO: Set this webhook secret from Stripe Dashboard
+    // Get it from Stripe Dashboard -> Webhooks -> Signing secret
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_replace_with_your_webhook_secret';
+
+    try {
+      // Verify webhook signature
+      const event = stripe.webhooks.constructEvent(
+        req.rawBody || req.body,
+        sig,
+        webhookSecret
+      );
+
+      console.log('Stripe webhook event received:', event.type);
+
+      // Handle successful checkout
+      if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        
+        console.log('Payment successful for session:', session.id);
+        
+        // Save to Firestore
+        const db = getFirestore();
+        await db.collection('purchases').add({
+          sessionId: session.id,
+          userId: session.metadata?.userId || session.client_reference_id || 'unknown',
+          customerEmail: session.customer_details?.email,
+          amount: session.amount_total,
+          currency: session.currency,
+          paymentStatus: session.payment_status,
+          status: 'completed',
+          productType: 'trade_hustle_resume_builder',
+          createdAt: new Date(),
+          stripeCustomerId: session.customer,
+        });
+
+        console.log('Purchase record created in Firestore');
+
+        // TODO: Grant access to resume builder features
+        // You can add logic here to:
+        // 1. Update user permissions in Firestore
+        // 2. Send confirmation email
+        // 3. Trigger other business logic
+      }
+
+      // Handle payment failure
+      if (event.type === 'checkout.session.expired' || event.type === 'payment_intent.payment_failed') {
+        const session = event.data.object;
+        console.log('Payment failed/expired for session:', session.id);
+        
+        // TODO: Handle failed payments (logging, notifications, etc.)
+      }
+
+      res.json({ received: true });
+    } catch (err) {
+      console.error('Webhook signature verification failed:', err.message);
+      res.status(400).json({ 
+        error: 'Webhook signature verification failed',
+        message: err.message 
       });
     }
   }

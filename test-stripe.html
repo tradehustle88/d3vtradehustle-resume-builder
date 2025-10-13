@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test Stripe Checkout - Trade Hustle Resume Builder</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #001a33;
+      color: #ffd700;
+    }
+    .container {
+      text-align: center;
+      padding: 40px;
+      background: linear-gradient(135deg, #001a33, #8b0000);
+      border-radius: 10px;
+      border: 2px solid #ffd700;
+    }
+    button {
+      background: linear-gradient(45deg, #ffd700, #ffed4e);
+      color: #001a33;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 20px;
+      transition: transform 0.2s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    }
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    #status {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      min-height: 50px;
+    }
+    .success { background-color: #4caf50; color: white; }
+    .error { background-color: #f44336; color: white; }
+    .loading { background-color: #ff9800; color: white; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔥 Trade Hustle Resume Builder</h1>
+    <h2>Stripe Checkout Test</h2>
+    <p>Test the payment integration for your AI-powered resume builder</p>
+    
+    <button id="checkoutBtn" onclick="handleCheckout()">
+      💳 Start Checkout - Test Payment
+    </button>
+    
+    <div id="status"></div>
+    
+    <div style="margin-top: 30px; font-size: 12px; opacity: 0.7;">
+      <p>🧪 This is a test page for the Stripe integration</p>
+      <p>Function URL: https://us-central1-tradehustleresumebuilder.cloudfunctions.net/createCheckout</p>
+    </div>
+  </div>
+
+  <script>
+    async function handleCheckout() {
+      const statusDiv = document.getElementById('status');
+      const button = document.getElementById('checkoutBtn');
+      
+      // Loading state
+      button.disabled = true;
+      button.textContent = '⏳ Creating checkout session...';
+      statusDiv.className = 'loading';
+      statusDiv.textContent = '🚀 Initializing payment with Stripe...';
+
+      try {
+        console.log('Starting checkout request...');
+        
+        const response = await fetch(
+          'https://us-central1-tradehustleresumebuilder.cloudfunctions.net/createCheckout',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: 'test-user-' + Date.now(), // Unique test user ID
+              source: 'test-page',
+            }),
+          }
+        );
+
+        console.log('Response status:', response.status);
+        const data = await response.json();
+        console.log('Response data:', data);
+        
+        if (data.success && data.url) {
+          statusDiv.className = 'success';
+          statusDiv.textContent = '✅ Checkout session created! Redirecting to Stripe...';
+          
+          // Redirect after a brief delay
+          setTimeout(() => {
+            window.location.href = data.url;
+          }, 1000);
+        } else {
+          throw new Error(data.message || 'Failed to create checkout session');
+        }
+      } catch (error) {
+        console.error('Checkout failed:', error);
+        statusDiv.className = 'error';
+        statusDiv.innerHTML = `
+          <strong>❌ Error:</strong> ${error.message}<br>
+          <small>Check the browser console for more details</small>
+        `;
+        
+        // Reset button
+        button.disabled = false;
+        button.textContent = '💳 Start Checkout - Test Payment';
+      }
+    }
+    
+    // Test connection on page load
+    window.onload = function() {
+      console.log('Trade Hustle Checkout Test Page Loaded');
+      console.log('Testing connection to:', 'https://us-central1-tradehustleresumebuilder.cloudfunctions.net/createCheckout');
+    };
+  </script>
+</body>
+</html>
