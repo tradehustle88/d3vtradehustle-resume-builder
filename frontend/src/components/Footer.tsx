@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="w-full mt-auto border-t border-white/10 bg-gradient-to-b from-gray-900 to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Gold Coin Social Icons */}
+        {/* Updated Social Media Icons */}
         <SocialBar />
         
         {/* Footer Content */}
