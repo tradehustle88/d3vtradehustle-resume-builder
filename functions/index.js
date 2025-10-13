@@ -2,8 +2,12 @@
 import { onRequest } from "firebase-functions/v2/https";
 import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
+import { initializeApp } from "firebase-admin/app";
 import { textModel, imageModel } from "./gemini.js";
 import { getStripe, stripeSecretKey } from "./config.js";
+
+// Initialize Firebase Admin
+initializeApp();
 
 /* --- Text: fast resume summaries, keywords, advice --- */
 export const geminiText = onRequest(async (req, res) => {
@@ -40,7 +44,7 @@ export const createCheckout = onRequest(
   {
     secrets: [stripeSecretKey], // Declare secret dependency
     cors: {
-      origin: ['https://nexxgennhustle.com', 'http://localhost:3000'], // Add your domains
+      origin: true, // Allow all origins for now, restrict later
       methods: ['POST'],
     },
   },
@@ -111,65 +115,63 @@ export const stripeWebhook = onRequest(
     const stripe = getStripe();
     const sig = req.headers['stripe-signature'];
     
-    // TODO: Set this webhook secret from Stripe Dashboard
-    // Get it from Stripe Dashboard -> Webhooks -> Signing secret
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_replace_with_your_webhook_secret';
+    // You'll get this signing secret after creating the webhook in Stripe
+    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+
+    let event;
 
     try {
-      // Verify webhook signature
-      const event = stripe.webhooks.constructEvent(
-        req.rawBody || req.body,
+      // Verify the webhook signature
+      event = stripe.webhooks.constructEvent(
+        req.rawBody,
         sig,
-        webhookSecret
+        endpointSecret
       );
+    } catch (err) {
+      console.error('⚠️ Webhook signature verification failed:', err.message);
+      return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
 
-      console.log('Stripe webhook event received:', event.type);
+    // Handle the event
+    try {
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object;
+          console.log('✅ Payment successful:', session.id);
 
-      // Handle successful checkout
-      if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
-        
-        console.log('Payment successful for session:', session.id);
-        
-        // Save to Firestore
-        const db = getFirestore();
-        await db.collection('purchases').add({
-          sessionId: session.id,
-          userId: session.metadata?.userId || session.client_reference_id || 'unknown',
-          customerEmail: session.customer_details?.email,
-          amount: session.amount_total,
-          currency: session.currency,
-          paymentStatus: session.payment_status,
-          status: 'completed',
-          productType: 'trade_hustle_resume_builder',
-          createdAt: new Date(),
-          stripeCustomerId: session.customer,
-        });
+          // Save purchase to Firestore
+          const db = getFirestore();
+          await db.collection('purchases').add({
+            sessionId: session.id,
+            customerId: session.customer,
+            customerEmail: session.customer_details?.email,
+            userId: session.metadata?.userId || session.client_reference_id,
+            amountTotal: session.amount_total,
+            currency: session.currency,
+            paymentStatus: session.payment_status,
+            status: 'completed',
+            createdAt: new Date(),
+          });
 
-        console.log('Purchase record created in Firestore');
+          console.log('📝 Purchase recorded in Firestore');
+          break;
 
-        // TODO: Grant access to resume builder features
-        // You can add logic here to:
-        // 1. Update user permissions in Firestore
-        // 2. Send confirmation email
-        // 3. Trigger other business logic
-      }
+        case 'checkout.session.expired':
+          console.log('⏰ Checkout session expired:', event.data.object.id);
+          break;
 
-      // Handle payment failure
-      if (event.type === 'checkout.session.expired' || event.type === 'payment_intent.payment_failed') {
-        const session = event.data.object;
-        console.log('Payment failed/expired for session:', session.id);
-        
-        // TODO: Handle failed payments (logging, notifications, etc.)
+        case 'payment_intent.succeeded':
+          console.log('💰 Payment succeeded:', event.data.object.id);
+          break;
+
+        default:
+          console.log(`Unhandled event type: ${event.type}`);
       }
 
       res.json({ received: true });
-    } catch (err) {
-      console.error('Webhook signature verification failed:', err.message);
-      res.status(400).json({ 
-        error: 'Webhook signature verification failed',
-        message: err.message 
-      });
+    } catch (error) {
+      console.error('Error processing webhook:', error);
+      res.status(500).json({ error: 'Webhook processing failed' });
     }
   }
 );
