@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import paint splatter utilities */
+@import '../styles/paint-splatters.css';
+
 /* Animated Multicolor Glow for headings */
 @keyframes rotateGlow {
   0%   { text-shadow: 0 0 10px #E50914, 0 0 25px #E50914; }      /* Hustle Red */
