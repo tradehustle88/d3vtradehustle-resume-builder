@@ -1,0 +1,437 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import paint splatter utilities */
+@import '../styles/paint-splatters.css';
+
+/* Animated Multicolor Glow for headings */
+@keyframes rotateGlow {
+  0%   { text-shadow: 0 0 10px #E50914, 0 0 25px #E50914; }      /* Hustle Red */
+  33%  { text-shadow: 0 0 10px #D4A017, 0 0 25px #D4A017; }      /* Hustle Yellow */
+  66%  { text-shadow: 0 0 10px #1673FF, 0 0 25px #1673FF; }      /* Electric Blue */
+  100% { text-shadow: 0 0 10px #E50914, 0 0 25px #E50914; }
+}
+
+.rotating-glow {
+  color: #ffffff;
+  animation: rotateGlow 9s linear infinite;
+}
+
+/* Background gradient for hero */
+.bg-hero {
+  background: linear-gradient(to bottom, #000000, #001a33, #000000);
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* Title */
+.hero-title {
+  font-family: "Anton", sans-serif;
+  font-size: 4rem;
+  font-weight: 900;
+  color: white;
+  position: relative;
+  display: inline-block;
+  text-transform: uppercase;
+  line-height: 1.2;
+  letter-spacing: 2px;
+}
+
+/* Flowing multi-color outline effect */
+.hero-title::before {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  color: transparent;
+  -webkit-text-stroke: 3px transparent;
+  background: linear-gradient(
+    90deg,
+    #ff0000,
+    #ffd700,
+    #1e90ff,
+    #ff0000
+  );
+  background-size: 400%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: outline-flow 8s linear infinite;
+  z-index: -1;
+}
+
+@keyframes outline-flow {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 400% 50%; }
+}
+
+/* Logo */
+.hero-logo {
+  transition: filter 0.6s ease, transform 0.6s ease;
+}
+.hero-logo:hover {
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.9));
+  transform: rotate(2deg);
+}
+
+/* Subtitle */
+.hero-subtitle {
+  font-family: "Anton", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffd700;
+  text-transform: uppercase;
+  line-height: 1.5;
+  letter-spacing: 1px;
+}
+
+/* Brick block section - updated for new brick wall background */
+.brick-block {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 1;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+/* Unlock the Hustle button */
+.btn-hustle {
+  display: inline-block;
+  padding: 0.85rem 2.5rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: white;
+  background: #8b0000;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+.btn-hustle:hover {
+  background: #ff0000;
+  filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.9));
+  transform: translateY(-2px);
+}
+
+/* Brick wall overlay styles */
+.brick-block-overlay {
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+}
+
+/* Custom animations for paint effects */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* Coin spin animation - rotates every 7 seconds */
+@keyframes coin-spin {
+  0% { transform: rotate(0deg); }
+  90% { transform: rotate(0deg); } /* hold still */
+  100% { transform: rotate(360deg); } /* full spin */
+}
+
+.animate-coin-spin {
+  display: inline-block;
+  animation: coin-spin 7s linear infinite;
+}
+
+/* Enhanced paint splatter effects */
+.paint-red,
+.paint-yellow,
+.paint-blue {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  opacity: 0.15;
+  animation: paint-fade 20s infinite linear;
+}
+
+.paint-red { top: 10%; left: 5%; }
+.paint-yellow { bottom: 15%; right: 10%; }
+.paint-blue { top: 40%; right: 20%; }
+
+@keyframes paint-fade {
+  0% { opacity: 0.1; transform: rotate(0deg) scale(1); }
+  50% { opacity: 0.25; transform: rotate(180deg) scale(1.05); }
+  100% { opacity: 0.1; transform: rotate(360deg) scale(1); }
+}
+
+/* Gritty texture overlay */
+.gritty-overlay {
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 0, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(30, 144, 255, 0.1) 0%, transparent 50%);
+  mix-blend-mode: overlay;
+}
+
+/* Floating paint splatter animations */
+@keyframes float-splatter-1 {
+  0%, 100% { 
+    transform: translate(0, 0) rotate(-10deg);
+  }
+  25% { 
+    transform: translate(10px, -15px) rotate(-12deg);
+  }
+  50% { 
+    transform: translate(5px, -25px) rotate(-8deg);
+  }
+  75% { 
+    transform: translate(-5px, -10px) rotate(-14deg);
+  }
+}
+
+@keyframes float-splatter-2 {
+  0%, 100% { 
+    transform: translate(0, 0) rotate(15deg);
+  }
+  30% { 
+    transform: translate(-12px, 10px) rotate(18deg);
+  }
+  60% { 
+    transform: translate(-20px, -5px) rotate(12deg);
+  }
+  85% { 
+    transform: translate(-8px, 5px) rotate(20deg);
+  }
+}
+
+@keyframes float-splatter-3 {
+  0%, 100% { 
+    transform: translate(0, 0) rotate(25deg);
+  }
+  20% { 
+    transform: translate(8px, 12px) rotate(28deg);
+  }
+  55% { 
+    transform: translate(-10px, 20px) rotate(22deg);
+  }
+  80% { 
+    transform: translate(15px, 8px) rotate(30deg);
+  }
+}
+
+/* Hero section paint splatters - using pseudo elements */
+.hero-section-with-splatters::before {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: 10%;
+  width: 250px;
+  height: 250px;
+  background: url('/assets/paint-red-v3.png') no-repeat center/contain;
+  opacity: 0.6;
+  z-index: 0;
+  pointer-events: none;
+  animation: float-splatter-1 8s ease-in-out infinite;
+}
+
+.hero-section-with-splatters::after {
+  content: '';
+  position: absolute;
+  bottom: 30px;
+  right: 15%;
+  width: 200px;
+  height: 200px;
+  background: url('/assets/paint-yellow-v2.png') no-repeat center/contain;
+  opacity: 0.5;
+  z-index: 0;
+  pointer-events: none;
+  animation: float-splatter-2 10s ease-in-out infinite 2s;
+}
+
+/* Blue splatter animation class */
+.paint-splatter-blue-animated {
+  animation: float-splatter-3 12s ease-in-out infinite 4s;
+}
+
+/* Content wrapper to stay above splatters */
+.content-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+/* Hero section with layered brick + gradient effects */
+.hero-section-layered {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Gradient shift animation overlay */
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.gradient-shift-overlay {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(216,72,57,0.15), rgba(244,212,124,0.15), rgba(30,40,60,0.15));
+  background-size: 200% 200%;
+  animation: gradientMove 20s ease infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Film grain animation */
+@keyframes grain {
+  0%, 100% { transform: translate(0, 0); }
+  10% { transform: translate(-5%, -5%); }
+  20% { transform: translate(-10%, 5%); }
+  30% { transform: translate(5%, -10%); }
+  40% { transform: translate(-5%, 15%); }
+  50% { transform: translate(-10%, 5%); }
+  60% { transform: translate(15%, 0); }
+  70% { transform: translate(0, 10%); }
+  80% { transform: translate(-15%, 0); }
+  90% { transform: translate(10%, 5%); }
+}
+
+/* Slow floating animation for combined paint splatters */
+@keyframes slow-float {
+  0%, 100% { 
+    transform: translateY(0px) scale(1) rotate(0deg); 
+  }
+  50% { 
+    transform: translateY(-10px) scale(1.02) rotate(1deg); 
+  }
+}
+
+.animate-slow-float {
+  animation: slow-float 12s ease-in-out infinite;
+}
+
+/* Alternate floating animation for second splatter layer */
+@keyframes slow-float-alt {
+  0%, 100% { 
+    transform: translateY(0px) translateX(0px) scale(1) rotate(0deg); 
+  }
+  33% { 
+    transform: translateY(8px) translateX(-5px) scale(1.01) rotate(-1deg); 
+  }
+  66% { 
+    transform: translateY(-12px) translateX(5px) scale(1.03) rotate(2deg); 
+  }
+}
+
+.grain-overlay {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,.05) 2px, rgba(255,255,255,.05) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,.03) 2px, rgba(0,0,0,.03) 4px);
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  animation: grain 2s steps(10) infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Electric blue glow animation for hero text */
+@keyframes electricGlow {
+  0% {
+    text-shadow:
+      0 0 10px #1673FF,
+      0 0 20px #1673FF,
+      0 0 40px #1673FF;
+  }
+  50% {
+    text-shadow:
+      0 0 20px #1673FF,
+      0 0 40px #4D9EFF,
+      0 0 80px #4D9EFF;
+  }
+  100% {
+    text-shadow:
+      0 0 10px #1673FF,
+      0 0 20px #1673FF,
+      0 0 40px #1673FF;
+  }
+}
+
+/* Hero gradient background */
+.hero-gradient {
+  background: linear-gradient(180deg, #000000 0%, #0A1B3A 60%, #000000 100%);
+  background-attachment: fixed;
+}
+
+/* Glowing text class */
+.glow-text {
+  animation: electricGlow 4s ease-in-out infinite alternate;
+}
+
+/* Hero title enhanced with simplified paint glow */
+.hero-title-enhanced {
+  text-shadow:
+    0 0 15px rgba(255, 200, 100, 0.6),
+    0 0 25px rgba(255, 100, 100, 0.5),
+    0 0 35px rgba(100, 150, 255, 0.5),
+    0 0 45px rgba(255, 200, 100, 0.4),
+    0 0 60px rgba(255, 100, 100, 0.3),
+    0 0 80px rgba(100, 150, 255, 0.3);
+  -webkit-text-stroke: 1px rgba(255, 200, 150, 0.5);
+}
+
+/* Accessibility: Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate-coin-spin,
+  .animate-slow-float,
+  .animate-slow-float-alt,
+  .animate-spin,
+  .glow-text,
+  .hero-title-enhanced {
+    animation: none !important;
+  }
+  
+  video {
+    display: none !important;
+  }
+}
+
+/* Skip to content link for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #ffd700;
+  color: #000;
+  padding: 8px 16px;
+  text-decoration: none;
+  font-weight: bold;
+  z-index: 100;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Float animation for logo */
+@keyframes float-slow {
+  0%,100% {transform: translateY(0);}
+  50% {transform: translateY(-8px);}
+}
+.animate-float-slow {
+  animation: float-slow 10s ease-in-out infinite;
+}
+

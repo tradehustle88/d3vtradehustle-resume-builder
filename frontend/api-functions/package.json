@@ -1,0 +1,21 @@
+{
+  "name": "api-functions",
+  "description": "Firebase Functions for TradeHustle Resume Builder",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-functions": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "axios": "^1.7.7"
+  },
+  "private": true
+}
