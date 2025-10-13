@@ -12,3 +12,4 @@ node_modules
 api-functions/.env
 functions/.env
 .firebase/logs/
+.firebase/logs/vsce-debug.log
