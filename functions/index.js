@@ -72,7 +72,7 @@ export const createCheckout = onRequest(
         mode: 'payment',
         line_items: [
           {
-            price: 'price_123', // Replace with your actual Stripe Price ID
+            price: 'price_1SHfAyLr4v4blpwbcvDqbej8', // Trade Hustle Resume Builder Price
             quantity: 1,
           },
         ],
