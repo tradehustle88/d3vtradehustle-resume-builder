@@ -1,8 +1,9 @@
 import Stripe from 'stripe';
 import { defineSecret } from 'firebase-functions/params';
 
-// Define secret parameter (will be set via Firebase CLI or Console)
+// Define secret parameters (will be set via Firebase CLI or Console)
 const stripeSecretKey = defineSecret('STRIPE_SECRET_KEY');
+const stripeWebhookSecret = defineSecret('STRIPE_WEBHOOK_SECRET');
 
 // Initialize Stripe (only when the secret is available)
 export const getStripe = () => {
@@ -11,5 +12,5 @@ export const getStripe = () => {
   });
 };
 
-// Export the secret for function configuration
-export { stripeSecretKey };
+// Export the secrets for function configuration
+export { stripeSecretKey, stripeWebhookSecret };

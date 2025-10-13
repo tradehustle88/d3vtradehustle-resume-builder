@@ -4,7 +4,7 @@ import { getAuth } from "firebase-admin/auth";
 import { getFirestore } from "firebase-admin/firestore";
 import { initializeApp } from "firebase-admin/app";
 import { textModel, imageModel } from "./gemini.js";
-import { getStripe, stripeSecretKey } from "./config.js";
+import { getStripe, stripeSecretKey, stripeWebhookSecret } from "./config.js";
 
 // Initialize Firebase Admin
 initializeApp();
@@ -109,14 +109,14 @@ export const createCheckout = onRequest(
 /* --- Stripe Webhook: handle payment confirmations --- */
 export const stripeWebhook = onRequest(
   {
-    secrets: [stripeSecretKey],
+    secrets: [stripeSecretKey, stripeWebhookSecret],
   },
   async (req, res) => {
     const stripe = getStripe();
     const sig = req.headers['stripe-signature'];
     
-    // You'll get this signing secret after creating the webhook in Stripe
-    const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+    // Get the webhook secret from Firebase secrets
+    const endpointSecret = stripeWebhookSecret.value();
 
     let event;
 
