@@ -1,5 +1,6 @@
 import { VertexAI } from "@google-cloud/vertexai";
 
+// Trade Hustle Resume Builder - Gemini AI Integration
 const PROJECT_ID = "tradehustleresumebuilder";
 const LOCATION = "us-central1";
 
