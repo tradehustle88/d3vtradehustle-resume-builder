@@ -5,8 +5,11 @@ import PaintSplatter from '@/components/PaintSplatter'
 export default function PricingPage() {
   const handleGetStarted = async () => {
     try {
-      // Call your live Firebase Functions createCheckout endpoint
-      const response = await fetch('https://us-central1-tradehustleresumebuilder.cloudfunctions.net/api/createCheckout', {
+      // Get the base URL from env (uses /app function)
+      const baseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL || 'https://app-fbs5jy4frq-uc.a.run.app';
+      
+      // Call the createCheckout endpoint under /api
+      const response = await fetch(`${baseUrl}/api/create-checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,10 +73,7 @@ export default function PricingPage() {
         <div className="max-w-lg mx-auto">
           <div className="bg-gradient-to-b from-[#111] to-[#222] border-2 border-[#E50914] rounded-xl shadow-2xl p-8 text-center relative overflow-hidden">
             {/* Background decoration */}
-            <div 
-              className="absolute inset-0 opacity-10 bg-cover bg-center"
-              style={{ backgroundImage: "url('/assets/brick-wall-texture.webp')" }}
-            />
+            <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-gray-800 to-gray-900" />
             
             <div className="relative z-10">
               {/* Badge */}

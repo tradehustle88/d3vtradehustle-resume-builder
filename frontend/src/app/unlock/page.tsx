@@ -91,14 +91,14 @@ function UnlockPageContent() {
         </h2>
       </div>
 
-      {/* --- BRICK CARD --- */}
+      {/* --- MAIN CARD --- */}
       <div className="relative z-10 w-[85%] max-w-5xl rounded-2xl overflow-hidden border border-neutral-800 shadow-[0_0_60px_rgba(22,115,255,0.25)]">
         
-        {/* Brick background */}
-        <div className="absolute inset-0 bg-[url('/assets/brick-bg-v3.webp')] bg-cover bg-center opacity-90" />
+        {/* Dark gradient background instead of brick */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-black to-gray-800" />
 
         {/* Blue-dark gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-[#0A1B3A]/70 to-black/80 mix-blend-overlay" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-[#0A1B3A]/50 to-black/60 mix-blend-overlay" />
 
         {/* Paint splatter accent */}
         <Image
@@ -122,8 +122,8 @@ function UnlockPageContent() {
         <div className="relative z-20 p-8 md:p-12">
           {/* Logo Above Cards */}
           <Image
-            src="/assets/resumeBuilderLogo-v3.png"
-            alt="Trade Hustle Logo"
+            src="/assets/trade-hustle-logo-new.png"
+            alt="Trade Hustle Resume Builder Logo"
             width={224}
             height={224}
             className="mx-auto w-48 md:w-56 mb-12 opacity-95"

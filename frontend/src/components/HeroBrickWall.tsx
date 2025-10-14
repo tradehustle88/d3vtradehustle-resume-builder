@@ -5,18 +5,11 @@ import TextLogo from "./TextLogo";
 
 export default function HeroBrickWall() {
   return (
-    <div className="relative w-full h-screen overflow-hidden">
-      {/* Brick Wall Background */}
+    <div className="relative w-full h-screen overflow-hidden bg-gradient-to-br from-gray-900 via-black to-gray-800">
+      {/* Dark gradient background instead of brick */}
       <div className="absolute inset-0 z-0">
-        <Image
-          src="/assets/brick-bg-v3.webp"
-          alt="Brick Wall Background"
-          fill
-          className="object-cover"
-          priority
-        />
         {/* Dark overlay for better text contrast */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/20"></div>
       </div>
 
       {/* Paint Splatter Effects */}
@@ -71,8 +64,8 @@ export default function HeroBrickWall() {
         
         <div className="relative">
           <Image
-            src="/assets/resumeBuilderLogo-v3.png"
-            alt="Trade Hustle Logo"
+            src="/assets/trade-hustle-logo-new.png"
+            alt="Trade Hustle Resume Builder Logo"
             width={340}
             height={340}
             priority

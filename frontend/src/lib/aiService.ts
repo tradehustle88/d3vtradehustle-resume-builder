@@ -3,9 +3,9 @@
  * Trade Hustle Resume Builder - AI Service Layer
  */
 
-// Firebase Cloud Functions URL
+// Firebase Cloud Functions URL - Using /app function
 const BASE_URL = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL ||
-  "https://us-central1-tradehustleresumebuilder.cloudfunctions.net";
+  "https://app-fbs5jy4frq-uc.a.run.app";
 
 // Helper function for API calls
 async function apiCall(endpoint: string, options: RequestInit = {}): Promise<any> {
@@ -108,7 +108,7 @@ async generateResume(prompt: string): Promise<string> {
   }
   
   const res = await fetch(
-    'https://us-central1-tradehustleresumebuilder.cloudfunctions.net/geminiAgent',
+    `${BASE_URL}/api/geminiAgent`,
     {
       method: 'POST',
       headers,
@@ -219,7 +219,7 @@ export const aiService = AIService.getInstance();
  */
 export async function generateResume(prompt: string): Promise<string> {
   const res = await fetch(
-    'https://us-central1-tradehustleresumebuilder.cloudfunctions.net/geminiAgent',
+    `${BASE_URL}/api/geminiAgent`,
     {
       method: 'POST',
       headers: { 

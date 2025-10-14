@@ -27,8 +27,9 @@ export default function SignupForm() {
       }
 
       // 2. Send token + email directly to Firebase Cloud Function
+      const baseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL || 'https://app-fbs5jy4frq-uc.a.run.app';
       const res = await fetch(
-        "https://us-central1-tradehustleresumebuilder.cloudfunctions.net/verifyRecaptcha",
+        `${baseUrl}/api/verifyRecaptcha`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

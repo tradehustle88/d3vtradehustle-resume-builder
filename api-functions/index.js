@@ -7,7 +7,8 @@
  *  - Health check and root routes
  */
 
-require("dotenv").config();
+// Note: dotenv not needed in production - Firebase injects env vars automatically
+// require("dotenv").config();
 
 const {onRequest} = require("firebase-functions/v2/https");
 const {setGlobalOptions} = require("firebase-functions/v2");
@@ -145,12 +146,12 @@ app.get("/api/status", (req, res) => {
     timestamp: new Date().toISOString(),
     environment: {
       projectId: process.env.PROJECT_ID || "not-configured",
-      region: process.env.REGION || "not-configured", 
-      googleAI: !!process.env.GOOGLE_API_KEY ? "configured" : "not-configured",
+      region: process.env.REGION || "not-configured",
+      googleAI: process.env.GOOGLE_API_KEY ? "configured" : "not-configured",
       vertexAI: !!vertexAI && !!process.env.PROJECT_ID ? "configured" : "not-configured",
-      recaptcha: !!process.env.RECAPTCHA_SECRET ? "configured" : "not-configured",
-      gmail: !!process.env.GMAIL_USER && !!process.env.GMAIL_PASS ? "configured" : "not-configured"
-    }
+      recaptcha: process.env.RECAPTCHA_SECRET ? "configured" : "not-configured",
+      gmail: !!process.env.GMAIL_USER && !!process.env.GMAIL_PASS ? "configured" : "not-configured",
+    },
   });
 });
 
@@ -342,7 +343,7 @@ app.post("/api/geminiAgent", honeypotCheck, verifyUser, async (req, res) => {
     const {uid, email, displayName} = req.user;
     const {prompt, useVertexAI = false, model = "gemini-1.5-flash"} = req.body;
 
-    console.log(`🤖 AI request from ${email} (${uid}) - Provider: ${useVertexAI ? 'Vertex AI' : 'Gemini API'}`);
+    console.log(`🤖 AI request from ${email} (${uid}) - Provider: ${useVertexAI ? "Vertex AI" : "Gemini API"}`);
 
     if (!prompt) {
       return res.status(400).json({
@@ -418,12 +419,356 @@ app.post("/api/geminiAgent", honeypotCheck, verifyUser, async (req, res) => {
       model: modelUsed,
       message: `AI generation completed for ${displayName || email}`,
     });
-
   } catch (err) {
     console.error("❌ Gemini Agent error:", err);
     res.status(500).json({
       success: false,
       error: err.message,
+    });
+  }
+});
+
+//
+// Service Imports
+//
+const stripeService = require("./services/stripe");
+const firestoreService = require("./services/firestore");
+const aiService = require("./services/ai");
+
+//
+// Resume & Data Management Routes
+//
+
+/**
+ * Save resume
+ * POST /api/resumes
+ */
+app.post("/api/resumes", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const result = await firestoreService.saveResume(uid, req.body);
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Save Resume Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Get user's resumes
+ * GET /api/resumes
+ */
+app.get("/api/resumes", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const resumes = await firestoreService.getUserResumes(uid);
+    res.json({success: true, resumes});
+  } catch (error) {
+    console.error("❌ Get Resumes Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Get single resume
+ * GET /api/resumes/:id
+ */
+app.get("/api/resumes/:id", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const resume = await firestoreService.getResume(req.params.id, uid);
+    res.json({success: true, resume});
+  } catch (error) {
+    console.error("❌ Get Resume Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Delete resume
+ * DELETE /api/resumes/:id
+ */
+app.delete("/api/resumes/:id", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const result = await firestoreService.deleteResume(req.params.id, uid);
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Delete Resume Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Create job entry
+ * POST /api/jobs
+ */
+app.post("/api/jobs", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const result = await firestoreService.createJob(uid, req.body);
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Create Job Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Get user's jobs
+ * GET /api/jobs
+ */
+app.get("/api/jobs", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const statusFilter = req.query.status || null;
+    const jobs = await firestoreService.getUserJobs(uid, statusFilter);
+    res.json({success: true, jobs});
+  } catch (error) {
+    console.error("❌ Get Jobs Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Update job status
+ * PUT /api/jobs/:id
+ */
+app.put("/api/jobs/:id", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const {status, notes} = req.body;
+    const result = await firestoreService.updateJobStatus(req.params.id, uid, status, notes);
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Update Job Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Delete job
+ * DELETE /api/jobs/:id
+ */
+app.delete("/api/jobs/:id", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const result = await firestoreService.deleteJob(req.params.id, uid);
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Delete Job Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+//
+// AI Enhancement Routes
+//
+
+/**
+ * Get AI resume suggestions
+ * POST /api/ai/suggestions
+ */
+app.post("/api/ai/suggestions", verifyUser, async (req, res) => {
+  try {
+    const {resumeContent, trade} = req.body;
+    const result = await aiService.generateResumeSuggestions(resumeContent, trade);
+    res.json({success: true, suggestions: result});
+  } catch (error) {
+    console.error("❌ AI Suggestions Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Calculate ATS score
+ * POST /api/ai/ats-score
+ */
+app.post("/api/ai/ats-score", verifyUser, async (req, res) => {
+  try {
+    const {resumeContent, jobDescription} = req.body;
+    const result = await aiService.calculateATSScore(resumeContent, jobDescription);
+    res.json({success: true, score: result});
+  } catch (error) {
+    console.error("❌ ATS Score Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Enhance achievement
+ * POST /api/ai/enhance
+ */
+app.post("/api/ai/enhance", verifyUser, async (req, res) => {
+  try {
+    const {achievement, context} = req.body;
+    const result = await aiService.enhanceAchievement(achievement, context);
+    res.json({success: true, enhanced: result});
+  } catch (error) {
+    console.error("❌ Enhance Achievement Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+/**
+ * Match job description
+ * POST /api/ai/match-job
+ */
+app.post("/api/ai/match-job", verifyUser, async (req, res) => {
+  try {
+    const {resumeContent, jobDescription} = req.body;
+    const result = await aiService.matchJobDescription(resumeContent, jobDescription);
+    res.json({success: true, match: result});
+  } catch (error) {
+    console.error("❌ Match Job Error:", error);
+    res.status(500).json({success: false, error: error.message});
+  }
+});
+
+//
+// Stripe Payment Routes
+//
+
+/**
+ * Create Stripe checkout session
+ * POST /api/create-checkout
+ * Body: { priceId, successUrl, cancelUrl, metadata }
+ */
+app.post("/api/create-checkout", verifyUser, async (req, res) => {
+  try {
+    const {priceId, successUrl, cancelUrl, metadata} = req.body;
+    const {uid, email} = req.user;
+
+    if (!priceId || !successUrl || !cancelUrl) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing required fields: priceId, successUrl, cancelUrl",
+      });
+    }
+
+    const result = await stripeService.createCheckoutSession(
+        uid,
+        email,
+        priceId,
+        successUrl,
+        cancelUrl,
+        metadata || {},
+    );
+
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Create Checkout Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * Stripe webhook handler
+ * POST /api/webhook/stripe
+ * Handles: checkout.session.completed, subscription updates, payment events
+ */
+app.post("/api/webhook/stripe", express.raw({type: "application/json"}), async (req, res) => {
+  try {
+    const sig = req.headers["stripe-signature"];
+    // Firebase Functions v2 uses environment variables only
+    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+    if (!webhookSecret) {
+      console.error("⚠️ STRIPE_WEBHOOK_SECRET not configured");
+      return res.status(500).json({error: "Webhook secret not configured"});
+    }
+
+    // Verify webhook signature
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    const stripe = require("stripe")(stripeKey);
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    } catch (err) {
+      console.error("⚠️ Webhook signature verification failed:", err.message);
+      return res.status(400).json({error: "Invalid signature"});
+    }
+
+    // Handle the event
+    await stripeService.handleWebhookEvent(event);
+
+    res.json({received: true});
+  } catch (error) {
+    console.error("❌ Webhook Error:", error);
+    res.status(500).json({error: error.message});
+  }
+});
+
+/**
+ * Get subscription details
+ * GET /api/subscription
+ */
+app.get("/api/subscription", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const details = await stripeService.getSubscriptionDetails(uid);
+
+    res.json({
+      success: true,
+      subscription: details,
+    });
+  } catch (error) {
+    console.error("❌ Get Subscription Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * Cancel subscription
+ * POST /api/cancel-subscription
+ */
+app.post("/api/cancel-subscription", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const result = await stripeService.cancelSubscription(uid);
+
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Cancel Subscription Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * Create customer portal session
+ * POST /api/create-portal-session
+ * Body: { returnUrl }
+ */
+app.post("/api/create-portal-session", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const {returnUrl} = req.body;
+
+    if (!returnUrl) {
+      return res.status(400).json({
+        success: false,
+        error: "returnUrl is required",
+      });
+    }
+
+    const result = await stripeService.createPortalSession(uid, returnUrl);
+
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Create Portal Session Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
     });
   }
 });
@@ -436,8 +781,21 @@ app.get("/", (req, res) => {
 });
 
 //
-// Exports
+// ============================================
+// EXPORTS - Single App Function (Simplified Deployment)
+// ============================================
+// All routes are accessible via: /app/api/...
+// Example: https://...cloudfunctions.net/app/api/create-checkout
 //
+
+// ✅ MAIN EXPORT - Keep this one
+exports.app = onRequest(app);
+
+// ❌ INDIVIDUAL EXPORTS - Commented out to avoid deployment conflicts
+// These cause "Secret environment variable overlaps" errors
+// All routes are still accessible via the app function above
+
+/*
 exports.signup = onRequest((req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({error: "Method not allowed"});
@@ -470,17 +828,12 @@ exports.geminiAgent = onRequest((req, res) => {
   return app(mockReq, res);
 });
 
-// Updated to v2 function to fix deployment migration issues
 exports.verifyRecaptcha = onRequest(async (req, res) => {
-  // Allow CORS for testing/demo
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Headers", "Content-Type");
-
   if (req.method === "OPTIONS") {
-    // Handle CORS preflight
     return res.status(204).send("");
   }
-
   const token = req.body.token;
   try {
     const result = await verifyRecaptcha(token);
@@ -490,4 +843,43 @@ exports.verifyRecaptcha = onRequest(async (req, res) => {
   }
 });
 
-exports.app = onRequest(app);
+exports.createCheckout = onRequest((req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).json({error: "Method not allowed"});
+  }
+  const mockReq = {...req, url: "/api/create-checkout", path: "/api/create-checkout"};
+  return app(mockReq, res);
+});
+
+exports.stripeWebhook = onRequest((req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).json({error: "Method not allowed"});
+  }
+  const mockReq = {...req, url: "/api/webhook/stripe", path: "/api/webhook/stripe"};
+  return app(mockReq, res);
+});
+
+exports.getSubscription = onRequest((req, res) => {
+  if (req.method !== "GET") {
+    return res.status(405).json({error: "Method not allowed"});
+  }
+  const mockReq = {...req, url: "/api/subscription", path: "/api/subscription"};
+  return app(mockReq, res);
+});
+
+exports.cancelSubscription = onRequest((req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).json({error: "Method not allowed"});
+  }
+  const mockReq = {...req, url: "/api/cancel-subscription", path: "/api/cancel-subscription"};
+  return app(mockReq, res);
+});
+
+exports.createPortalSession = onRequest((req, res) => {
+  if (req.method !== "POST") {
+    return res.status(405).json({error: "Method not allowed"});
+  }
+  const mockReq = {...req, url: "/api/create-portal-session", path: "/api/create-portal-session"};
+  return app(mockReq, res);
+});
+*/

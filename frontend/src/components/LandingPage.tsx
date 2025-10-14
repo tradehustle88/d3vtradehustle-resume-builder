@@ -1,8 +1,14 @@
-'use client'
+1. process.env.STRIPE_SECRET_KEY     (Cloud Run - Best for v2)
+   ↓
+2. functions.config().stripe.secret_key  (Legacy - Auto fallback)
+   ↓
+3. null (Graceful degradation)'use client'
 import Image from 'next/image'
-import SimpleAIAssistant from './SimpleAIAssistant'
+import { useRouter } from 'next/navigation'
 
 export default function LandingPage() {
+  const router = useRouter()
+
   return (
     <section className="relative min-h-screen bg-black text-white overflow-hidden">
       {/* Top Section (No Brick Background) */}
@@ -13,29 +19,61 @@ export default function LandingPage() {
         {/* Logo between title and subtitle */}
         <div className="flex justify-center mt-6">
           <Image
-            src="/assets/resumeBuilderLogo-v3.png"
-            alt="Trade Hustle Logo"
+            src="/assets/trade-hustle-logo-new.png"
+            alt="Trade Hustle Resume Builder Logo"
             width={160}
             height={160}
             className="drop-shadow-[0_0_25px_rgba(255,215,0,0.4)] animate-float-slow"
           />
         </div>
 
-        {/* Subtitle */}
-        <p className="mt-6 text-lg text-gray-300 px-4 max-w-3xl mx-auto">
-          Built for the trades. Backed by hustle. Get the tools you need to land your next job.
-        </p>
+        {/* Enhanced Value Proposition */}
+        <div className="mt-8 px-4 max-w-4xl mx-auto">
+          <p className="text-2xl font-bold text-white mb-4">
+            ATS-Optimized Resumes Built by Tradespeople, for Tradespeople
+          </p>
+          <p className="text-lg text-gray-300">
+            Land more interviews with AI-powered resumes designed specifically for your trade. 
+            No fluff. No guesswork. Just results.
+          </p>
+        </div>
+
+        {/* Trust Signals */}
+        <div className="mt-8 flex flex-wrap justify-center gap-8 text-gray-300">
+          <div className="flex items-center gap-2">
+            <span className="text-[#FFD700] text-2xl">⚡</span>
+            <span className="font-bold">15 Min Setup</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[#FFD700] text-2xl">✓</span>
+            <span className="font-bold">95%+ ATS Score</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[#FFD700] text-2xl">🎯</span>
+            <span className="font-bold">Trade-Specific</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[#FFD700] text-2xl">🔥</span>
+            <span className="font-bold">5,000+ Built</span>
+          </div>
+        </div>
+
+        {/* Primary CTA Button */}
+        <div className="mt-12">
+          <button
+            onClick={() => router.push('/trade-selection')}
+            className="bg-[#8B0000] hover:bg-red-800 text-white font-extrabold text-2xl py-6 px-12 rounded-lg transition-all duration-300 shadow-2xl hover:shadow-[#FFD700]/50 hover:scale-105 transform"
+          >
+            Choose Your Trade & Get Started →
+          </button>
+          <p className="text-gray-400 text-sm mt-3">Free to start • No credit card required</p>
+        </div>
       </div>
 
-      {/* Brick Background Section */}
-      <div className="relative mt-12 pb-24">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-70"
-          style={{ backgroundImage: "url('/assets/brick-bg-v3.webp')" }}
-        />
-
-        {/* Overlay to darken the brick slightly */}
-        <div className="absolute inset-0 bg-black/30" />
+      {/* Background Section */}
+      <div className="relative mt-12 pb-24 bg-gradient-to-b from-gray-900 to-black">
+        {/* Dark gradient background instead of brick */}
+        <div className="absolute inset-0 bg-black/20" />
 
         {/* Foreground Content */}
         <div className="relative z-10 flex flex-col sm:flex-row justify-center gap-8 px-6 mt-10">
@@ -72,18 +110,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* AI Assistant Section */}
-        <div className="relative z-10 flex justify-center px-6 mt-16">
-          <div className="max-w-4xl w-full">
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-[#ffd700] mb-2">⚡ TRY THE AI ASSISTANT</h2>
-              <p className="text-gray-300 text-lg">
-                Get professional resume content in seconds - powered by advanced AI
-              </p>
-            </div>
-            <SimpleAIAssistant />
-          </div>
-        </div>
+        {/* Removed AI Assistant Section */}
       </div>
     </section>
   )

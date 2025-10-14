@@ -34,10 +34,10 @@ export const metadata: Metadata = {
     siteName: "Trade Hustle",
     images: [
       {
-        url: "/assets/resumeBuilderLogo-v3.png", // hosted in /public
+        url: "/assets/trade-hustle-logo-new.png", // hosted in /public
         width: 1024,
         height: 1536,
-        alt: "Trade Hustle Builder Logo",
+        alt: "Trade Hustle Resume Builder Logo",
       },
     ],
     locale: "en_US",
@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     title: "Trade Hustle Resume Builder",
     description:
       "Get hired faster with ATS-optimized trade resumes. Built for the trade. Backed by Hustle.",
-    images: ["/assets/resumeBuilderLogo-v3.png"],
+    images: ["/assets/trade-hustle-logo-new.png"],
   },
 };
 

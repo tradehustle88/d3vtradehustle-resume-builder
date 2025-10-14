@@ -88,15 +88,15 @@
   letter-spacing: 1px;
 }
 
-/* Brick block section - updated for new brick wall background */
+/* Content block section - modern gradient design */
 .brick-block {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(2px);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(31, 41, 55, 0.8));
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   position: relative;
   z-index: 1;
-  border: 2px solid rgba(255, 215, 0, 0.3);
+  border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
 /* Unlock the Hustle button */
@@ -117,12 +117,12 @@
   transform: translateY(-2px);
 }
 
-/* Brick wall overlay styles */
+/* Modern overlay styles */
 .brick-block-overlay {
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(2px);
-  border: 2px solid rgba(255, 215, 0, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+  background: linear-gradient(135deg, rgba(17, 24, 39, 0.85), rgba(31, 41, 55, 0.75));
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
 /* Custom animations for paint effects */
@@ -263,7 +263,7 @@
   z-index: 2;
 }
 
-/* Hero section with layered brick + gradient effects */
+/* Hero section with modern gradient effects */
 .hero-section-layered {
   position: relative;
   min-height: 100vh;

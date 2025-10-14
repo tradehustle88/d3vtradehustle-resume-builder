@@ -116,11 +116,10 @@
 }
 
 /* Background textures */
-.brick-wall-bg {
-  background-image: url('/assets/brick-wall-texture.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+.gradient-bg {
+  background: linear-gradient(135deg, #1f2937 0%, #111827 50%, #0f172a 100%);
+  background-size: 200% 200%;
+  animation: gradientMove 8s ease infinite;
 }
 
 /* Positioning utilities */
