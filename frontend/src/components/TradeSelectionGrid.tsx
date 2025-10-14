@@ -80,7 +80,7 @@ const trades: TradeOption[] = [
   {
     id: 'contractor',
     name: 'Contractor',
-    icon: '👷',
+    icon: '🏗️',
     templateCount: 25,
     popularJobs: ['General Contractor', 'Project Manager', 'Construction Supervisor'],
     description: 'Manage construction projects and coordinate trades',
