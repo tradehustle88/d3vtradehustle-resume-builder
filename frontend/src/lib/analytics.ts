@@ -101,6 +101,17 @@ export const trackCustomEvent = (eventName: string, params?: Record<string, any>
 };
 
 /**
+ * Generic event tracker
+ * @param eventName - The event name
+ * @param params - Optional event parameters
+ */
+export const trackEvent = (eventName: string, params?: Record<string, any>) => {
+    if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', eventName, params || {});
+    }
+};
+
+/**
  * Track errors for debugging
  * @param description - Error description
  * @param fatal - Whether the error is fatal
