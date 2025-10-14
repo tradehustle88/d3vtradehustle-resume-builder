@@ -19,7 +19,7 @@ const trades: TradeOption[] = [
     name: 'Electrician',
     icon: '⚡',
     templateCount: 25,
-    popularJobs: ['Journeyman Electrician', 'Master Electrician', 'Electrical Foreman'],
+    popularJobs: ['Residential', 'Commercial', 'Industrial'],
     description: 'Wire systems, install fixtures, troubleshoot electrical issues',
     color: 'from-yellow-600 to-orange-700'
   },
@@ -28,25 +28,25 @@ const trades: TradeOption[] = [
     name: 'Plumber',
     icon: '🔧',
     templateCount: 25,
-    popularJobs: ['Journeyman Plumber', 'Pipefitter', 'Plumbing Foreman'],
+    popularJobs: ['Service', 'Installation', 'Maintenance'],
     description: 'Install and repair piping systems, fixtures, and appliances',
     color: 'from-blue-600 to-cyan-700'
   },
   {
     id: 'hvac',
-    name: 'HVAC Tech',
+    name: 'HVAC Technician',
     icon: '❄️',
     templateCount: 25,
-    popularJobs: ['HVAC Technician', 'HVAC Installer', 'Service Technician'],
+    popularJobs: ['Install', 'Repair', 'PM'],
     description: 'Install, maintain, and repair heating and cooling systems',
     color: 'from-cyan-600 to-blue-700'
   },
   {
     id: 'carpenter',
     name: 'Carpenter',
-    icon: '🔨',
+    icon: '🪚',
     templateCount: 25,
-    popularJobs: ['Rough Carpenter', 'Finish Carpenter', 'Framing Carpenter'],
+    popularJobs: ['Framing', 'Finish', 'Cabinet'],
     description: 'Build and repair structures, frameworks, and finish work',
     color: 'from-amber-700 to-yellow-800'
   },
@@ -55,7 +55,7 @@ const trades: TradeOption[] = [
     name: 'Mason',
     icon: '🧱',
     templateCount: 25,
-    popularJobs: ['Bricklayer', 'Stone Mason', 'Concrete Finisher'],
+    popularJobs: ['Brick', 'Stone', 'Concrete'],
     description: 'Construct and repair structures using brick, stone, concrete',
     color: 'from-orange-700 to-red-800'
   },
@@ -64,7 +64,7 @@ const trades: TradeOption[] = [
     name: 'Welder',
     icon: '🔥',
     templateCount: 25,
-    popularJobs: ['MIG Welder', 'TIG Welder', 'Pipe Welder'],
+    popularJobs: ['MIG', 'TIG', 'Stick'],
     description: 'Join metal parts using various welding techniques',
     color: 'from-red-600 to-orange-700'
   },
@@ -73,16 +73,16 @@ const trades: TradeOption[] = [
     name: 'Mechanic',
     icon: '🔩',
     templateCount: 25,
-    popularJobs: ['Auto Mechanic', 'Diesel Mechanic', 'Heavy Equipment Mechanic'],
+    popularJobs: ['Auto', 'Diesel', 'Equipment'],
     description: 'Diagnose and repair vehicles and machinery',
     color: 'from-gray-700 to-slate-800'
   },
   {
     id: 'contractor',
-    name: 'Contractor',
-    icon: '🏗️',
+    name: 'General Contractor',
+    icon: '👷',
     templateCount: 25,
-    popularJobs: ['General Contractor', 'Project Manager', 'Construction Supervisor'],
+    popularJobs: ['Residential', 'Commercial', 'Remodel'],
     description: 'Manage construction projects and coordinate trades',
     color: 'from-green-700 to-emerald-800'
   }
