@@ -25,16 +25,16 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.npm
-          key: ${{ runner.os }}-functions-${{ hashFiles('functions/package-lock.json') }}
+          key: ${{ runner.os }}-functions-${{ hashFiles('api-functions/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-functions-
 
       - name: Install Firebase Functions dependencies
-        working-directory: ./functions
+        working-directory: ./api-functions
         run: npm ci
 
       - name: Build functions
-        working-directory: ./functions
+        working-directory: ./api-functions
         run: npm run build --if-present
 
       - name: Deploy to Firebase
