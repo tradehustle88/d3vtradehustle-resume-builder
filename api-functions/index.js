@@ -20,6 +20,11 @@ const cors = require("cors");
 const {GoogleGenerativeAI} = require("@google/generative-ai");
 const {VertexAI} = require("@google-cloud/vertexai");
 const axios = require("axios");
+const {
+  pricingTiers,
+  getTierById,
+  getTierFromPriceId,
+} = require("./stripe-config");
 
 // Set global options
 setGlobalOptions({maxInstances: 10});
@@ -1295,6 +1300,204 @@ app.post("/api/referrals/payout", honeypotCheck, verifyUser, async (req, res) =>
     });
   } catch (error) {
     console.error("❌ Payout Request Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+//
+// ============================================
+// SUBSCRIPTION MANAGEMENT ROUTES
+// ============================================
+//
+
+/**
+ * Create Subscription
+ * POST /api/subscription/create
+ * Create new subscription with Stripe checkout
+ */
+app.post("/api/subscription/create", honeypotCheck, verifyUser, async (req, res) => {
+  try {
+    const {uid, email} = req.user;
+    const {priceId, tierId} = req.body;
+
+    if (!priceId || !tierId) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing priceId or tierId",
+      });
+    }
+
+    // Validate tier exists
+    const tierConfig = getTierById(tierId);
+    if (!tierConfig) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid tier",
+      });
+    }
+
+    // Check if user already has active subscription
+    const userDoc = await db.collection("users").doc(uid).get();
+    const userData = userDoc.data();
+    
+    if (userData && userData.subscriptionStatus === "active") {
+      return res.status(400).json({
+        success: false,
+        error: "You already have an active subscription",
+      });
+    }
+
+    const frontendUrl = process.env.FRONTEND_URL || "https://tradehustle.co";
+    const successUrl = `${frontendUrl}/dashboard?subscription=success`;
+    const cancelUrl = `${frontendUrl}/pricing?subscription=canceled`;
+
+    // Create Stripe checkout session
+    const result = await stripeService.createCheckoutSession(
+        uid,
+        email,
+        priceId,
+        successUrl,
+        cancelUrl,
+        {
+          tierId,
+          type: "subscription",
+        },
+    );
+
+    // Log subscription attempt
+    await db.collection("subscriptionAttempts").add({
+      userId: uid,
+      email: email,
+      tierId: tierId,
+      priceId: priceId,
+      sessionId: result.sessionId,
+      status: "pending",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    console.log(`💳 Subscription checkout created: ${tierId} for ${email}`);
+
+    res.json({
+      success: true,
+      sessionId: result.sessionId,
+      checkoutUrl: result.url,
+    });
+  } catch (error) {
+    console.error("❌ Create Subscription Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * Get User Subscription Status
+ * GET /api/subscription/status
+ * Get current user's subscription details
+ */
+app.get("/api/subscription/status", verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+
+    const userDoc = await db.collection("users").doc(uid).get();
+    
+    if (!userDoc.exists) {
+      return res.json({
+        success: true,
+        subscription: {
+          tier: "free",
+          status: "active",
+          features: getTierById("free").limits,
+        },
+      });
+    }
+
+    const userData = userDoc.data();
+    const currentTier = userData.subscriptionTier || "free";
+    const tierConfig = getTierById(currentTier);
+
+    res.json({
+      success: true,
+      subscription: {
+        tier: currentTier,
+        status: userData.subscriptionStatus || "inactive",
+        expiry: userData.subscriptionExpiry || null,
+        features: tierConfig.limits,
+        stripeCustomerId: userData.stripeCustomerId || null,
+        stripeSubscriptionId: userData.stripeSubscriptionId || null,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Get Subscription Status Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * Update Subscription (Upgrade/Downgrade)
+ * POST /api/subscription/update
+ * Update existing subscription to new tier
+ */
+app.post("/api/subscription/update", honeypotCheck, verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const {newPriceId, newTierId} = req.body;
+
+    if (!newPriceId || !newTierId) {
+      return res.status(400).json({
+        success: false,
+        error: "Missing newPriceId or newTierId",
+      });
+    }
+
+    // Get user's current subscription
+    const userDoc = await db.collection("users").doc(uid).get();
+    const userData = userDoc.data();
+
+    if (!userData || !userData.stripeSubscriptionId) {
+      return res.status(400).json({
+        success: false,
+        error: "No active subscription found",
+      });
+    }
+
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
+    const stripe = require("stripe")(stripeKey);
+
+    // Update subscription in Stripe
+    const subscription = await stripe.subscriptions.retrieve(
+        userData.stripeSubscriptionId,
+    );
+    
+    await stripe.subscriptions.update(userData.stripeSubscriptionId, {
+      items: [{
+        id: subscription.items.data[0].id,
+        price: newPriceId,
+      }],
+      proration_behavior: "create_prorations",
+    });
+
+    // Update Firestore
+    await db.collection("users").doc(uid).update({
+      subscriptionTier: newTierId,
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    console.log(`🔄 Subscription updated: ${userData.subscriptionTier} → ${newTierId}`);
+
+    res.json({
+      success: true,
+      message: "Subscription updated successfully",
+    });
+  } catch (error) {
+    console.error("❌ Update Subscription Error:", error);
     res.status(500).json({
       success: false,
       error: error.message,

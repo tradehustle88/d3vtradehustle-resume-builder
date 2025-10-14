@@ -1,164 +1,124 @@
-'use client'
-import Link from 'next/link'
-import PaintSplatter from '@/components/PaintSplatter'
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { auth } from "@/lib/firebase";
 
 export default function PricingPage() {
-  const handleGetStarted = async () => {
-    try {
-      // Get the base URL from env (uses /app function)
-      const baseUrl = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL || 'https://app-fbs5jy4frq-uc.a.run.app';
-      
-      // Call the createCheckout endpoint under /api
-      const response = await fetch(`${baseUrl}/api/create-checkout`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          // Using your live Stripe price ID
-          priceId: 'price_1SHfAyLr4v4blpwbcvDqbej8',
-          successUrl: `${window.location.origin}/success`,
-          cancelUrl: `${window.location.origin}/pricing`,
-        }),
-      })
+  const router = useRouter();
+  const [loading, setLoading] = useState("");
+  const [user, setUser] = useState(null);
 
-      if (!response.ok) {
-        throw new Error('Failed to create checkout session')
-      }
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((u) => setUser(u));
+    return () => unsubscribe();
+  }, []);
 
-      const { url } = await response.json()
-      
-      // Redirect to Stripe Checkout
-      window.location.href = url
-    } catch (error) {
-      console.error('Error creating checkout session:', error)
-      alert('Error starting checkout. Please try again.')
+  const handleSubscribe = async (tierId, priceId) => {
+    if (!user) {
+      router.push("/login?redirect=/pricing");
+      return;
     }
-  }
+
+    setLoading(tierId);
+    try {
+      const token = await user.getIdToken();
+      const url = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL || "https://app-fbs5jy4frq-uc.a.run.app";
+      const res = await fetch(`${url}/api/subscription/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+        body: JSON.stringify({ priceId, tierId }),
+      });
+      const data = await res.json();
+      if (data.success && data.checkoutUrl) {
+        window.location.href = data.checkoutUrl;
+      } else {
+        alert(data.error || "Failed");
+        setLoading("");
+      }
+    } catch (error) {
+      alert("An error occurred");
+      setLoading("");
+    }
+  };
 
   return (
-    <section className="relative min-h-screen bg-black text-white overflow-hidden">
-      {/* Paint Splatter Background Effects */}
-      <PaintSplatter 
-        type="multicolor" 
-        size="xl" 
-        animation="float" 
-        style={{ top: '10%', right: '5%', opacity: 0.4 }}
-      />
-      <PaintSplatter 
-        type="blue" 
-        size="lg" 
-        animation="pulse" 
-        style={{ bottom: '15%', left: '10%', opacity: 0.5 }}
-      />
-      <PaintSplatter 
-        type="spray-1" 
-        size="md" 
-        animation="fade-in" 
-        style={{ top: '30%', left: '20%', opacity: 0.3 }}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-[#001a33] via-[#003366] to-[#001a33] py-12 px-4">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-5xl font-bold text-[#ffd700] text-center mb-4">PRICING</h1>
+        <p className="text-xl text-white/80 text-center mb-12">Start with $2 trial, upgrade when ready</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white/5 border-2 border-white/10 rounded-xl p-6">
+            <h3 className="text-2xl font-bold text-[#ffd700] mb-2">Free</h3>
+            <div className="text-4xl font-bold text-white mb-4">$0</div>
+            <ul className="space-y-2 mb-6">
+              <li className="text-white/80">✓ Unlimited resumes</li>
+              <li className="text-white/80">✓ Text export</li>
+              <li className="text-white/40">✗ No AI</li>
+            </ul>
+            <button disabled className="w-full py-3 bg-white/10 text-white rounded-lg opacity-50">Free Forever</button>
+          </div>
 
-      <div className="relative z-10 container mx-auto px-6 py-16">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-extrabold text-[#E50914] mb-4">
-            TRADE HUSTLE RESUME BUILDER
-          </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Get your professional resume built with AI assistance and land your next trade job faster.
-          </p>
-        </div>
+          <div className="bg-white/5 border-2 border-[#ffd700] rounded-xl p-6 shadow-[0_0_30px_rgba(255,215,0,0.3)]">
+            <div className="bg-[#ffd700] text-[#001a33] px-3 py-1 rounded-full text-sm font-bold mb-4 inline-block">BEST VALUE</div>
+            <h3 className="text-2xl font-bold text-[#ffd700] mb-2">7-Day Trial</h3>
+            <div className="text-4xl font-bold text-white mb-4">$2</div>
+            <ul className="space-y-2 mb-6">
+              <li className="text-white/80">✓ All Pro features</li>
+              <li className="text-white/80">✓ 200+ templates</li>
+              <li className="text-white/80">✓ AI & ATS scoring</li>
+            </ul>
+            <button
+              onClick={() => handleSubscribe("trial", process.env.NEXT_PUBLIC_STRIPE_PRICE_TRIAL || "price_trial_7day")}
+              disabled={loading === "trial"}
+              className="w-full py-3 bg-[#ffd700] text-[#001a33] rounded-lg font-bold hover:bg-[#ffed4e]"
+            >
+              {loading === "trial" ? "Processing..." : "Start Trial"}
+            </button>
+          </div>
 
-        {/* Pricing Card */}
-        <div className="max-w-lg mx-auto">
-          <div className="bg-gradient-to-b from-[#111] to-[#222] border-2 border-[#E50914] rounded-xl shadow-2xl p-8 text-center relative overflow-hidden">
-            {/* Background decoration */}
-            <div className="absolute inset-0 opacity-10 bg-gradient-to-br from-gray-800 to-gray-900" />
-            
-            <div className="relative z-10">
-              {/* Badge */}
-              <div className="inline-block bg-[#E50914] text-white px-4 py-2 rounded-full text-sm font-bold mb-6">
-                🔥 MOST POPULAR
-              </div>
+          <div className="bg-white/5 border-2 border-white/10 rounded-xl p-6">
+            <h3 className="text-2xl font-bold text-[#ffd700] mb-2">Pro Monthly</h3>
+            <div className="text-4xl font-bold text-white mb-4">$14.95<span className="text-lg text-white/60">/mo</span></div>
+            <ul className="space-y-2 mb-6">
+              <li className="text-white/80">✓ All templates</li>
+              <li className="text-white/80">✓ AI suggestions</li>
+              <li className="text-white/80">✓ Job tracker</li>
+            </ul>
+            <button
+              onClick={() => handleSubscribe("proMonthly", process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_MONTHLY || "price_pro_monthly")}
+              disabled={loading === "proMonthly"}
+              className="w-full py-3 bg-white/10 text-white rounded-lg hover:bg-white/20"
+            >
+              {loading === "proMonthly" ? "Processing..." : "Subscribe"}
+            </button>
+          </div>
 
-              {/* Price */}
-              <div className="mb-8">
-                <div className="text-6xl font-bold text-[#ffd700] mb-2">$47</div>
-                <div className="text-gray-400 text-lg">One-time payment</div>
-              </div>
-
-              {/* Features */}
-              <div className="space-y-4 mb-8 text-left">
-                <div className="flex items-center">
-                  <span className="text-[#E50914] mr-3">✓</span>
-                  <span>AI-Powered Resume Generation</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-[#E50914] mr-3">✓</span>
-                  <span>ATS-Optimized Templates</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-[#E50914] mr-3">✓</span>
-                  <span>Trade-Specific Content Library</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-[#E50914] mr-3">✓</span>
-                  <span>Professional PDF Export</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-[#E50914] mr-3">✓</span>
-                  <span>Instant Download</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-[#E50914] mr-3">✓</span>
-                  <span>30-Day Money Back Guarantee</span>
-                </div>
-              </div>
-
-              {/* CTA Button */}
-              <button 
-                onClick={handleGetStarted}
-                className="w-full bg-gradient-to-r from-[#E50914] to-[#8B0000] hover:from-[#FF1B2D] hover:to-[#A0001B] text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300 shadow-2xl transform hover:scale-105 hover:shadow-[0_0_30px_rgba(229,9,20,0.6)] mb-4"
-              >
-                START BUILDING NOW →
-              </button>
-
-              <p className="text-sm text-gray-400">
-                Secure checkout powered by Stripe • No recurring charges
-              </p>
-            </div>
+          <div className="bg-white/5 border-2 border-white/10 rounded-xl p-6">
+            <h3 className="text-2xl font-bold text-[#ffd700] mb-2">Pro Annual</h3>
+            <div className="text-4xl font-bold text-white mb-4">$119<span className="text-lg text-white/60">/yr</span></div>
+            <p className="text-emerald-400 text-sm mb-4">Save $60/year</p>
+            <ul className="space-y-2 mb-6">
+              <li className="text-white/80">✓ Everything in Pro</li>
+              <li className="text-white/80">✓ Priority support</li>
+              <li className="text-white/80">✓ Free blueprint</li>
+            </ul>
+            <button
+              onClick={() => handleSubscribe("proAnnual", process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_ANNUAL || "price_pro_annual")}
+              disabled={loading === "proAnnual"}
+              className="w-full py-3 bg-white/10 text-white rounded-lg hover:bg-white/20"
+            >
+              {loading === "proAnnual" ? "Processing..." : "Subscribe"}
+            </button>
           </div>
         </div>
 
-        {/* Back to Home */}
         <div className="text-center mt-12">
-          <Link href="/" className="text-[#ffd700] hover:text-white transition-colors duration-300 underline">
-            ← Back to Home
-          </Link>
-        </div>
-
-        {/* Trust Signals */}
-        <div className="text-center mt-16 max-w-4xl mx-auto">
-          <h3 className="text-2xl font-bold text-[#ffd700] mb-8">Why Trade Professionals Trust Us</h3>
-          <div className="grid md:grid-3 gap-8">
-            <div className="text-center">
-              <div className="text-4xl mb-4">🚧</div>
-              <h4 className="font-bold mb-2">Built for Trades</h4>
-              <p className="text-gray-400 text-sm">Templates designed specifically for construction, electrical, plumbing, and skilled trades.</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl mb-4">🤖</div>
-              <h4 className="font-bold mb-2">AI-Powered</h4>
-              <p className="text-gray-400 text-sm">Advanced AI helps you craft compelling job descriptions and highlight your skills.</p>
-            </div>
-            <div className="text-center">
-              <div className="text-4xl mb-4">⚡</div>
-              <h4 className="font-bold mb-2">ATS-Ready</h4>
-              <p className="text-gray-400 text-sm">Optimized to pass Applicant Tracking Systems used by major employers.</p>
-            </div>
-          </div>
+          <Link href="/" className="text-[#ffd700] hover:text-white underline">← Back to Home</Link>
         </div>
       </div>
-    </section>
-  )
+    </div>
+  );
 }
