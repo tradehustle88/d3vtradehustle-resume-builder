@@ -1,287 +1,302 @@
 'use client'
-import { useState } from 'react'
+
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 
 interface Template {
   id: string
   name: string
-  category: 'classic' | 'modern' | 'creative' | 'ats-optimized' | 'executive'
-  thumbnail: string
+  thumbnailURL: string
   atsScore: number
-  features: string[]
-  popular?: boolean
+  tradeType: string
+  style: 'classic' | 'modern' | 'minimal' | 'bold'
+  featured: boolean
+}
+
+interface TemplateCardProps {
+  template: Template
+  selected: boolean
+  onSelect: () => void
+}
+
+function TemplateCard({ template, selected, onSelect }: TemplateCardProps) {
+  return (
+    <button
+      onClick={onSelect}
+      className={`
+        group relative overflow-hidden rounded-lg border-2 
+        transition-all duration-300 transform hover:scale-105
+        ${selected ? 'border-[#FFD700] ring-4 ring-[#FFD700] ring-opacity-50' : 'border-gray-700 hover:border-[#FFD700]'}
+        bg-gray-800 hover:shadow-2xl
+      `}
+    >
+      {/* Featured Badge */}
+      {template.featured && (
+        <div className="absolute top-2 left-2 z-10 bg-[#FFD700] text-black text-xs font-bold px-2 py-1 rounded">
+          ⭐ Featured
+        </div>
+      )}
+
+      {/* ATS Score Badge */}
+      <div className="absolute top-2 right-2 z-10 bg-green-600 text-white text-xs font-bold px-2 py-1 rounded">
+        ATS {template.atsScore}%
+      </div>
+
+      {/* Template Thumbnail */}
+      <div className="aspect-[8.5/11] bg-gray-900 relative overflow-hidden">
+        {template.thumbnailURL ? (
+          <img
+            src={template.thumbnailURL}
+            alt={template.name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-gray-500">
+            <span className="text-4xl">📄</span>
+          </div>
+        )}
+        
+        {/* Hover Overlay */}
+        <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-opacity flex items-center justify-center">
+          <span className="text-white font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+            Preview
+          </span>
+        </div>
+      </div>
+
+      {/* Template Info */}
+      <div className="p-3 text-left">
+        <h3 className="text-sm font-bold text-white mb-1 truncate">
+          {template.name}
+        </h3>
+        <div className="flex items-center justify-between text-xs text-gray-400">
+          <span className="capitalize">{template.style}</span>
+          {selected && (
+            <span className="text-[#FFD700]">✓ Selected</span>
+          )}
+        </div>
+      </div>
+    </button>
+  )
+}
+
+interface PreviewModalProps {
+  templateId: string | null
+  onClose: () => void
+}
+
+function PreviewModal({ templateId, onClose }: PreviewModalProps) {
+  if (!templateId) return null
+
+  return (
+    <div 
+      className="fixed inset-0 z-50 bg-black bg-opacity-75 flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <div 
+        className="bg-gray-900 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Modal Header */}
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <h2 className="text-xl font-bold text-white">Template Preview</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Modal Body */}
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-8rem)]">
+          <div className="aspect-[8.5/11] bg-white rounded-lg shadow-2xl">
+            {/* Preview content would go here */}
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+              <div className="text-center">
+                <span className="text-6xl mb-4 block">📄</span>
+                <p>Template ID: {templateId}</p>
+                <p className="text-sm mt-2">Preview loading...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div className="flex items-center justify-end gap-4 p-4 border-t border-gray-700">
+          <button
+            onClick={onClose}
+            className="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              // TODO: Navigate to resume builder with selected template
+              console.log('Use template:', templateId)
+            }}
+            className="px-6 py-2 bg-[#FFD700] hover:bg-yellow-500 text-black font-bold rounded-lg transition-colors"
+          >
+            Use This Template →
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Mock function to load templates - replace with actual API call
+async function loadTemplates(tradeType: string): Promise<Template[]> {
+  // TODO: Replace with actual API call to Firebase Functions
+  // const response = await fetch(`/api/templates?trade=${tradeType}`)
+  // return response.json()
+  
+  // Mock data for development
+  const styles: Array<'classic' | 'modern' | 'minimal' | 'bold'> = ['classic', 'modern', 'minimal', 'bold']
+  
+  return Array.from({ length: 25 }, (_, i) => ({
+    id: `${tradeType}-template-${i + 1}`,
+    name: `${tradeType.charAt(0).toUpperCase() + tradeType.slice(1)} Resume ${i + 1}`,
+    thumbnailURL: '', // TODO: Add actual thumbnail URLs
+    atsScore: Math.floor(Math.random() * 15) + 85, // Random score between 85-100
+    tradeType,
+    style: styles[i % 4],
+    featured: i < 3 // First 3 are featured
+  }))
 }
 
 interface TemplateGalleryProps {
-  trade: string
-  customTradeName?: string
+  tradeType: string
 }
 
-const TEMPLATE_CATEGORIES = [
-  'All Templates',
-  'ATS-Optimized',
-  'Modern',
-  'Classic',
-  'Creative',
-  'Executive'
-]
-
-// Generate 25 templates per trade
-const generateTemplates = (trade: string): Template[] => {
-  const templates: Template[] = []
-  const categories: Template['category'][] = ['classic', 'modern', 'creative', 'ats-optimized', 'executive']
-  
-  for (let i = 1; i <= 25; i++) {
-    const category = categories[(i - 1) % categories.length]
-    templates.push({
-      id: `${trade}-template-${i}`,
-      name: `${trade.charAt(0).toUpperCase() + trade.slice(1)} Pro ${i}`,
-      category,
-      thumbnail: `/assets/templates/${trade}/${i}.jpg`,
-      atsScore: Math.floor(Math.random() * 15) + 85, // 85-100
-      features: [
-        'ATS-Friendly Format',
-        'Trade-Specific Keywords',
-        category === 'ats-optimized' ? 'Optimized for Applicant Tracking' : 'Professional Layout',
-        'Easy Customization'
-      ],
-      popular: i <= 5 // First 5 are popular
-    })
-  }
-  
-  return templates
-}
-
-export default function TemplateGallery({ trade, customTradeName }: TemplateGalleryProps) {
+export default function TemplateGallery({ tradeType }: TemplateGalleryProps) {
   const router = useRouter()
-  const [selectedCategory, setSelectedCategory] = useState('All Templates')
+  const [templates, setTemplates] = useState<Template[]>([])
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
-  const [previewTemplate, setPreviewTemplate] = useState<Template | null>(null)
-  
-  const templates = generateTemplates(trade)
-  
-  const filteredTemplates = selectedCategory === 'All Templates'
-    ? templates
-    : templates.filter(t => t.category === selectedCategory.toLowerCase().replace('-', ''))
+  const [loading, setLoading] = useState(true)
+  const [filter, setFilter] = useState<'all' | 'classic' | 'modern' | 'minimal' | 'bold'>('all')
 
-  const handleTemplateSelect = (templateId: string) => {
-    setSelectedTemplate(templateId)
-    // Navigate to builder with selected template
-    router.push(`/builder?trade=${trade}&template=${templateId}`)
-  }
+  useEffect(() => {
+    // Fetch 25 templates for selected trade
+    setLoading(true)
+    loadTemplates(tradeType)
+      .then(setTemplates)
+      .finally(() => setLoading(false))
+  }, [tradeType])
 
-  const handlePreview = (template: Template) => {
-    setPreviewTemplate(template)
-  }
+  const filteredTemplates = filter === 'all' 
+    ? templates 
+    : templates.filter(t => t.style === filter)
 
-  const closePreview = () => {
-    setPreviewTemplate(null)
-  }
+  const featuredTemplates = templates.filter(t => t.featured)
+  const regularTemplates = templates.filter(t => !t.featured)
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-gray-900 to-black py-16 px-4">
+    <section className="min-h-screen bg-gradient-to-b from-black to-gray-900 py-16 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-5xl font-extrabold text-white mb-4">
-            {customTradeName || trade.charAt(0).toUpperCase() + trade.slice(1)} <span className="text-[#E50914]">Templates</span>
+            <span className="text-[#FFD700]">{tradeType.charAt(0).toUpperCase() + tradeType.slice(1)}</span> Resume Templates
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-            Choose from 25 professionally designed, ATS-optimized templates tailored for your trade.
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+            Choose from {templates.length} professionally designed, ATS-optimized resume templates
+            tailored for {tradeType} positions.
           </p>
-          
-          {/* Back Button */}
-          <button
-            onClick={() => router.back()}
-            className="text-[#FFD700] hover:text-yellow-500 font-bold inline-flex items-center gap-2 mb-8"
-          >
-            ← Back to Trade Selection
-          </button>
         </div>
 
-        {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12">
-          {TEMPLATE_CATEGORIES.map((category) => (
+        {/* Filter Buttons */}
+        <div className="flex flex-wrap justify-center gap-4 mb-8">
+          {(['all', 'classic', 'modern', 'minimal', 'bold'] as const).map(styleFilter => (
             <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
+              key={styleFilter}
+              onClick={() => setFilter(styleFilter)}
               className={`
-                px-6 py-3 rounded-lg font-bold transition-all duration-300
-                ${selectedCategory === category
-                  ? 'bg-[#E50914] text-white shadow-lg scale-105'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }
+                px-6 py-2 rounded-lg font-bold transition-all duration-300
+                ${filter === styleFilter 
+                  ? 'bg-[#FFD700] text-black' 
+                  : 'bg-gray-800 text-white hover:bg-gray-700'}
               `}
             >
-              {category}
+              {styleFilter.charAt(0).toUpperCase() + styleFilter.slice(1)}
             </button>
           ))}
         </div>
 
-        {/* Templates Grid - 12 Column Layout */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
-          {filteredTemplates.map((template) => (
-            <div
-              key={template.id}
-              className={`
-                group relative bg-gray-800 rounded-xl overflow-hidden
-                transition-all duration-300 transform hover:scale-105
-                ${selectedTemplate === template.id ? 'ring-4 ring-[#FFD700]' : ''}
-                hover:shadow-2xl hover:shadow-[#E50914]/30
-              `}
-            >
-              {/* Popular Badge */}
-              {template.popular && (
-                <div className="absolute top-4 left-4 bg-[#FFD700] text-black font-bold px-3 py-1 rounded-full text-sm z-10">
-                  🔥 Popular
-                </div>
-              )}
-
-              {/* ATS Score Badge */}
-              <div className="absolute top-4 right-4 bg-green-500 text-white font-bold px-3 py-1 rounded-full text-sm z-10">
-                ATS {template.atsScore}%
-              </div>
-
-              {/* Template Thumbnail */}
-              <div className="relative h-80 bg-gradient-to-br from-gray-700 to-gray-900">
-                {/* Placeholder for actual template preview */}
-                <div className="absolute inset-0 flex items-center justify-center text-gray-500">
-                  <div className="text-center p-6">
-                    <div className="text-6xl mb-4">📄</div>
-                    <div className="text-sm font-mono">{template.name}</div>
-                  </div>
-                </div>
-                
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <button
-                    onClick={() => handlePreview(template)}
-                    className="bg-white text-black font-bold px-6 py-3 rounded-lg mb-2 hover:bg-gray-200 transition-colors"
-                  >
-                    👁️ Preview
-                  </button>
-                </div>
-              </div>
-
-              {/* Template Info */}
-              <div className="p-4">
-                <h3 className="text-white font-bold text-lg mb-2">{template.name}</h3>
-                <p className="text-gray-400 text-sm mb-3 capitalize">{template.category.replace('-', ' ')}</p>
-                
-                {/* Features */}
-                <ul className="text-xs text-gray-500 mb-4 space-y-1">
-                  {template.features.slice(0, 3).map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-2">
-                      <span className="text-green-500">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-
-                {/* Select Button */}
-                <button
-                  onClick={() => handleTemplateSelect(template.id)}
-                  className="w-full bg-[#8B0000] hover:bg-red-800 text-white font-bold py-3 rounded-lg transition-all duration-300"
-                >
-                  Use This Template →
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Preview Modal */}
-        {previewTemplate && (
-          <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={closePreview}>
-            <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="p-6">
-                {/* Modal Header */}
-                <div className="flex justify-between items-start mb-6">
-                  <div>
-                    <h3 className="text-3xl font-bold text-white mb-2">{previewTemplate.name}</h3>
-                    <p className="text-gray-400 capitalize">{previewTemplate.category.replace('-', ' ')} Template</p>
-                    <div className="flex gap-4 mt-3">
-                      <span className="bg-green-500 text-white font-bold px-3 py-1 rounded-full text-sm">
-                        ATS Score: {previewTemplate.atsScore}%
-                      </span>
-                      {previewTemplate.popular && (
-                        <span className="bg-[#FFD700] text-black font-bold px-3 py-1 rounded-full text-sm">
-                          🔥 Popular Choice
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <button
-                    onClick={closePreview}
-                    className="text-white hover:text-red-500 text-3xl font-bold"
-                  >
-                    ×
-                  </button>
-                </div>
-
-                {/* Large Preview */}
-                <div className="bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg h-96 mb-6 flex items-center justify-center">
-                  <div className="text-center p-8 text-gray-400">
-                    <div className="text-8xl mb-4">📄</div>
-                    <div className="text-2xl font-bold text-white mb-2">{previewTemplate.name}</div>
-                    <div className="text-sm">Full template preview coming soon</div>
-                  </div>
-                </div>
-
-                {/* Features List */}
-                <div className="mb-6">
-                  <h4 className="text-white font-bold text-xl mb-3">Template Features:</h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {previewTemplate.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-gray-300">
-                        <span className="text-green-500 text-xl">✓</span>
-                        {feature}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex gap-4">
-                  <button
-                    onClick={() => handleTemplateSelect(previewTemplate.id)}
-                    className="flex-1 bg-[#8B0000] hover:bg-red-800 text-white font-bold py-4 rounded-lg transition-all duration-300"
-                  >
-                    Use This Template →
-                  </button>
-                  <button
-                    onClick={closePreview}
-                    className="px-8 bg-gray-700 hover:bg-gray-600 text-white font-bold py-4 rounded-lg transition-all duration-300"
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-20">
+            <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#FFD700]"></div>
+            <p className="text-gray-400 mt-4">Loading templates...</p>
           </div>
         )}
 
-        {/* Trust Signals */}
-        <div className="mt-16 bg-gray-800 rounded-xl p-8 border border-gray-700">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-            <div>
-              <div className="text-4xl mb-3">🎯</div>
-              <h4 className="text-white font-bold text-xl mb-2">ATS-Optimized</h4>
-              <p className="text-gray-400">Pass applicant tracking systems with 95%+ success rate</p>
-            </div>
-            <div>
-              <div className="text-4xl mb-3">⚡</div>
-              <h4 className="text-white font-bold text-xl mb-2">Quick Customization</h4>
-              <p className="text-gray-400">Edit and download your resume in under 15 minutes</p>
-            </div>
-            <div>
-              <div className="text-4xl mb-3">🏆</div>
-              <h4 className="text-white font-bold text-xl mb-2">Industry Specific</h4>
-              <p className="text-gray-400">Templates designed by trade professionals for trade professionals</p>
-            </div>
+        {/* Template Gallery */}
+        {!loading && (
+          <div className="template-gallery">
+            {/* Featured Templates */}
+            {filter === 'all' && featuredTemplates.length > 0 && (
+              <div className="mb-12">
+                <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                  <span>⭐</span> Featured Templates
+                </h3>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {featuredTemplates.map(template => (
+                    <TemplateCard
+                      key={template.id}
+                      template={template}
+                      selected={selectedTemplate === template.id}
+                      onSelect={() => setSelectedTemplate(template.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Regular Templates */}
+            {filteredTemplates.length > 0 ? (
+              <>
+                {filter === 'all' && regularTemplates.length > 0 && (
+                  <h3 className="text-2xl font-bold text-white mb-6">All Templates</h3>
+                )}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                  {(filter === 'all' ? regularTemplates : filteredTemplates).map(template => (
+                    <TemplateCard
+                      key={template.id}
+                      template={template}
+                      selected={selectedTemplate === template.id}
+                      onSelect={() => setSelectedTemplate(template.id)}
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-20">
+                <p className="text-gray-400 text-xl">No templates found for this filter.</p>
+              </div>
+            )}
           </div>
-        </div>
+        )}
+
+        {/* Preview Modal */}
+        <PreviewModal 
+          templateId={selectedTemplate} 
+          onClose={() => setSelectedTemplate(null)}
+        />
+
+        {/* Bottom CTA */}
+        {!loading && templates.length > 0 && (
+          <div className="mt-16 text-center">
+            <button
+              onClick={() => router.back()}
+              className="px-8 py-3 bg-gray-700 hover:bg-gray-600 text-white font-bold rounded-lg transition-colors"
+            >
+              ← Back to Trade Selection
+            </button>
+          </div>
+        )}
       </div>
     </section>
   )
