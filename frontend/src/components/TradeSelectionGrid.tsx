@@ -1,84 +1,101 @@
 'use client'
+
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-interface Trade {
+interface TradeOption {
   id: string
   name: string
   icon: string
+  templateCount: number
+  popularJobs: string[]
   description: string
   color: string
 }
 
-const TRADES: Trade[] = [
+const trades: TradeOption[] = [
   {
     id: 'electrician',
     name: 'Electrician',
     icon: '⚡',
-    description: 'Residential & Commercial Wiring',
-    color: 'from-yellow-600 to-yellow-800'
+    templateCount: 25,
+    popularJobs: ['Journeyman Electrician', 'Master Electrician', 'Electrical Foreman'],
+    description: 'Wire systems, install fixtures, troubleshoot electrical issues',
+    color: 'from-yellow-600 to-orange-700'
   },
   {
     id: 'plumber',
     name: 'Plumber',
     icon: '🔧',
-    description: 'Pipefitting & Water Systems',
-    color: 'from-blue-600 to-blue-800'
+    templateCount: 25,
+    popularJobs: ['Journeyman Plumber', 'Pipefitter', 'Plumbing Foreman'],
+    description: 'Install and repair piping systems, fixtures, and appliances',
+    color: 'from-blue-600 to-cyan-700'
   },
   {
     id: 'hvac',
-    name: 'HVAC Technician',
+    name: 'HVAC Tech',
     icon: '❄️',
-    description: 'Heating, Ventilation & AC',
-    color: 'from-cyan-600 to-cyan-800'
+    templateCount: 25,
+    popularJobs: ['HVAC Technician', 'HVAC Installer', 'Service Technician'],
+    description: 'Install, maintain, and repair heating and cooling systems',
+    color: 'from-cyan-600 to-blue-700'
   },
   {
     id: 'carpenter',
     name: 'Carpenter',
-    icon: '🪚',
-    description: 'Framing & Finish Carpentry',
-    color: 'from-amber-600 to-amber-800'
+    icon: '🔨',
+    templateCount: 25,
+    popularJobs: ['Rough Carpenter', 'Finish Carpenter', 'Framing Carpenter'],
+    description: 'Build and repair structures, frameworks, and finish work',
+    color: 'from-amber-700 to-yellow-800'
   },
   {
     id: 'mason',
     name: 'Mason',
     icon: '🧱',
-    description: 'Bricklaying & Concrete Work',
-    color: 'from-orange-600 to-orange-800'
+    templateCount: 25,
+    popularJobs: ['Bricklayer', 'Stone Mason', 'Concrete Finisher'],
+    description: 'Construct and repair structures using brick, stone, concrete',
+    color: 'from-orange-700 to-red-800'
   },
   {
     id: 'welder',
     name: 'Welder',
     icon: '🔥',
-    description: 'MIG, TIG & Arc Welding',
-    color: 'from-red-600 to-red-800'
+    templateCount: 25,
+    popularJobs: ['MIG Welder', 'TIG Welder', 'Pipe Welder'],
+    description: 'Join metal parts using various welding techniques',
+    color: 'from-red-600 to-orange-700'
   },
   {
     id: 'mechanic',
     name: 'Mechanic',
     icon: '🔩',
-    description: 'Auto & Heavy Equipment',
-    color: 'from-gray-600 to-gray-800'
+    templateCount: 25,
+    popularJobs: ['Auto Mechanic', 'Diesel Mechanic', 'Heavy Equipment Mechanic'],
+    description: 'Diagnose and repair vehicles and machinery',
+    color: 'from-gray-700 to-slate-800'
   },
   {
     id: 'contractor',
-    name: 'General Contractor',
+    name: 'Contractor',
     icon: '👷',
-    description: 'Project Management & Supervision',
-    color: 'from-green-600 to-green-800'
+    templateCount: 25,
+    popularJobs: ['General Contractor', 'Project Manager', 'Construction Supervisor'],
+    description: 'Manage construction projects and coordinate trades',
+    color: 'from-green-700 to-emerald-800'
   }
 ]
 
 export default function TradeSelectionGrid() {
   const router = useRouter()
   const [selectedTrade, setSelectedTrade] = useState<string | null>(null)
-  const [customTrade, setCustomTrade] = useState('')
   const [showCustomInput, setShowCustomInput] = useState(false)
+  const [customTrade, setCustomTrade] = useState('')
 
   const handleTradeSelect = (tradeId: string) => {
     setSelectedTrade(tradeId)
-    setShowCustomInput(false)
-    // Navigate to template gallery with selected trade
     router.push(`/templates?trade=${tradeId}`)
   }
 
@@ -91,10 +108,9 @@ export default function TradeSelectionGrid() {
   return (
     <section className="min-h-screen bg-gradient-to-b from-black to-gray-900 py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-5xl font-extrabold text-white mb-4">
-            Choose Your <span className="text-[#E50914]">Trade</span>
+            Choose Your <span className="text-[#FFD700]">Trade</span>
           </h2>
           <p className="text-xl text-gray-300 max-w-3xl mx-auto">
             Select your trade to unlock industry-specific resume templates optimized for ATS systems
@@ -102,36 +118,33 @@ export default function TradeSelectionGrid() {
           </p>
         </div>
 
-        {/* 12-Column Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {TRADES.map((trade) => (
+          {trades.map((trade) => (
             <button
               key={trade.id}
               onClick={() => handleTradeSelect(trade.id)}
-              className={`
-                group relative overflow-hidden rounded-xl p-6 
-                transition-all duration-300 transform hover:scale-105
-                ${selectedTrade === trade.id ? 'ring-4 ring-[#FFD700]' : ''}
-                bg-gradient-to-br ${trade.color}
-                hover:shadow-2xl hover:shadow-${trade.color}/50
-              `}
+              className={`group relative overflow-hidden rounded-xl p-6 transition-all duration-300 transform hover:scale-105 ${selectedTrade === trade.id ? 'ring-4 ring-[#FFD700]' : ''} bg-gradient-to-br ${trade.color} hover:shadow-2xl`}
             >
-              {/* Trade Icon */}
               <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform">
                 {trade.icon}
               </div>
-
-              {/* Trade Name */}
               <h3 className="text-2xl font-bold text-white mb-2">
                 {trade.name}
               </h3>
-
-              {/* Description */}
-              <p className="text-sm text-gray-200 opacity-90">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <span className="bg-[#FFD700] text-black text-xs font-bold px-3 py-1 rounded-full">
+                  {trade.templateCount} Templates
+                </span>
+              </div>
+              <p className="text-sm text-gray-200 opacity-90 mb-3">
                 {trade.description}
               </p>
-
-              {/* Selected Indicator */}
+              <div className="text-xs text-gray-300 space-y-1">
+                <p className="font-semibold">Popular Jobs:</p>
+                {trade.popularJobs.slice(0, 2).map((job, idx) => (
+                  <p key={idx} className="opacity-80">• {job}</p>
+                ))}
+              </div>
               {selectedTrade === trade.id && (
                 <div className="absolute top-4 right-4 bg-[#FFD700] rounded-full p-2">
                   <svg className="w-5 h-5 text-black" fill="currentColor" viewBox="0 0 20 20">
@@ -139,14 +152,11 @@ export default function TradeSelectionGrid() {
                   </svg>
                 </div>
               )}
-
-              {/* Hover Effect Overlay */}
               <div className="absolute inset-0 bg-white/0 group-hover:bg-white/10 transition-colors" />
             </button>
           ))}
         </div>
 
-        {/* Custom Trade Option */}
         <div className="max-w-2xl mx-auto">
           <button
             onClick={() => setShowCustomInput(!showCustomInput)}
@@ -156,7 +166,6 @@ export default function TradeSelectionGrid() {
             <span className="text-xl">Custom Trade / Other</span>
           </button>
 
-          {/* Custom Trade Input */}
           {showCustomInput && (
             <div className="mt-6 bg-gray-800 p-6 rounded-xl border border-gray-700">
               <label className="block text-white font-bold mb-3">
@@ -181,7 +190,6 @@ export default function TradeSelectionGrid() {
           )}
         </div>
 
-        {/* Trust Signals */}
         <div className="mt-16 text-center">
           <div className="flex flex-wrap justify-center gap-8 text-gray-400">
             <div className="flex items-center gap-2">
