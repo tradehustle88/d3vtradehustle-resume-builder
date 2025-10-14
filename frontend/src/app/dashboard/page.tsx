@@ -35,11 +35,25 @@ const dashboardCards: DashboardCard[] = [
     color: 'from-yellow-600 to-yellow-800',
   },
   {
-    title: 'Career Blueprints',
-    description: 'AI-powered career path & skill gap analysis',
+    title: 'Career Path',
+    description: 'AI-powered career roadmap & skill gap analysis',
     icon: '🚀',
     href: '/dashboard/career',
     color: 'from-green-600 to-green-800',
+  },
+  {
+    title: 'Career Blueprints',
+    description: 'Premium guides to fast-track your career ($29-$99)',
+    icon: '📘',
+    href: '/dashboard/blueprints',
+    color: 'from-orange-600 to-red-800',
+  },
+  {
+    title: 'Refer & Earn',
+    description: 'Earn $10 per referral + help your trade buddies',
+    icon: '💰',
+    href: '/dashboard/referrals',
+    color: 'from-emerald-600 to-teal-800',
   },
 ];
 
@@ -114,7 +128,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {dashboardCards.map((card) => (
             <button
               key={card.href}

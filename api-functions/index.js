@@ -964,6 +964,345 @@ app.post("/api/create-portal-session", verifyUser, async (req, res) => {
 });
 
 //
+// ============================================
+// BLUEPRINT PURCHASE ENDPOINTS
+// ============================================
+//
+
+/**
+ * POST /api/blueprints/purchase
+ * Create Stripe checkout session for blueprint purchase
+ * Body: { blueprintId, price }
+ */
+app.post("/api/blueprints/purchase", honeypotCheck, verifyUser, async (req, res) => {
+  try {
+    const {uid, email} = req.user;
+    const {blueprintId, price} = req.body;
+
+    if (!blueprintId || !price) {
+      return res.status(400).json({
+        success: false,
+        error: "blueprintId and price are required",
+      });
+    }
+
+    console.log(`📘 Blueprint purchase initiated: ${blueprintId} by ${email}`);
+
+    // Create Stripe checkout session for one-time payment
+    const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
+    const frontendUrl = process.env.FRONTEND_URL || "https://tradehustle.co";
+    const successUrl = `${frontendUrl}/dashboard/blueprints?` +
+      `success=true&session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${frontendUrl}/dashboard/blueprints?canceled=true`;
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Career Blueprint: ${blueprintId}`,
+              description: "One-time purchase, lifetime access",
+            },
+            unit_amount: price * 100, // Convert to cents
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: successUrl,
+      cancel_url: cancelUrl,
+      client_reference_id: uid,
+      metadata: {
+        blueprintId: blueprintId,
+        userId: uid,
+        type: "blueprint_purchase",
+      },
+    });
+
+    // Log purchase attempt
+    await db.collection("blueprintPurchaseAttempts").add({
+      userId: uid,
+      blueprintId: blueprintId,
+      price: price,
+      sessionId: session.id,
+      status: "pending",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    res.json({
+      success: true,
+      checkoutUrl: session.url,
+      sessionId: session.id,
+    });
+  } catch (error) {
+    console.error("❌ Blueprint Purchase Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * POST /api/blueprints/verify
+ * Verify blueprint purchase after Stripe webhook
+ * Body: { sessionId }
+ */
+app.post("/api/blueprints/verify", honeypotCheck, verifyUser, async (req, res) => {
+  try {
+    const {uid} = req.user;
+    const {sessionId} = req.body;
+
+    if (!sessionId) {
+      return res.status(400).json({
+        success: false,
+        error: "sessionId is required",
+      });
+    }
+
+    // Check if purchase record exists
+    const purchaseSnapshot = await db.collection("blueprintPurchases")
+        .where("userId", "==", uid)
+        .where("stripeSessionId", "==", sessionId)
+        .get();
+
+    if (purchaseSnapshot.empty) {
+      return res.status(404).json({
+        success: false,
+        error: "Purchase not found or not yet processed",
+      });
+    }
+
+    const purchase = purchaseSnapshot.docs[0].data();
+
+    res.json({
+      success: true,
+      purchase: {
+        blueprintId: purchase.blueprintId,
+        purchaseDate: purchase.purchaseDate,
+        downloadUrl: purchase.downloadUrl,
+      },
+    });
+  } catch (error) {
+    console.error("❌ Blueprint Verify Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+//
+// ============================================
+// REFERRAL PROGRAM ENDPOINTS
+// ============================================
+//
+
+/**
+ * POST /api/referrals/generate
+ * Generate unique referral code for user
+ */
+app.post("/api/referrals/generate", honeypotCheck, verifyUser, async (req, res) => {
+  try {
+    const {uid, email} = req.user;
+
+    // Check if user already has a referral code
+    const userDoc = await db.collection("users").doc(uid).get();
+
+    if (userDoc.exists() && userDoc.data().referralCode) {
+      return res.json({
+        success: true,
+        referralCode: userDoc.data().referralCode,
+      });
+    }
+
+    // Generate unique referral code (8 characters)
+    const generateCode = () => {
+      return crypto.randomBytes(4).toString("hex").toUpperCase();
+    };
+
+    let referralCode = generateCode();
+    let isUnique = false;
+
+    // Ensure referral code is unique
+    while (!isUnique) {
+      const existingCode = await db.collection("users")
+          .where("referralCode", "==", referralCode)
+          .get();
+
+      if (existingCode.empty) {
+        isUnique = true;
+      } else {
+        referralCode = generateCode();
+      }
+    }
+
+    // Save referral code to user document
+    await db.collection("users").doc(uid).set({
+      email: email,
+      referralCode: referralCode,
+      referralStats: {
+        totalReferrals: 0,
+        converted: 0,
+        totalEarnings: 0,
+      },
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    }, {merge: true});
+
+    console.log(`🔗 Referral code generated: ${referralCode} for ${email}`);
+
+    res.json({
+      success: true,
+      referralCode: referralCode,
+    });
+  } catch (error) {
+    console.error("❌ Generate Referral Code Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * POST /api/referrals/track
+ * Track referral signup
+ * Body: { referralCode, referredEmail }
+ */
+app.post("/api/referrals/track", honeypotCheck, async (req, res) => {
+  try {
+    const {referralCode, referredEmail} = req.body;
+
+    if (!referralCode || !referredEmail) {
+      return res.status(400).json({
+        success: false,
+        error: "referralCode and referredEmail are required",
+      });
+    }
+
+    // Find referrer by code
+    const referrerSnapshot = await db.collection("users")
+        .where("referralCode", "==", referralCode)
+        .get();
+
+    if (referrerSnapshot.empty) {
+      return res.status(404).json({
+        success: false,
+        error: "Invalid referral code",
+      });
+    }
+
+    const referrerId = referrerSnapshot.docs[0].id;
+
+    // Create referral record
+    await db.collection("referrals").add({
+      referrerId: referrerId,
+      referredEmail: referredEmail,
+      status: "signed_up",
+      commission: 10.00, // $10 per referral
+      paid: false,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    // Update referrer stats
+    await db.collection("users").doc(referrerId).update({
+      "referralStats.totalReferrals": admin.firestore.FieldValue.increment(1),
+    });
+
+    console.log(`🎯 Referral tracked: ${referredEmail} referred by ${referralCode}`);
+
+    res.json({
+      success: true,
+      message: "Referral tracked successfully",
+    });
+  } catch (error) {
+    console.error("❌ Track Referral Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * POST /api/referrals/payout
+ * Request referral payout
+ * Body: { amount }
+ */
+app.post("/api/referrals/payout", honeypotCheck, verifyUser, async (req, res) => {
+  try {
+    const {uid, email} = req.user;
+    const {amount} = req.body;
+
+    if (!amount || amount < 50) {
+      return res.status(400).json({
+        success: false,
+        error: "Minimum payout amount is $50",
+      });
+    }
+
+    // Get user's referral stats
+    const userDoc = await db.collection("users").doc(uid).get();
+    const userData = userDoc.data();
+
+    if (!userData || !userData.referralStats) {
+      return res.status(404).json({
+        success: false,
+        error: "No referral data found",
+      });
+    }
+
+    // Get unpaid referrals
+    const unpaidReferrals = await db.collection("referrals")
+        .where("referrerId", "==", uid)
+        .where("status", "==", "converted")
+        .where("paid", "==", false)
+        .get();
+
+    const availableAmount = unpaidReferrals.docs.reduce((sum, doc) => {
+      return sum + doc.data().commission;
+    }, 0);
+
+    if (availableAmount < amount) {
+      return res.status(400).json({
+        success: false,
+        error: `Insufficient funds. Available: $${availableAmount.toFixed(2)}`,
+      });
+    }
+
+    // Create payout request
+    const payoutRequest = await db.collection("payoutRequests").add({
+      userId: uid,
+      email: email,
+      amount: amount,
+      status: "pending",
+      referralIds: unpaidReferrals.docs.map((doc) => doc.id),
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    console.log(`💰 Payout requested: $${amount} for ${email}`);
+
+    // TODO: Integrate with PayPal or Stripe payouts API
+
+    res.json({
+      success: true,
+      message: "Payout request submitted successfully",
+      payoutId: payoutRequest.id,
+      amount: amount,
+    });
+  } catch (error) {
+    console.error("❌ Payout Request Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+//
 // Root route
 //
 app.get("/", (req, res) => {

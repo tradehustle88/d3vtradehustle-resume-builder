@@ -54,6 +54,30 @@ service cloud.firestore {
       allow delete: if false; // Users cannot delete their own profile
     }
     
+    // Blueprint Purchases collection - user can only read their own purchases
+    match /blueprintPurchases/{purchaseId} {
+      allow read: if isAuthenticated() && isOwner(resource.data.userId);
+      allow write: if false; // Only backend can write purchases
+    }
+    
+    // Blueprint Purchase Attempts collection - user can read their own attempts
+    match /blueprintPurchaseAttempts/{attemptId} {
+      allow read: if isAuthenticated() && isOwner(resource.data.userId);
+      allow write: if false; // Only backend can write attempts
+    }
+    
+    // Referrals collection - referrer can read their own referrals
+    match /referrals/{referralId} {
+      allow read: if isAuthenticated() && isOwner(resource.data.referrerId);
+      allow write: if false; // Only backend can write referrals
+    }
+    
+    // Payout Requests collection - user can read their own payout requests
+    match /payoutRequests/{requestId} {
+      allow read: if isAuthenticated() && isOwner(resource.data.userId);
+      allow write: if false; // Only backend can write payout requests
+    }
+    
     // Block all other collections by default
     match /{document=**} {
       allow read, write: if false;
