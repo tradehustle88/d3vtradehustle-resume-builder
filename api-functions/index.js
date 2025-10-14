@@ -1342,7 +1342,7 @@ app.post("/api/subscription/create", honeypotCheck, verifyUser, async (req, res)
     // Check if user already has active subscription
     const userDoc = await db.collection("users").doc(uid).get();
     const userData = userDoc.data();
-    
+
     if (userData && userData.subscriptionStatus === "active") {
       return res.status(400).json({
         success: false,
@@ -1404,7 +1404,7 @@ app.get("/api/subscription/status", verifyUser, async (req, res) => {
     const {uid} = req.user;
 
     const userDoc = await db.collection("users").doc(uid).get();
-    
+
     if (!userDoc.exists) {
       return res.json({
         success: true,
@@ -1475,7 +1475,7 @@ app.post("/api/subscription/update", honeypotCheck, verifyUser, async (req, res)
     const subscription = await stripe.subscriptions.retrieve(
         userData.stripeSubscriptionId,
     );
-    
+
     await stripe.subscriptions.update(userData.stripeSubscriptionId, {
       items: [{
         id: subscription.items.data[0].id,

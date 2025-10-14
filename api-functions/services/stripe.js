@@ -12,7 +12,7 @@ function getStripeKey() {
   if (process.env.STRIPE_SECRET_KEY) {
     return process.env.STRIPE_SECRET_KEY;
   }
-  
+
   // Fallback to Firebase config (legacy, but still works in some contexts)
   try {
     const config = functions.config();
@@ -23,7 +23,7 @@ function getStripeKey() {
     // functions.config() not available in v2 runtime, continue
     console.log("ℹ️ Firebase config not available (v2 runtime) - using environment variables only");
   }
-  
+
   return null;
 }
 

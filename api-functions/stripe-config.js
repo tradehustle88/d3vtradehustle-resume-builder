@@ -5,16 +5,16 @@
 
 const pricingTiers = {
   free: {
-    id: 'free',
-    name: 'Free',
+    id: "free",
+    name: "Free",
     price: 0,
     interval: null,
     features: [
-      'Build unlimited resumes',
-      'Plain text export only',
-      'Basic templates (5)',
-      'No AI suggestions',
-      'No ATS scoring'
+      "Build unlimited resumes",
+      "Plain text export only",
+      "Basic templates (5)",
+      "No AI suggestions",
+      "No ATS scoring",
     ],
     limits: {
       resumes: -1, // unlimited
@@ -23,25 +23,25 @@ const pricingTiers = {
       aiSuggestions: 0,
       atsScoring: false,
       jobTracker: false,
-      certVault: false
+      certVault: false,
     },
-    stripePriceId: null
+    stripePriceId: null,
   },
-  
+
   trial: {
-    id: 'trial',
-    name: '7-Day Trial',
+    id: "trial",
+    name: "7-Day Trial",
     price: 2.00,
     interval: null,
-    duration: '7 days',
+    duration: "7 days",
     trialDays: 7,
     features: [
-      'All Pro features for 7 days',
-      'Full template library (200+)',
-      'PDF/DOCX exports',
-      'AI-powered suggestions',
-      'ATS scoring',
-      'Job tracker access'
+      "All Pro features for 7 days",
+      "Full template library (200+)",
+      "PDF/DOCX exports",
+      "AI-powered suggestions",
+      "ATS scoring",
+      "Job tracker access",
     ],
     limits: {
       resumes: -1,
@@ -50,25 +50,25 @@ const pricingTiers = {
       aiSuggestions: -1,
       atsScoring: true,
       jobTracker: true,
-      certVault: true
+      certVault: true,
     },
-    stripePriceId: process.env.STRIPE_PRICE_TRIAL || 'price_trial_7day'
+    stripePriceId: process.env.STRIPE_PRICE_TRIAL || "price_trial_7day",
   },
-  
+
   proMonthly: {
-    id: 'proMonthly',
-    name: 'Pro Monthly',
+    id: "proMonthly",
+    name: "Pro Monthly",
     price: 14.95,
-    interval: 'month',
+    interval: "month",
     features: [
-      'Unlimited resume versions',
-      'All templates (200+)',
-      'PDF/DOCX/TXT exports',
-      'AI suggestions & optimization',
-      'Real-time ATS scoring',
-      'Job tracker',
-      'Cert vault (100MB)',
-      'Email support'
+      "Unlimited resume versions",
+      "All templates (200+)",
+      "PDF/DOCX/TXT exports",
+      "AI suggestions & optimization",
+      "Real-time ATS scoring",
+      "Job tracker",
+      "Cert vault (100MB)",
+      "Email support",
     ],
     limits: {
       resumes: -1,
@@ -77,24 +77,24 @@ const pricingTiers = {
       aiSuggestions: -1,
       atsScoring: true,
       jobTracker: true,
-      certVault: true
+      certVault: true,
     },
-    stripePriceId: process.env.STRIPE_PRICE_PRO_MONTHLY || 'price_pro_monthly'
+    stripePriceId: process.env.STRIPE_PRICE_PRO_MONTHLY || "price_pro_monthly",
   },
-  
+
   proAnnual: {
-    id: 'proAnnual',
-    name: 'Pro Annual',
+    id: "proAnnual",
+    name: "Pro Annual",
     price: 119.00,
-    interval: 'year',
-    savings: '33%',
+    interval: "year",
+    savings: "33%",
     monthlyEquivalent: 9.92,
     features: [
-      'Everything in Pro Monthly',
-      'Save $60/year',
-      'Priority support',
-      '1 free Career Blueprint',
-      'Extended cert vault (500MB)'
+      "Everything in Pro Monthly",
+      "Save $60/year",
+      "Priority support",
+      "1 free Career Blueprint",
+      "Extended cert vault (500MB)",
     ],
     limits: {
       resumes: -1,
@@ -104,10 +104,10 @@ const pricingTiers = {
       atsScoring: true,
       jobTracker: true,
       certVault: true,
-      freeBlueprint: true
+      freeBlueprint: true,
     },
-    stripePriceId: process.env.STRIPE_PRICE_PRO_ANNUAL || 'price_pro_annual'
-  }
+    stripePriceId: process.env.STRIPE_PRICE_PRO_ANNUAL || "price_pro_annual",
+  },
 };
 
 /**
@@ -126,7 +126,7 @@ function getTierFromPriceId(priceId) {
       return tierId;
     }
   }
-  return 'free';
+  return "free";
 }
 
 /**
@@ -143,10 +143,10 @@ function hasFeatureAccess(userTier, feature) {
 function isWithinLimit(userTier, feature, currentUsage) {
   const tier = getTierById(userTier);
   const limit = tier.limits[feature];
-  
+
   // -1 means unlimited
   if (limit === -1) return true;
-  
+
   // Check if current usage is below limit
   return currentUsage < limit;
 }
@@ -162,7 +162,7 @@ function getAllTiers() {
  * Get subscription tiers only (exclude free)
  */
 function getSubscriptionTiers() {
-  return Object.values(pricingTiers).filter(tier => tier.stripePriceId);
+  return Object.values(pricingTiers).filter((tier) => tier.stripePriceId);
 }
 
 module.exports = {
@@ -172,5 +172,5 @@ module.exports = {
   hasFeatureAccess,
   isWithinLimit,
   getAllTiers,
-  getSubscriptionTiers
+  getSubscriptionTiers,
 };

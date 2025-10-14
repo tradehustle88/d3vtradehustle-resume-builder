@@ -1,33 +1,33 @@
 // AI Services using Vertex AI (Gemini)
-const { VertexAI } = require('@google-cloud/vertexai');
+const {VertexAI} = require("@google-cloud/vertexai");
 
 // Initialize Vertex AI
 const vertexAI = new VertexAI({
-  project: process.env.GOOGLE_CLOUD_PROJECT || 'tradehustleresumebuilder',
-  location: 'us-central1'
+  project: process.env.GOOGLE_CLOUD_PROJECT || "tradehustleresumebuilder",
+  location: "us-central1",
 });
 
 // Model configurations
 const models = {
   // Fast, lightweight for suggestions
   text: vertexAI.preview.getGenerativeModel({
-    model: 'gemini-2.0-flash-exp',
+    model: "gemini-2.0-flash-exp",
     generationConfig: {
       maxOutputTokens: 1024,
       temperature: 0.7,
-      topP: 0.8
-    }
+      topP: 0.8,
+    },
   }),
-  
+
   // Powerful for analysis
   analysis: vertexAI.preview.getGenerativeModel({
-    model: 'gemini-1.5-pro-002',
+    model: "gemini-1.5-pro-002",
     generationConfig: {
       maxOutputTokens: 2048,
       temperature: 0.5,
-      topP: 0.9
-    }
-  })
+      topP: 0.9,
+    },
+  }),
 };
 
 /**
@@ -52,7 +52,7 @@ Example: ["suggestion 1", "suggestion 2", "suggestion 3"]`;
 
     const result = await models.text.generateContent(prompt);
     const response = result.response.text().trim();
-    
+
     // Try to parse as JSON
     try {
       const suggestions = JSON.parse(response);
@@ -60,13 +60,13 @@ Example: ["suggestion 1", "suggestion 2", "suggestion 3"]`;
     } catch (error) {
       // If not valid JSON, split by newlines and clean up
       return response
-        .split('\n')
-        .filter(line => line.trim())
-        .slice(0, 3);
+          .split("\n")
+          .filter((line) => line.trim())
+          .slice(0, 3);
     }
   } catch (error) {
-    console.error('AI Suggestions Error:', error);
-    throw new Error('Failed to generate suggestions');
+    console.error("AI Suggestions Error:", error);
+    throw new Error("Failed to generate suggestions");
   }
 }
 
@@ -78,11 +78,11 @@ async function calculateATSScore(resumeData, trade) {
     const prompt = `Analyze this ${trade} resume for ATS (Applicant Tracking System) compatibility.
 
 Resume Data:
-- Name: ${resumeData.fullName || 'Not provided'}
-- Email: ${resumeData.email || 'Not provided'}
-- Phone: ${resumeData.phone || 'Not provided'}
-- Summary: ${resumeData.professionalSummary || 'Not provided'}
-- Skills: ${(resumeData.skills || []).join(', ') || 'None listed'}
+- Name: ${resumeData.fullName || "Not provided"}
+- Email: ${resumeData.email || "Not provided"}
+- Phone: ${resumeData.phone || "Not provided"}
+- Summary: ${resumeData.professionalSummary || "Not provided"}
+- Skills: ${(resumeData.skills || []).join(", ") || "None listed"}
 - Experience: ${(resumeData.workExperience || []).length} positions
 - Certifications: ${(resumeData.certifications || []).length} certificates
 
@@ -104,17 +104,17 @@ Key ${trade} keywords to check: license, certified, safety, code compliance, too
 
     const result = await models.analysis.generateContent(prompt);
     const response = result.response.text().trim();
-    
+
     try {
       // Remove markdown code blocks if present
-      const cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const cleaned = response.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       return JSON.parse(cleaned);
     } catch (parseError) {
       // Fallback analysis
       return generateFallbackATSAnalysis(resumeData, trade);
     }
   } catch (error) {
-    console.error('ATS Analysis Error:', error);
+    console.error("ATS Analysis Error:", error);
     return generateFallbackATSAnalysis(resumeData, trade);
   }
 }
@@ -124,7 +124,7 @@ Key ${trade} keywords to check: license, certified, safety, code compliance, too
  */
 function generateFallbackATSAnalysis(resumeData, trade) {
   let score = 50; // Base score
-  
+
   // Add points for complete sections
   if (resumeData.fullName) score += 5;
   if (resumeData.email) score += 5;
@@ -133,38 +133,38 @@ function generateFallbackATSAnalysis(resumeData, trade) {
   if (resumeData.workExperience && resumeData.workExperience.length > 0) score += 15;
   if (resumeData.skills && resumeData.skills.length >= 5) score += 10;
   if (resumeData.certifications && resumeData.certifications.length > 0) score += 10;
-  
+
   const tradeKeywords = {
-    electrician: ['license', 'NEC', 'electrical', 'wiring', 'circuits'],
-    plumber: ['license', 'piping', 'plumbing', 'fixtures', 'water'],
-    hvac: ['EPA', 'refrigerant', 'HVAC', 'heating', 'cooling'],
-    carpenter: ['framing', 'carpentry', 'blueprint', 'woodworking'],
-    mason: ['masonry', 'concrete', 'brick', 'mortar'],
-    welder: ['welding', 'MIG', 'TIG', 'fabrication'],
-    mechanic: ['ASE', 'automotive', 'diagnostic', 'repair'],
-    contractor: ['project management', 'supervision', 'contractor', 'scheduling']
+    electrician: ["license", "NEC", "electrical", "wiring", "circuits"],
+    plumber: ["license", "piping", "plumbing", "fixtures", "water"],
+    hvac: ["EPA", "refrigerant", "HVAC", "heating", "cooling"],
+    carpenter: ["framing", "carpentry", "blueprint", "woodworking"],
+    mason: ["masonry", "concrete", "brick", "mortar"],
+    welder: ["welding", "MIG", "TIG", "fabrication"],
+    mechanic: ["ASE", "automotive", "diagnostic", "repair"],
+    contractor: ["project management", "supervision", "contractor", "scheduling"],
   };
-  
+
   const keywords = tradeKeywords[trade.toLowerCase()] || [];
   const resumeText = JSON.stringify(resumeData).toLowerCase();
-  const foundKeywords = keywords.filter(kw => resumeText.includes(kw.toLowerCase()));
-  
+  const foundKeywords = keywords.filter((kw) => resumeText.includes(kw.toLowerCase()));
+
   return {
     score: Math.min(score, 100),
     keywords: {
       found: foundKeywords,
-      missing: keywords.filter(kw => !foundKeywords.includes(kw))
+      missing: keywords.filter((kw) => !foundKeywords.includes(kw)),
     },
     formatting: {
       passed: true,
-      issues: []
+      issues: [],
     },
     suggestions: [
-      'Add more quantifiable achievements with numbers',
-      'Include relevant trade certifications',
-      'Use industry-specific keywords and terminology',
-      'List specific tools and equipment experience'
-    ]
+      "Add more quantifiable achievements with numbers",
+      "Include relevant trade certifications",
+      "Use industry-specific keywords and terminology",
+      "List specific tools and equipment experience",
+    ],
   };
 }
 
@@ -186,9 +186,9 @@ Make it:
 Return ONLY the enhanced version as a single sentence, no quotes or extra text.`;
 
     const result = await models.text.generateContent(prompt);
-    return result.response.text().trim().replace(/^["']|["']$/g, '');
+    return result.response.text().trim().replace(/^["']|["']$/g, "");
   } catch (error) {
-    console.error('Enhancement Error:', error);
+    console.error("Enhancement Error:", error);
     return achievement; // Return original if enhancement fails
   }
 }
@@ -201,9 +201,9 @@ async function matchJobDescription(resumeData, jobDescription) {
     const prompt = `Compare this resume with the job description and provide a match analysis.
 
 Resume Summary:
-- Skills: ${(resumeData.skills || []).join(', ')}
-- Experience: ${(resumeData.workExperience || []).map(e => e.jobTitle).join(', ')}
-- Certifications: ${(resumeData.certifications || []).map(c => c.name).join(', ')}
+- Skills: ${(resumeData.skills || []).join(", ")}
+- Experience: ${(resumeData.workExperience || []).map((e) => e.jobTitle).join(", ")}
+- Certifications: ${(resumeData.certifications || []).map((c) => c.name).join(", ")}
 
 Job Description:
 ${jobDescription}
@@ -218,25 +218,25 @@ Return EXACT JSON format (no other text):
 
     const result = await models.analysis.generateContent(prompt);
     const response = result.response.text().trim();
-    
+
     try {
-      const cleaned = response.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const cleaned = response.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
       return JSON.parse(cleaned);
     } catch (parseError) {
       return {
         matchScore: 50,
         matchedSkills: [],
         missingSkills: [],
-        recommendations: ['Unable to analyze match at this time']
+        recommendations: ["Unable to analyze match at this time"],
       };
     }
   } catch (error) {
-    console.error('Job Match Error:', error);
+    console.error("Job Match Error:", error);
     return {
       matchScore: 0,
       matchedSkills: [],
       missingSkills: [],
-      recommendations: ['Error analyzing job match']
+      recommendations: ["Error analyzing job match"],
     };
   }
 }
@@ -255,8 +255,8 @@ async function generateProfessionalSummary(trade, workExperience, skills) {
 
     const prompt = `Write a professional resume summary for a ${trade} with:
 - ${Math.round(totalYears)} years of experience
-- Key positions: ${workExperience.map(e => e.jobTitle).join(', ')}
-- Skills: ${skills.join(', ')}
+- Key positions: ${workExperience.map((e) => e.jobTitle).join(", ")}
+- Skills: ${skills.join(", ")}
 
 Requirements:
 - 2-3 sentences
@@ -269,7 +269,7 @@ Return only the summary text, no quotes.`;
     const result = await models.text.generateContent(prompt);
     return result.response.text().trim();
   } catch (error) {
-    console.error('Summary Generation Error:', error);
+    console.error("Summary Generation Error:", error);
     return `Experienced ${trade} professional with proven expertise in the trades industry.`;
   }
 }
@@ -279,5 +279,5 @@ module.exports = {
   calculateATSScore,
   enhanceAchievement,
   matchJobDescription,
-  generateProfessionalSummary
+  generateProfessionalSummary,
 };
