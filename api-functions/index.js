@@ -428,6 +428,196 @@ app.post("/api/geminiAgent", honeypotCheck, verifyUser, async (req, res) => {
   }
 });
 
+// ATS Resume Analysis - Analyze resume and calculate ATS score
+app.post("/api/gemini/analyze-resume", honeypotCheck, async (req, res) => {
+  try {
+    const {resumeData} = req.body;
+
+    if (!resumeData) {
+      return res.status(400).json({
+        success: false,
+        error: "Resume data is required",
+      });
+    }
+
+    // Check if Gemini is available
+    if (!genAI && !vertexAI) {
+      return res.status(503).json({
+        success: false,
+        error: "AI service unavailable",
+        message: "GOOGLE_API_KEY not configured",
+      });
+    }
+
+    const trade = resumeData.profile && resumeData.profile.trade ? resumeData.profile.trade : "unknown";
+    console.log(`📊 ATS Analysis request for trade: ${trade}`);
+
+    const tradeForPrompt = resumeData.profile && resumeData.profile.trade ? resumeData.profile.trade : "the trade";
+    const prompt = `
+Analyze this tradesperson's resume for ATS (Applicant Tracking System) compatibility.
+
+Score 0-100 based on:
+- Keywords relevant to ${tradeForPrompt}
+- Quantifiable achievements and metrics
+- Proper formatting and structure
+- Skill clarity and specificity
+- Experience depth and relevance
+- Certifications and licenses
+- Contact information completeness
+
+Resume Data:
+${JSON.stringify(resumeData, null, 2)}
+
+Return ONLY valid JSON in this exact format (no markdown, no code blocks):
+{
+  "score": <number 0-100>,
+  "suggestions": [<array of 3-5 actionable improvement suggestions>],
+  "strengths": [<array of 2-3 resume strengths>],
+  "weaknesses": [<array of 2-3 areas to improve>],
+  "keywordMatch": <number 0-100>,
+  "formattingScore": <number 0-100>,
+  "experienceScore": <number 0-100>
+}`;
+
+    let result;
+    let aiProvider;
+
+    try {
+      // Try Vertex AI first
+      if (vertexAI) {
+        const vertexModel = vertexAI.preview.getGenerativeModel({
+          model: "gemini-1.5-flash",
+        });
+        const vertexResult = await vertexModel.generateContent(prompt);
+        result = vertexResult.response.candidates[0].content.parts[0].text;
+        aiProvider = "Vertex AI";
+      }
+    } catch (vertexError) {
+      console.warn("⚠️ Vertex AI failed, trying Gemini API:", vertexError.message);
+    }
+
+    // Fallback to Gemini API if Vertex failed or unavailable
+    if (!result && genAI) {
+      const geminiModel = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash-preview-09-2025",
+      });
+      const geminiResult = await geminiModel.generateContent(prompt);
+      result = geminiResult.response.text();
+      aiProvider = "Gemini API";
+    }
+
+    if (!result) {
+      throw new Error("No AI provider available");
+    }
+
+    // Clean up JSON response (remove markdown code blocks if present)
+    let cleanResult = result.trim();
+    if (cleanResult.startsWith("```json")) {
+      cleanResult = cleanResult.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+    } else if (cleanResult.startsWith("```")) {
+      cleanResult = cleanResult.replace(/```\n?/g, "");
+    }
+
+    const analysis = JSON.parse(cleanResult);
+
+    // Validate response structure
+    if (typeof analysis.score !== "number" || !Array.isArray(analysis.suggestions)) {
+      throw new Error("Invalid AI response format");
+    }
+
+    console.log(`✅ ATS Analysis complete - Score: ${analysis.score}% (via ${aiProvider})`);
+
+    res.json(analysis);
+  } catch (err) {
+    console.error("❌ ATS Analysis error:", err);
+    res.status(500).json({
+      success: false,
+      error: err.message || "Analysis failed",
+    });
+  }
+});
+
+// Trade Keywords - Get suggested keywords for a trade
+app.post("/api/gemini/trade-keywords", honeypotCheck, async (req, res) => {
+  try {
+    const {trade} = req.body;
+
+    if (!trade) {
+      return res.status(400).json({
+        success: false,
+        error: "Trade type is required",
+      });
+    }
+
+    // Check if Gemini is available
+    if (!genAI && !vertexAI) {
+      return res.status(503).json({
+        success: false,
+        error: "AI service unavailable",
+      });
+    }
+
+    console.log(`🔑 Keyword request for trade: ${trade}`);
+
+    const prompt = `
+Generate a list of the top 20 ATS-optimized keywords for ${trade} trade positions.
+Include:
+- Technical skills specific to ${trade}
+- Common tools and equipment
+- Industry certifications
+- Safety requirements
+- Job responsibilities
+- Compliance standards
+
+Return ONLY a JSON array of keywords (no markdown, no code blocks):
+["keyword1", "keyword2", "keyword3", ...]`;
+
+    let result;
+
+    if (genAI) {
+      const model = genAI.getGenerativeModel({
+        model: "gemini-1.5-flash",
+      });
+      const geminiResult = await model.generateContent(prompt);
+      result = geminiResult.response.text();
+    } else if (vertexAI) {
+      const model = vertexAI.preview.getGenerativeModel({
+        model: "gemini-1.5-flash",
+      });
+      const vertexResult = await model.generateContent(prompt);
+      result = vertexResult.response.candidates[0].content.parts[0].text;
+    }
+
+    // Clean up JSON response
+    let cleanResult = result.trim();
+    if (cleanResult.startsWith("```json")) {
+      cleanResult = cleanResult.replace(/```json\n?/g, "").replace(/```\n?/g, "");
+    } else if (cleanResult.startsWith("```")) {
+      cleanResult = cleanResult.replace(/```\n?/g, "");
+    }
+
+    const keywords = JSON.parse(cleanResult);
+
+    if (!Array.isArray(keywords)) {
+      throw new Error("Invalid keywords format");
+    }
+
+    console.log(`✅ Generated ${keywords.length} keywords for ${trade}`);
+
+    res.json({
+      success: true,
+      keywords,
+      trade,
+    });
+  } catch (err) {
+    console.error("❌ Keyword generation error:", err);
+    res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+});
+
 //
 // Service Imports
 //
