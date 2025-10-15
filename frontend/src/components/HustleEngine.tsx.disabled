@@ -160,7 +160,7 @@ export default function HustleEngine({
     } else {
       experience.forEach((exp, idx) => {
         if (!exp.companyName.trim()) newErrors[`exp${idx}_company`] = 'Company name required'
-        if (!exp.position.trim()) newErrors[`exp${idx}_position`] = 'Position required'
+        if (!exp.jobTitle.trim()) newErrors[`exp${idx}_position`] = 'Position required'
         if (!exp.startDate) newErrors[`exp${idx}_startDate`] = 'Start date required'
         if (!exp.current && !exp.endDate) newErrors[`exp${idx}_endDate`] = 'End date required'
       })
@@ -238,6 +238,8 @@ export default function HustleEngine({
         templateId,
         tradeType,
         title: `${profile.fullName} - ${tradeType} Resume`,
+        status: 'draft',
+        isPrimary: false,
         profile: {
           fullName: profile.fullName,
           email: profile.email,
@@ -270,7 +272,7 @@ export default function HustleEngine({
 
       if (savedResumeId || existingResume?.id) {
         // Update existing resume
-        resumeId = savedResumeId || existingResume!.id
+        resumeId = (savedResumeId || existingResume!.id) as string
         const resumeRef = doc(db, 'resumes', resumeId)
         await updateDoc(resumeRef, resumeData as any)
         trackEvent('resume_updated', { resumeId, tradeType })
@@ -301,13 +303,14 @@ export default function HustleEngine({
     setExperience([...experience, {
       id: crypto.randomUUID(),
       companyName: '',
-      position: '',
+      jobTitle: '',
       location: '',
       startDate: '',
       endDate: '',
       current: false,
       responsibilities: [''],
-      achievements: []
+      achievements: [],
+      atsOptimized: false
     }])
   }
 
@@ -356,10 +359,9 @@ export default function HustleEngine({
   const addSkill = () => {
     if (newSkill.trim()) {
       const skill: TechnicalSkill = {
-        id: crypto.randomUUID(),
         name: newSkill.trim(),
         category: 'technical',
-        proficiency: 'intermediate',
+        proficiency: 3,
         yearsOfExperience: 1
       }
       setSkills({ ...skills, technical: [...skills.technical, skill] })
@@ -684,8 +686,8 @@ export default function HustleEngine({
                       </label>
                       <input
                         type="text"
-                        value={exp.position}
-                        onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
+                        value={exp.jobTitle}
+                        onChange={(e) => updateExperience(exp.id, 'jobTitle', e.target.value)}
                         className="w-full px-4 py-2 bg-gray-600 text-white rounded-lg focus:ring-2 focus:ring-[#ffd700] focus:outline-none"
                         placeholder="Master Electrician"
                       />

@@ -122,8 +122,8 @@ function UnlockPageContent() {
         <div className="relative z-20 p-8 md:p-12">
           {/* Logo Above Cards */}
           <Image
-            src="/assets/trade-hustle-logo-new.png"
-            alt="Trade Hustle Resume Builder Logo"
+            src="/assets/resumeBuilderLogo-v3.png"
+            alt="Trade Hustle Resume Builder"
             width={224}
             height={224}
             className="mx-auto w-48 md:w-56 mb-12 opacity-95"
