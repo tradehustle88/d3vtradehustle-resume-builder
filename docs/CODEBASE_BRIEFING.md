@@ -711,7 +711,7 @@ firebase deploy --only hosting
 firebase deploy                 # Deploy all services
 
 # Environment Management
-firebase functions:config:set stripe.secret_key="sk_live_..."
+firebase functions:secrets:set STRIPE_SECRET_KEY
 firebase functions:secrets:set GOOGLE_API_KEY
 ```
 

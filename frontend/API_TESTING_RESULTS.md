@@ -53,15 +53,15 @@ curl -X POST https://us-central1-tradehustleresumebuilder.cloudfunctions.net/edi
 You need to configure these environment variables in Firebase:
 
 ```bash
-# Set reCAPTCHA secret key
-firebase functions:config:set recaptcha.secret_key="your-recaptcha-secret-key"
+# Set reCAPTCHA secret key (prompts for value)
+firebase functions:secrets:set RECAPTCHA_SECRET
 
 # Set Google API key for Gemini
-firebase functions:config:set google.api_key="your-google-api-key"
+firebase functions:secrets:set GOOGLE_API_KEY
 
 # Set Gmail credentials (optional, for email notifications)
-firebase functions:config:set gmail.user="your-email@gmail.com"
-firebase functions:config:set gmail.pass="your-app-password"
+firebase functions:secrets:set GMAIL_USER
+firebase functions:secrets:set GMAIL_APP_PASSWORD
 ```
 
 ### 2. **Redeploy After Setting Environment Variables**

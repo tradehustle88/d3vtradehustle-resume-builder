@@ -391,9 +391,8 @@ localStorage.setItem(cacheKey, JSON.stringify(response), { ttl: 3600 });
 
 2. **Set environment variables**:
    ```bash
-   firebase functions:config:set \
-     project.id="your-gcp-project-id" \
-     region="us-central1"
+  firebase functions:secrets:set PROJECT_ID
+  firebase functions:secrets:set REGION
    ```
 
 3. **Update frontend** to use new API:
@@ -415,7 +414,7 @@ localStorage.setItem(cacheKey, JSON.stringify(response), { ttl: 3600 });
 
 **Solution**: Ensure `PROJECT_ID` environment variable is set:
 ```bash
-firebase functions:config:set project.id="your-project-id"
+firebase functions:secrets:set PROJECT_ID
 ```
 
 ### Issue: "Both Vertex AI and Gemini API unavailable"

@@ -1,28 +1,19 @@
 // Stripe Payment Service
 const admin = require("firebase-admin");
-const functions = require("firebase-functions");
 
 /**
  * Get Stripe key from multiple sources with fallback
- * Priority: 1) Environment variable, 2) Firebase config (legacy)
  * @return {string|null} Stripe secret key or null if not found
  */
 function getStripeKey() {
-  // Try environment variable first (Firebase Functions v2)
+  // Pull from injected secret/environment variable
   if (process.env.STRIPE_SECRET_KEY) {
     return process.env.STRIPE_SECRET_KEY;
   }
 
-  // Fallback to Firebase config (legacy, but still works in some contexts)
-  try {
-    const config = functions.config();
-    if (config && config.stripe && config.stripe.secret_key) {
-      return config.stripe.secret_key;
-    }
-  } catch (error) {
-    // functions.config() not available in v2 runtime, continue
-    console.log("ℹ️ Firebase config not available (v2 runtime) - using environment variables only");
-  }
+  console.warn("⚠️ STRIPE_SECRET_KEY not configured - Stripe features will be disabled");
+  console.warn("   Set via: firebase functions:secrets:set STRIPE_SECRET_KEY");
+  console.warn("   Or provide STRIPE_SECRET_KEY in your local environment");
 
   return null;
 }
@@ -35,9 +26,7 @@ if (stripeKey) {
   stripe = require("stripe")(stripeKey);
   console.log("✅ Stripe initialized successfully");
 } else {
-  console.warn("⚠️ STRIPE_SECRET_KEY not configured - Stripe features will be disabled");
-  console.warn("   Set via: firebase functions:config:set stripe.secret_key=\"sk_...\"");
-  console.warn("   Or via Cloud Console environment variables");
+  console.warn("ℹ️ Stripe client not initialised - secret key missing");
 }
 
 const db = admin.firestore();

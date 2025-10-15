@@ -210,7 +210,7 @@ run: firebase deploy --only functions:app --force --token "$FIREBASE_TOKEN"
     FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
     STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
   run: |
-    firebase functions:config:set stripe.key="$STRIPE_SECRET_KEY"
+    printf "%s" "$STRIPE_SECRET_KEY" | firebase functions:secrets:set STRIPE_SECRET_KEY --data-file=-
     firebase deploy --only functions --force --token "$FIREBASE_TOKEN"
 ```
 

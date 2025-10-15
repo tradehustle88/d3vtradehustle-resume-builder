@@ -158,8 +158,8 @@ ACTIVE_CAMPAIGN_WELCOME_AUTOMATION_ID=123
 6. Add to Firebase config:
 
 ```bash
-firebase functions:config:set gmail.user="your-email@gmail.com"
-firebase functions:config:set gmail.app_password="xxxx xxxx xxxx xxxx"
+firebase functions:secrets:set GMAIL_USER
+firebase functions:secrets:set GMAIL_APP_PASSWORD
 ```
 
 ---
@@ -388,11 +388,11 @@ curl -X POST http://localhost:8080/firestore/users/test123 \
 
 ```bash
 # Set Gmail credentials
-firebase functions:config:set gmail.user="your-email@gmail.com"
-firebase functions:config:set gmail.app_password="xxxx xxxx xxxx xxxx"
+firebase functions:secrets:set GMAIL_USER
+firebase functions:secrets:set GMAIL_APP_PASSWORD
 
 # Verify config
-firebase functions:config:get
+firebase functions:secrets:list
 ```
 
 ### **Step 2: Deploy Functions**

@@ -343,7 +343,7 @@ gcloud run logs read app --region=us-central1 --limit=50
 
 ### Issue: Stripe checkout fails
 **Solution:** 
-1. Check Firebase config: `firebase functions:config:get`
+1. Check Firebase secrets: `firebase functions:secrets:list`
 2. Verify Stripe keys are set correctly
 3. Check backend logs for Stripe initialization message
 

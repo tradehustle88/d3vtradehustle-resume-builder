@@ -17,8 +17,8 @@ The Firebase emulators show: `"Failed to load environment variables from .env"`
 ### Option 1: Deploy to Production (Recommended)
 
 ```powershell
-# Set production environment variables
-firebase functions:config:set stripe.secret_key="sk_test_51SHW3qLr4v4blpwbWpaQ87KEHPJjt50QLAxnJSQjbcrCpjiGMViwToduT4Ey45Huu8yK5oVbHLo9ynWm9Ewd1i1j00xMQFLp86"
+# Set production secret (you'll be prompted for the value)
+firebase functions:secrets:set STRIPE_SECRET_KEY
 
 # Deploy functions
 firebase deploy --only functions
@@ -40,14 +40,14 @@ const stripe = require("stripe")("sk_test_51SHW3qLr4v4blpwbWpaQ87KEHPJjt50QLAxnJ
 
 Then restart emulators.
 
-### Option 3: Use Firebase Functions Config (Production-like)
+### Option 3: Use Firebase Secret Manager (Production-like)
 
 ```powershell
-# Set config locally
-firebase functions:config:set stripe.secret_key="sk_test_51SHW3qLr4v4blpwbWpaQ87KEHPJjt50QLAxnJSQjbcrCpjiGMViwToduT4Ey45Huu8yK5oVbHLo9ynWm9Ewd1i1j00xMQFLp86"
+# Store the key (interactive prompt hides the value)
+firebase functions:secrets:set STRIPE_SECRET_KEY
 
-# Download config for local use
-firebase functions:config:get > .runtimeconfig.json
+# Pull the secret locally when needed
+firebase functions:secrets:access STRIPE_SECRET_KEY > stripe-secret.tmp
 
 # Restart emulators
 firebase emulators:start --only functions
@@ -76,8 +76,8 @@ firebase emulators:start --only functions
 **Deploy to production now and test there:**
 
 ```powershell
-# 1. Set Stripe key in production config
-firebase functions:config:set stripe.secret_key="sk_test_51SHW3qLr4v4blpwbWpaQ87KEHPJjt50QLAxnJSQjbcrCpjiGMViwToduT4Ey45Huu8yK5oVbHLo9ynWm9Ewd1i1j00xMQFLp86"
+# 1. Store the Stripe key in Secret Manager
+firebase functions:secrets:set STRIPE_SECRET_KEY
 
 # 2. Deploy
 firebase deploy --only functions

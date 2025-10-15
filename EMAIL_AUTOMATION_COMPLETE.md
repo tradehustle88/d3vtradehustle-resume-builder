@@ -50,8 +50,8 @@
 ### 1. **Set Gmail Credentials**
 
 ```bash
-firebase functions:config:set gmail.user="your-email@gmail.com"
-firebase functions:config:set gmail.app_password="xxxx xxxx xxxx xxxx"
+firebase functions:secrets:set GMAIL_USER
+firebase functions:secrets:set GMAIL_APP_PASSWORD
 ```
 
 ### 2. **Deploy Functions**

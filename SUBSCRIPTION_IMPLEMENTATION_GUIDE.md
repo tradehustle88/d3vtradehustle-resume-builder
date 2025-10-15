@@ -484,12 +484,11 @@ price_pro_annual=price_...
 ### 2. Set Environment Variables
 ```bash
 # Firebase Functions
-firebase functions:config:set \
-  stripe.secret_key="sk_live_..." \
-  stripe.webhook_secret="whsec_..." \
-  stripe.price_trial="price_trial_7day" \
-  stripe.price_monthly="price_pro_monthly" \
-  stripe.price_annual="price_pro_annual"
+firebase functions:secrets:set STRIPE_SECRET_KEY
+firebase functions:secrets:set STRIPE_WEBHOOK_SECRET
+firebase functions:secrets:set STRIPE_PRICE_TRIAL
+firebase functions:secrets:set STRIPE_PRICE_PRO_MONTHLY
+firebase functions:secrets:set STRIPE_PRICE_PRO_ANNUAL
 
 # Or use .env in api-functions/ (Functions v2)
 echo "STRIPE_SECRET_KEY=sk_live_..." >> api-functions/.env

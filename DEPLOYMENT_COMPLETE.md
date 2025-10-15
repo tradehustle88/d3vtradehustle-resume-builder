@@ -236,7 +236,7 @@ Files: 62 changed, 16,713 insertions(+), 146 deletions(-)
 
 ### 2. Add Google API Key (for AI features)
 ```powershell
-firebase functions:config:set google.api_key="YOUR_GEMINI_API_KEY"
+firebase functions:secrets:set GOOGLE_API_KEY
 firebase deploy --only functions:app
 ```
 

@@ -30,14 +30,14 @@ https://app-fbs5jy4frq-uc.a.run.app
 
 Your function is running but Stripe features are disabled because environment variables aren't set yet.
 
-###Option 1: Via Firebase CLI (Recommended)
+### Option 1: Via Firebase CLI (Recommended)
 
 ```powershell
 # Set Stripe Secret Key
-firebase functions:config:set stripe.secret_key="sk_test_51SHW3qLr4v4blpwbWpaQ87KEHPJjt50QLAxnJSQjbcrCpjiGMViwToduT4Ey45Huu8yK5oVbHLo9ynWm9Ewd1i1j00xMQFLp86" --project tradehustleresumebuilder
+firebase functions:secrets:set STRIPE_SECRET_KEY --project tradehustleresumebuilder
 
 # Set Webhook Secret
-firebase functions:config:set stripe.webhook_secret="whsec_VyOjYxkcsUXRhI1hrD2pHudzoSR9Pluq" --project tradehustleresumebuilder
+firebase functions:secrets:set STRIPE_WEBHOOK_SECRET --project tradehustleresumebuilder
 
 # Redeploy to apply changes
 firebase deploy --only functions:app

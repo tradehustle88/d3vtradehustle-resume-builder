@@ -70,19 +70,16 @@ firebase deploy --only hosting
 
 ## 🔑 Configuration Reference
 
-### Backend Configuration (Firebase Config)
-```json
-{
-  "stripe": {
-    "secret_key": "sk_test_51SHW3qLr4v4blpwb...",
-    "webhook_secret": "whsec_VyOjYxkcsUXRhI1hrD2pHudzoSR9Pluq"
-  }
-}
+### Backend Secrets (Firebase Secret Manager)
+```text
+STRIPE_SECRET_KEY
+STRIPE_WEBHOOK_SECRET
+GOOGLE_API_KEY
 ```
 
-**View your config:**
+**View your secrets:**
 ```powershell
-firebase functions:config:get
+firebase functions:secrets:list
 ```
 
 ### Frontend Configuration (.env.local)
@@ -418,14 +415,14 @@ firebase deploy
 ### Configuration Updates
 ```powershell
 # Set Stripe keys
-firebase functions:config:set stripe.secret_key="sk_test_..."
-firebase functions:config:set stripe.webhook_secret="whsec_..."
+firebase functions:secrets:set STRIPE_SECRET_KEY
+firebase functions:secrets:set STRIPE_WEBHOOK_SECRET
 
 # Set Google API key (for AI features)
-firebase functions:config:set google.api_key="YOUR_GEMINI_KEY"
+firebase functions:secrets:set GOOGLE_API_KEY
 
 # View current config
-firebase functions:config:get
+firebase functions:secrets:list
 
 # Apply config changes (redeploy)
 firebase deploy --only functions:app

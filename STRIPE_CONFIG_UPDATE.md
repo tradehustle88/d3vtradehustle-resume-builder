@@ -7,31 +7,22 @@
 
 ## 🔄 What Changed
 
-Updated `api-functions/services/stripe.js` to support **both** configuration methods with intelligent fallback:
+Updated `api-functions/services/stripe.js` to pull the secret straight from Firebase Secret Manager (or a locally provided environment variable):
 
 ```javascript
 /**
- * Get Stripe key from multiple sources with fallback
- * Priority: 1) Environment variable, 2) Firebase config (legacy)
+ * Get Stripe key from Secret Manager / environment
  */
 function getStripeKey() {
-  // Try environment variable first (Firebase Functions v2)
-  if (process.env.STRIPE_SECRET_KEY) {
-    return process.env.STRIPE_SECRET_KEY;
-  }
-  
-  // Fallback to Firebase config (legacy, but still works in some contexts)
-  try {
-    const config = functions.config();
-    if (config && config.stripe && config.stripe.secret_key) {
-      return config.stripe.secret_key;
-    }
-  } catch (error) {
-    // functions.config() not available in v2 runtime, continue
-    console.log("ℹ️ Firebase config not available (v2 runtime) - using environment variables only");
-  }
-  
-  return null;
+   if (process.env.STRIPE_SECRET_KEY) {
+      return process.env.STRIPE_SECRET_KEY;
+   }
+
+   console.warn("⚠️ STRIPE_SECRET_KEY not configured - Stripe features will be disabled");
+   console.warn("   Set via: firebase functions:secrets:set STRIPE_SECRET_KEY");
+   console.warn("   Or provide STRIPE_SECRET_KEY in your local environment");
+
+   return null;
 }
 ```
 
@@ -39,43 +30,34 @@ function getStripeKey() {
 
 ## ✅ Benefits
 
-1. **Backward Compatibility**
-   - Still works with existing `firebase functions:config:set` commands
-   - Gracefully handles v2 runtime where `functions.config()` isn't available
+1. **Secret Manager First**
+   - Leverages Firebase Secrets for secure runtime injection
+   - Keeps keys out of source control and CLI history
 
-2. **Forward Compatibility**
-   - Prioritizes environment variables (Cloud Run native)
-   - Works with Cloud Console environment variable UI
-   - No changes needed when migrating to pure v2
+2. **Predictable Behavior**
+   - Single source of truth (`STRIPE_SECRET_KEY` env var)
+   - Clear logging when the key is missing
 
 3. **Developer Experience**
-   - Clear logging messages explain what's happening
-   - Helpful error messages when Stripe key is missing
-   - No breaking changes for existing deployments
+   - Works locally with `.env` or `firebase functions:secrets:access`
+   - No more `functions.config()` fallbacks to maintain
 
 4. **Deployment Flexibility**
-   - Works in local emulator (with .env)
-   - Works in Cloud Run (with environment variables)
-   - Works with legacy Firebase config
-   - Works in all runtime contexts
+   - Works in local emulator (with `.env`)
+   - Works in Cloud Run / Firebase Functions v2 via Secret Manager
+   - Works anywhere environment variables can be provided
 
 ---
 
 ## 🎯 Configuration Priority Order
 
-The system checks for Stripe keys in this order:
+The system now expects the key in a single place:
 
-1. **`process.env.STRIPE_SECRET_KEY`** ⭐ (Highest Priority)
-   - Environment variable from Cloud Run
-   - Set via Cloud Console UI
-   - Native Cloud Run method
+1. **`process.env.STRIPE_SECRET_KEY`** ⭐
+   - Injected automatically from Firebase Secret Manager (`STRIPE_SECRET_KEY`)
+   - Can be supplied locally via `.env`
 
-2. **`functions.config().stripe.secret_key`** (Legacy Fallback)
-   - Set via Firebase CLI: `firebase functions:config:set stripe.secret_key="sk_..."`
-   - Only works in Functions v1 and some v2 contexts
-   - Automatically skipped if not available
-
-3. **None** (Graceful Degradation)
+2. **None** (Graceful Degradation)
    - Stripe features disabled
    - Clear warning messages logged
    - Application still starts successfully
@@ -84,8 +66,9 @@ The system checks for Stripe keys in this order:
 
 ## 📋 How to Configure (Multiple Options)
 
-### Option 1: Cloud Console (Recommended for Production)
-```
+### Option 1 · Cloud Console (recommended)
+
+```text
 1. Go to: https://console.cloud.google.com/run/detail/us-central1/app
 2. Click "Edit & Deploy New Revision"
 3. Add variable:
@@ -94,23 +77,20 @@ The system checks for Stripe keys in this order:
 4. Click "Deploy"
 ```
 
-### Option 2: Firebase CLI (Legacy, Still Works)
+### Option 2 · Firebase CLI (secret manager)
+
 ```powershell
-firebase functions:config:set stripe.secret_key="sk_test_51SHW3qLr4v4blpwb..."
+firebase functions:secrets:set STRIPE_SECRET_KEY
+# Paste the key when prompted (CLI hides the value)
 firebase deploy --only functions:app
 ```
 
-### Option 3: Local Development (.env file)
+### Option 3 · Local development (.env file)
+
 ```env
 # api-functions/.env
 STRIPE_SECRET_KEY=sk_test_51SHW3qLr4v4blpwb...
 STRIPE_WEBHOOK_SECRET=whsec_VyOjYxkcsUXRhI1hrD2pHudzoSR9Pluq
-```
-
-### Option 4: Firebase Functions Secret (Most Secure)
-```powershell
-firebase functions:secrets:set STRIPE_SECRET_KEY
-# Paste your key when prompted
 ```
 
 ---
@@ -130,10 +110,10 @@ Check that Stripe is properly configured by looking at the logs:
 ```
 
 ### ❌ Error Messages (Need Action):
-```
+```text
 ⚠️ STRIPE_SECRET_KEY not configured - Stripe features will be disabled
-   Set via: firebase functions:config:set stripe.secret_key="sk_..."
-   Or via Cloud Console environment variables
+   Set via: firebase functions:secrets:set STRIPE_SECRET_KEY
+   Or provide STRIPE_SECRET_KEY in your deployment environment
 ```
 
 ---
@@ -192,9 +172,11 @@ gcloud run services update app \
 firebase functions:log --only app | Select-String "Stripe"
 ```
 
-### Step 3: Remove Firebase Config (Optional)
+### Step 3: Rotate or remove the secret (optional)
+
 ```powershell
-firebase functions:config:unset stripe.secret_key
+# Rotate by re-running the set command, or remove entirely if no longer needed
+firebase functions:secrets:destroy STRIPE_SECRET_KEY --project YOUR_PROJECT_ID
 ```
 
 ---

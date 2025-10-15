@@ -184,11 +184,10 @@ export GOOGLE_API_KEY=your-api-key
 NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL=https://your-cloud-run-url
 ```
 
-### Firebase Config
+### Firebase Secrets
 ```bash
-firebase functions:config:set \
-  project.id="your-project-id" \
-  region="us-central1"
+firebase functions:secrets:set PROJECT_ID
+firebase functions:secrets:set REGION
 ```
 
 ---

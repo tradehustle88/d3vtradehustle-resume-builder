@@ -160,23 +160,21 @@ firebase deploy --only functions:app
 ## Step 6: Set Production Environment Variables
 
 ```powershell
-# Set Stripe secret key
-firebase functions:config:set stripe.secret_key="sk_live_..."
+# Store Stripe secrets (CLI will prompt for the values)
+firebase functions:secrets:set STRIPE_SECRET_KEY
+firebase functions:secrets:set STRIPE_WEBHOOK_SECRET
 
-# Set Stripe webhook secret
-firebase functions:config:set stripe.webhook_secret="whsec_..."
+# Store Stripe price IDs (optional secrets or plain env vars)
+firebase functions:secrets:set STRIPE_PRICE_TRIAL
+firebase functions:secrets:set STRIPE_PRICE_PRO_MONTHLY
+firebase functions:secrets:set STRIPE_PRICE_PRO_ANNUAL
+firebase functions:secrets:set STRIPE_PRICE_BLUEPRINT
 
-# Set Stripe price IDs
-firebase functions:config:set stripe.price_trial="price_..."
-firebase functions:config:set stripe.price_pro_monthly="price_..."
-firebase functions:config:set stripe.price_pro_annual="price_..."
-firebase functions:config:set stripe.price_blueprint="price_..."
+# Store Google AI key
+firebase functions:secrets:set GOOGLE_API_KEY
 
-# Set Google API key
-firebase functions:config:set google.api_key="YOUR_GEMINI_API_KEY"
-
-# View all config
-firebase functions:config:get
+# List configured secrets
+firebase functions:secrets:list
 ```
 
 ---
@@ -343,7 +341,7 @@ firebase functions:log --since 1h
 ### Issue: "STRIPE_SECRET_KEY not defined"
 **Fix**: Ensure environment variables are set:
 ```powershell
-firebase functions:config:set stripe.secret_key="sk_live_..."
+firebase functions:secrets:set STRIPE_SECRET_KEY
 firebase deploy --only functions
 ```
 
