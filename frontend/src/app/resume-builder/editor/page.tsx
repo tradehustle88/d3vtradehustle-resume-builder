@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { trackCustomEvent } from '@/lib/analytics';
+import { editResume } from '@/lib/api';
+import { useAuth } from '@/lib/useAuth';
 
 interface ResumeData {
   personalInfo: {
@@ -38,7 +40,10 @@ export default function EditorPage() {
     certifications: []
   });
   const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [aiSuccess, setAiSuccess] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState('personal'); // personal, experience, skills, preview
+  const { user, getIdToken, loading: authLoading } = useAuth();
 
   useEffect(() => {
     const trade = localStorage.getItem('selectedTrade') || '';
@@ -47,30 +52,77 @@ export default function EditorPage() {
     setSelectedTemplate(template);
   }, []);
 
-  const handleAIAssist = async (field: string, context: string) => {
+  const formatExperienceForPrompt = () => {
+    return resumeData.experience
+      .filter(exp => exp.title || exp.company || exp.description)
+      .map(exp => `${exp.title || 'Role'} at ${exp.company || 'Company'} (${exp.duration || 'Duration'}): ${exp.description || ''}`)
+      .join('\n');
+  };
+
+  const handleAIAssist = async (field: 'summary' | 'experience', experienceIndex?: number) => {
     setAiLoading(true);
-    trackCustomEvent('ai_assist_used', { field, trade: selectedTrade });
+    setAiError(null);
+    setAiSuccess(null);
+
+    const analyticsPayload: Record<string, string | number | undefined> = {
+      field,
+      trade: selectedTrade,
+      experienceIndex
+    };
+    trackCustomEvent('ai_assist_used', analyticsPayload);
 
     try {
-      // TODO: Call your Firebase Function for AI generation
-      // const response = await editResume(context, field);
-
-      // Mock AI response for now
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      let aiContent = '';
-      if (field === 'summary') {
-        aiContent = `Experienced ${selectedTrade} professional with 5+ years in residential and commercial projects. Skilled in troubleshooting, installation, and maintenance with strong attention to safety protocols and customer service.`;
-      } else if (field === 'description') {
-        aiContent = `• Installed and maintained HVAC systems for residential and commercial clients\n• Diagnosed and repaired heating and cooling equipment, reducing downtime by 30%\n• Collaborated with team members to complete projects on time and within budget\n• Maintained detailed service records and communicated findings to customers`;
+      const idToken = await getIdToken();
+      if (!idToken) {
+        throw new Error('Please sign in to use AI assistance.');
       }
+
+      let prompt = '';
+      let resumeContent: string | undefined;
+
+      if (field === 'summary') {
+        const personalInfo = resumeData.personalInfo;
+        const skills = resumeData.skills.length ? resumeData.skills.join(', ') : 'Not specified';
+        const certifications = resumeData.certifications.length ? resumeData.certifications.join(', ') : 'Not specified';
+        const experienceContext = formatExperienceForPrompt();
+
+        prompt = `You are an expert resume writer. Write a 2-3 sentence professional summary for a ${selectedTrade || 'skilled trades'} professional. Highlight safety, technical skills, customer satisfaction, and measurable achievements when possible. Use the following context to inform the summary:\nName: ${personalInfo.name || 'Not provided'}\nLocation: ${personalInfo.location || 'Not provided'}\nSkills: ${skills}\nCertifications: ${certifications}\nExperience: ${experienceContext || 'Experience details not provided'}\nReturn only the summary text without headings.`;
+        resumeContent = resumeData.summary;
+      } else if (field === 'experience') {
+        if (typeof experienceIndex !== 'number') {
+          throw new Error('Experience index required for AI assistance.');
+        }
+        const experience = resumeData.experience[experienceIndex];
+        prompt = `You are a resume optimization assistant. Create 3-4 impactful resume bullet points for the role ${experience.title || selectedTrade || 'Skilled Trades Professional'} at ${experience.company || 'the company'}. Focus on safety, technical expertise, customer satisfaction, and quantifiable achievements. Each bullet should begin with "•" and highlight tools, certifications, or technologies relevant to skilled trades. Incorporate any measurable results, efficiency gains, or leadership examples based on this context: ${experience.description || 'No previous description provided.'}`;
+        resumeContent = experience.description;
+      }
+
+      const response = await editResume(idToken, prompt, resumeContent);
+
+      if (!response.success) {
+        throw new Error(response.message || 'AI request failed.');
+      }
+
+      const aiContent = response.result.trim();
 
       if (field === 'summary') {
         setResumeData(prev => ({ ...prev, summary: aiContent }));
+      } else if (field === 'experience' && typeof experienceIndex === 'number') {
+        setResumeData(prev => ({
+          ...prev,
+          experience: prev.experience.map((exp, idx) =>
+            idx === experienceIndex ? { ...exp, description: aiContent } : exp
+          )
+        }));
       }
 
+      setAiSuccess('AI suggestion applied successfully.');
+      trackCustomEvent('ai_assist_success', analyticsPayload);
     } catch (error) {
       console.error('AI assist error:', error);
+      const message = error instanceof Error ? error.message : 'AI assistance failed. Please try again.';
+      setAiError(message);
+      trackCustomEvent('ai_assist_failed', { ...analyticsPayload, message });
     } finally {
       setAiLoading(false);
     }
@@ -186,6 +238,21 @@ export default function EditorPage() {
                   <span className="text-sm">AI is writing...</span>
                 </div>
               )}
+              {!aiLoading && aiSuccess && (
+                <div className="text-sm text-green-200 bg-green-500/10 border border-green-400/40 rounded-lg px-3 py-2">
+                  {aiSuccess}
+                </div>
+              )}
+              {!aiLoading && aiError && (
+                <div className="text-sm text-red-200 bg-red-500/10 border border-red-400/40 rounded-lg px-3 py-2">
+                  {aiError}
+                </div>
+              )}
+              {!aiLoading && !aiError && !aiSuccess && !authLoading && !user && (
+                <div className="text-sm text-purple-100 bg-purple-500/10 border border-purple-400/40 rounded-lg px-3 py-2">
+                  Sign in to unlock AI-powered resume writing.
+                </div>
+              )}
             </div>
           </div>
 
@@ -273,8 +340,8 @@ export default function EditorPage() {
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-white">Professional Summary</h2>
                     <button
-                      onClick={() => handleAIAssist('summary', `${selectedTrade} professional`)}
-                      disabled={aiLoading}
+                      onClick={() => handleAIAssist('summary')}
+                      disabled={aiLoading || (!user && !authLoading)}
                       className="py-2 px-4 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg disabled:opacity-50 flex items-center gap-2"
                     >
                       {aiLoading ? '🔄' : '🤖'} AI Assist
@@ -355,8 +422,8 @@ export default function EditorPage() {
                         <div className="flex justify-between items-center mb-2">
                           <label className="block text-sm font-medium text-gray-300">Job Description</label>
                           <button
-                            onClick={() => handleAIAssist('description', `${exp.title} at ${exp.company}`)}
-                            disabled={aiLoading}
+                            onClick={() => handleAIAssist('experience', index)}
+                            disabled={aiLoading || (!user && !authLoading)}
                             className="py-1 px-3 bg-purple-600 hover:bg-purple-500 text-white text-sm rounded-md disabled:opacity-50 flex items-center gap-1"
                           >
                             {aiLoading ? '🔄' : '🤖'} AI
@@ -406,6 +473,14 @@ export default function EditorPage() {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Technical Skills</label>
                       <input
                         type="text"
+                        value={resumeData.skills.join(', ')}
+                        onChange={(e) => {
+                          const skills = e.target.value
+                            .split(',')
+                            .map(skill => skill.trim())
+                            .filter(Boolean);
+                          setResumeData(prev => ({ ...prev, skills }));
+                        }}
                         placeholder="HVAC Systems, Electrical Troubleshooting, Blueprint Reading (separate with commas)"
                         className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-gray-300 focus:outline-none focus:border-red-400"
                       />
@@ -415,6 +490,14 @@ export default function EditorPage() {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Certifications</label>
                       <input
                         type="text"
+                        value={resumeData.certifications.join(', ')}
+                        onChange={(e) => {
+                          const certifications = e.target.value
+                            .split(',')
+                            .map(cert => cert.trim())
+                            .filter(Boolean);
+                          setResumeData(prev => ({ ...prev, certifications }));
+                        }}
                         placeholder="EPA 608, OSHA 10, Journeyman License (separate with commas)"
                         className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-gray-300 focus:outline-none focus:border-red-400"
                       />
@@ -455,6 +538,20 @@ export default function EditorPage() {
                       <div className="mb-6">
                         <h2 className="text-xl font-bold border-b-2 border-gray-300 pb-1 mb-3">Professional Summary</h2>
                         <p className="text-gray-700">{resumeData.summary}</p>
+                      </div>
+                    )}
+
+                    {!!resumeData.skills.length && (
+                      <div className="mb-6">
+                        <h2 className="text-xl font-bold border-b-2 border-gray-300 pb-1 mb-3">Key Skills</h2>
+                        <p className="text-gray-700">{resumeData.skills.join(', ')}</p>
+                      </div>
+                    )}
+
+                    {!!resumeData.certifications.length && (
+                      <div className="mb-6">
+                        <h2 className="text-xl font-bold border-b-2 border-gray-300 pb-1 mb-3">Certifications</h2>
+                        <p className="text-gray-700">{resumeData.certifications.join(', ')}</p>
                       </div>
                     )}
 
