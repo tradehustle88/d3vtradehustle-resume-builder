@@ -4,18 +4,19 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/firebase";
+import type { User } from "firebase/auth";
 
 export default function PricingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState("");
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((u) => setUser(u));
     return () => unsubscribe();
   }, []);
 
-  const handleSubscribe = async (tierId, priceId) => {
+  const handleSubscribe = async (tierId: string, priceId: string) => {
     if (!user) {
       router.push("/login?redirect=/pricing");
       return;

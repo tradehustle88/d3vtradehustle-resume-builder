@@ -61,15 +61,33 @@ export async function unlockResume(email: string, token: string) {
   });
 }
 
-// Edit resume content - now requires authentication
-export async function editResume(idToken: string, prompt: string, resumeContent?: string) {
-  return request<{ success: boolean; result: string; message: string }>("/api/editResume", {
+// Edit resume content with Vertex AI support - requires authentication
+export async function editResume(
+  idToken: string, 
+  prompt: string, 
+  resumeContent?: string,
+  useVertexAI: boolean = true
+) {
+  return request<{ 
+    success: boolean; 
+    result: string; 
+    message: string;
+    metadata?: {
+      model: string;
+      provider: string;
+      tokens: number;
+    }
+  }>("/api/editResume", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       "Authorization": `Bearer ${idToken}`,
     },
-    body: JSON.stringify({ prompt, resumeContent }),
+    body: JSON.stringify({ 
+      prompt, 
+      resumeContent,
+      useVertexAI // Enable Vertex AI by default (more secure, scalable)
+    }),
   });
 }
 

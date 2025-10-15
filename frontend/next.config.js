@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  // output: 'export',  // Disabled for development - enable for production static builds
+  output: 'export',  // Static export for Firebase Hosting
   trailingSlash: true,  // Add trailing slashes for better static hosting compatibility
   images: {
     unoptimized: true,  // Keep this for Firebase compatibility

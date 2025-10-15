@@ -275,13 +275,14 @@ app.post("/api/unlock-resume", honeypotCheck, verifyUser, async (req, res) => {
   }
 });
 //
-// Resume Editing (Gemini 2.5 Flash Preview) - Protected with authentication
+// Resume Editing with Vertex AI - Protected with authentication
+// Supports both Vertex AI (primary) and Gemini API (fallback)
 //
 app.post("/api/editResume", honeypotCheck, verifyUser, async (req, res) => {
   try {
     // User is already authenticated via verifyUser middleware
     const {uid, email, displayName} = req.user;
-    const {prompt, resumeContent} = req.body;
+    const {prompt, resumeContent, useVertexAI = true} = req.body;
 
     console.log(`✏️ Processing edit request for ${email} (${uid})`);
 
@@ -291,17 +292,6 @@ app.post("/api/editResume", honeypotCheck, verifyUser, async (req, res) => {
         message: "Missing prompt for resume editing",
       });
     }
-
-    if (!genAI) {
-      return res.status(503).json({
-        success: false,
-        message: "AI service not available. Please configure GOOGLE_API_KEY.",
-      });
-    }
-
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash-preview-09-2025",
-    });
 
     // Enhanced prompt with user context
     const enhancedPrompt = `
@@ -313,8 +303,73 @@ app.post("/api/editResume", honeypotCheck, verifyUser, async (req, res) => {
       Please provide professional resume editing suggestions.
     `;
 
-    const result = await model.generateContent(enhancedPrompt);
-    const text = result.response.text();
+    let text = "";
+    let modelUsed = "";
+    let provider = "";
+
+    // Try Vertex AI first (recommended for production)
+    if (useVertexAI && vertexAI) {
+      try {
+        console.log("🚀 Using Vertex AI (Gemini 1.5 Pro)...");
+        
+        const model = vertexAI.getGenerativeModel({
+          model: "gemini-1.5-pro",
+        });
+
+        const input = [{
+          role: "user",
+          parts: [{text: enhancedPrompt}],
+        }];
+
+        const result = await model.generateContent({
+          contents: input,
+        });
+
+        const response = await result.response;
+        text = response.candidates[0].content.parts[0].text;
+        modelUsed = "gemini-1.5-pro";
+        provider = "vertex-ai";
+        
+        console.log("✅ Vertex AI response received");
+      } catch (vertexError) {
+        console.warn("⚠️ Vertex AI failed, falling back to Gemini API:", vertexError.message);
+        
+        // Fallback to Gemini API
+        if (genAI) {
+          const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash-preview-09-2025",
+          });
+
+          const result = await model.generateContent(enhancedPrompt);
+          text = result.response.text();
+          modelUsed = "gemini-2.5-flash-preview-09-2025";
+          provider = "gemini-api";
+          
+          console.log("✅ Gemini API fallback successful");
+        } else {
+          throw new Error("Both Vertex AI and Gemini API unavailable");
+        }
+      }
+    } else if (genAI) {
+      // Use Gemini API directly
+      console.log("🚀 Using Gemini API directly...");
+      
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash-preview-09-2025",
+      });
+
+      const result = await model.generateContent(enhancedPrompt);
+      text = result.response.text();
+      modelUsed = "gemini-2.5-flash-preview-09-2025";
+      provider = "gemini-api";
+      
+      console.log("✅ Gemini API response received");
+    } else {
+      return res.status(503).json({
+        success: false,
+        message: "AI service not available. Please configure GOOGLE_API_KEY or enable Vertex AI.",
+      });
+    }
 
     // Save editing session to user's history
     await db.collection("resumeEdits").add({
@@ -323,13 +378,20 @@ app.post("/api/editResume", honeypotCheck, verifyUser, async (req, res) => {
       prompt,
       result: text,
       createdAt: new Date(),
-      model: "gemini-2.5-flash-preview-09-2025",
+      model: modelUsed,
+      provider,
+      contentLength: text.length,
     });
 
     res.json({
       success: true,
       result: text,
       message: `Resume editing completed for ${displayName || email}`,
+      metadata: {
+        model: modelUsed,
+        provider,
+        tokens: text.length, // Approximate
+      },
     });
   } catch (err) {
     console.error("❌ Resume editing error:", err);

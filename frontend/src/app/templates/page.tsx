@@ -1,15 +1,6 @@
 'use client'
-import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
 import TemplateGallery from '@/components/TemplateGallery'
-
-function TemplatesContent() {
-  const searchParams = useSearchParams()
-  const trade = searchParams.get('trade') || 'electrician'
-  const customTradeName = searchParams.get('name')
-
-  return <TemplateGallery trade={trade} customTradeName={customTradeName || undefined} />
-}
 
 export default function TemplatesPage() {
   return (
@@ -18,7 +9,7 @@ export default function TemplatesPage() {
         <div className="text-white text-2xl">Loading templates...</div>
       </div>
     }>
-      <TemplatesContent />
+      <TemplateGallery />
     </Suspense>
   )
 }

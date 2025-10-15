@@ -1,0 +1,1 @@
+http://localhost:3001/wizard?trade=electricianhttp://localhost:3001/wizard?trade=electrician

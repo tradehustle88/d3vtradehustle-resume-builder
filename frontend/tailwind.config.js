@@ -14,6 +14,7 @@ module.exports = {
       colors: {
         hustleRed: '#8b0000',
         hustleGold: '#ffd700',
+        hustleYellow: '#ffd700',
         hustleNavy: '#001a33',
       },
       // 12-Column Modular Grid System
@@ -36,6 +37,7 @@ module.exports = {
       },
       animation: {
         'float-slow': 'float 6s ease-in-out infinite',
+        'float': 'float 3s ease-in-out infinite',
       },
       keyframes: {
         float: {

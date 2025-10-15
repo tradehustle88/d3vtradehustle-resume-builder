@@ -96,12 +96,12 @@ export default function TradeSelectionGrid() {
 
   const handleTradeSelect = (tradeId: string) => {
     setSelectedTrade(tradeId)
-    router.push(`/templates?trade=${tradeId}`)
+    router.push(`/wizard?trade=${tradeId}`)
   }
 
   const handleCustomSubmit = () => {
     if (customTrade.trim()) {
-      router.push(`/templates?trade=custom&name=${encodeURIComponent(customTrade)}`)
+      router.push(`/wizard?trade=custom&name=${encodeURIComponent(customTrade)}`)
     }
   }
 
