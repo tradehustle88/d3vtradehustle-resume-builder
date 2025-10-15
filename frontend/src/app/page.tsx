@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 export default function Home() {
   return (
     <div className="bg-[#0A0A0A] min-h-screen">
@@ -32,12 +34,12 @@ export default function Home() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <button className="px-8 py-4 bg-[#DC2626] text-white font-bold rounded-lg hover:bg-[#B91C1C] transition-all transform hover:scale-105" style={{boxShadow: '0 0 20px rgba(220, 38, 38, 0.5)'}}>
+                <Link href="/templates" className="px-8 py-4 bg-[#DC2626] text-white font-bold rounded-lg hover:bg-[#B91C1C] transition-all transform hover:scale-105 text-center" style={{boxShadow: '0 0 20px rgba(220, 38, 38, 0.5)'}}>
                   View Templates & Start
-                </button>
-                <button className="px-8 py-4 bg-white/5 border border-white/20 text-white font-bold rounded-lg hover:bg-white/10 transition-all">
+                </Link>
+                <Link href="/builder" className="px-8 py-4 bg-white/5 border border-white/20 text-white font-bold rounded-lg hover:bg-white/10 transition-all text-center">
                   Import from Indeed
-                </button>
+                </Link>
               </div>
             </div>
             
@@ -167,9 +169,9 @@ export default function Home() {
           <p className="text-xl text-gray-300 mb-4">We never sell your info. Ever.</p>
           <p className="text-lg text-gray-400 mb-12">Delete your resume anytime—one click, it's gone for good.</p>
           
-          <button className="px-12 py-5 bg-[#DC2626] text-white text-xl font-bold rounded-lg hover:bg-[#B91C1C] transition-all transform hover:scale-105" style={{boxShadow: '0 0 30px rgba(220, 38, 38, 0.6)'}}>
+          <Link href="/builder" className="inline-block px-12 py-5 bg-[#DC2626] text-white text-xl font-bold rounded-lg hover:bg-[#B91C1C] transition-all transform hover:scale-105" style={{boxShadow: '0 0 30px rgba(220, 38, 38, 0.6)'}}>
             Start Building Your Resume
-          </button>
+          </Link>
         </div>
       </section>
     </div>
