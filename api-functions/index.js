@@ -49,10 +49,8 @@ const limiter = rateLimit({
   message: "Too many requests, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
-  // Use X-Forwarded-For header from Cloud Run proxy
-  keyGenerator: (req) => {
-    return req.ip || req.headers["x-forwarded-for"] || "unknown";
-  },
+  // Trust proxy is set, so req.ip will work correctly
+  skip: () => false, // Don't skip any requests
 });
 app.use(limiter);
 
@@ -1595,9 +1593,18 @@ const stripeSecretKey = defineSecret("STRIPE_SECRET_KEY");
 const stripeWebhookSecret = defineSecret("STRIPE_WEBHOOK_SECRET");
 const gmailUser = defineSecret("GMAIL_USER");
 const gmailAppPassword = defineSecret("GMAIL_APP_PASSWORD");
+const recaptchaSecret = defineSecret("RECAPTCHA_SECRET");
+const googleApiKey = defineSecret("GOOGLE_API_KEY");
 
 exports.app = onRequest({
-  secrets: [stripeSecretKey, stripeWebhookSecret, gmailUser, gmailAppPassword],
+  secrets: [
+    stripeSecretKey,
+    stripeWebhookSecret,
+    gmailUser,
+    gmailAppPassword,
+    recaptchaSecret,
+    googleApiKey,
+  ],
 }, app);
 
 // ❌ INDIVIDUAL EXPORTS - Commented out to avoid deployment conflicts
