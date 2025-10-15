@@ -13,3 +13,9 @@ api-functions/.env
 functions/.env
 .firebase/logs/
 .firebase/logs/vsce-debug.log
+firebase-debug.log
+
+# Python virtual environments
+.venv312/
+venv/
+.venv/

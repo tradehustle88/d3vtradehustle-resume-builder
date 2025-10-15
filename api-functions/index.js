@@ -12,6 +12,7 @@
 
 const {onRequest} = require("firebase-functions/v2/https");
 const {setGlobalOptions} = require("firebase-functions/v2");
+const {defineSecret} = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const express = require("express");
 const nodemailer = require("nodemailer");
@@ -33,6 +34,9 @@ setGlobalOptions({maxInstances: 10});
 admin.initializeApp();
 const app = express();
 
+// Trust proxy for Cloud Run/Cloud Functions
+app.set("trust proxy", true);
+
 // Middleware
 app.use(cors({origin: true}));
 app.use(express.json());
@@ -45,6 +49,10 @@ const limiter = rateLimit({
   message: "Too many requests, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
+  // Use X-Forwarded-For header from Cloud Run proxy
+  keyGenerator: (req) => {
+    return req.ip || req.headers["x-forwarded-for"] || "unknown";
+  },
 });
 app.use(limiter);
 
@@ -155,7 +163,7 @@ app.get("/api/status", (req, res) => {
       googleAI: process.env.GOOGLE_API_KEY ? "configured" : "not-configured",
       vertexAI: !!vertexAI && !!process.env.PROJECT_ID ? "configured" : "not-configured",
       recaptcha: process.env.RECAPTCHA_SECRET ? "configured" : "not-configured",
-      gmail: !!process.env.GMAIL_USER && !!process.env.GMAIL_PASS ? "configured" : "not-configured",
+      gmail: !!process.env.GMAIL_USER && !!process.env.GMAIL_APP_PASSWORD ? "configured" : "not-configured",
     },
   });
 });
@@ -193,16 +201,16 @@ app.post("/signup", async (req, res) => {
     });
 
     // Send Gmail confirmation
-    const gmailUser = process.env.GMAIL_USER;
-    const gmailPass = process.env.GMAIL_PASS;
-    if (gmailUser && gmailPass) {
+    const gmailUserVal = process.env.GMAIL_USER;
+    const gmailPassVal = process.env.GMAIL_APP_PASSWORD;
+    if (gmailUserVal && gmailPassVal) {
       const transporter = nodemailer.createTransport({
         service: "gmail",
-        auth: {user: gmailUser, pass: gmailPass},
+        auth: {user: gmailUserVal, pass: gmailPassVal},
       });
 
       await transporter.sendMail({
-        from: `"Trade Hustle" <${gmailUser}>`,
+        from: `"Trade Hustle" <${gmailUserVal}>`,
         to: email,
         subject: "Your Free Resume Kit",
         html: `
@@ -1583,7 +1591,14 @@ app.get("/", (req, res) => {
 //
 
 // ✅ MAIN EXPORT - Keep this one
-exports.app = onRequest(app);
+const stripeSecretKey = defineSecret("STRIPE_SECRET_KEY");
+const stripeWebhookSecret = defineSecret("STRIPE_WEBHOOK_SECRET");
+const gmailUser = defineSecret("GMAIL_USER");
+const gmailAppPassword = defineSecret("GMAIL_APP_PASSWORD");
+
+exports.app = onRequest({
+  secrets: [stripeSecretKey, stripeWebhookSecret, gmailUser, gmailAppPassword],
+}, app);
 
 // ❌ INDIVIDUAL EXPORTS - Commented out to avoid deployment conflicts
 // These cause "Secret environment variable overlaps" errors
