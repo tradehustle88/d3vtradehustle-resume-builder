@@ -369,12 +369,6 @@
   }
 }
 
-/* Hero gradient background */
-.hero-gradient {
-  background: linear-gradient(180deg, #000000 0%, #0A1B3A 60%, #000000 100%);
-  background-attachment: fixed;
-}
-
 /* Glowing text class */
 .glow-text {
   animation: electricGlow 4s ease-in-out infinite alternate;
