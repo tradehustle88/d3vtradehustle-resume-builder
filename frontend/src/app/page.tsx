@@ -4,18 +4,66 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 export default function Home() {
-  // Initialize magnetic button effect
+  // Initialize magnetic button effect and ambient animations
   useEffect(() => {
     import('@/styles/button-magnetic').then(module => {
       module.initMagneticButtons();
     });
+    
+    // Mouse glow effect
+    const handleMouseMove = (e: MouseEvent) => {
+      const glow = document.getElementById('mouseGlow');
+      if (glow) {
+        glow.style.left = `${e.clientX}px`;
+        glow.style.top = `${e.clientY}px`;
+      }
+    };
+    
+    // Parallax scroll effect
+    const handleScroll = () => {
+      const scrolled = window.scrollY;
+      const heroVideo = document.getElementById('heroVideo');
+      const toolsBackground = document.querySelector('.hero-gradient') as HTMLElement;
+      
+      if (heroVideo) {
+        heroVideo.style.transform = `translateY(${scrolled * 0.3}px)`;
+      }
+      if (toolsBackground) {
+        toolsBackground.style.transform = `translateY(${scrolled * 0.1}px)`;
+      }
+    };
+    
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
+  
   return (
     <div className="bg-white min-h-screen">
-      {/* Hero Section with Tools Gradient Backdrop */}
+      {/* Mouse glow effect */}
+      <div id="mouseGlow" className="mouse-glow" />
+      
+      {/* Hero Section with Video & Tools Gradient Backdrop */}
       <section className="hero-gradient overflow-hidden">
+        {/* Background Video Loop */}
+        <video 
+          autoPlay 
+          muted 
+          loop 
+          playsInline 
+          id="heroVideo"
+          className="hero-video"
+          poster="/tools-background.png"
+        >
+          <source src="/videos/trade-hero.mp4" type="video/mp4" />
+          {/* Fallback for browsers that don't support video */}
+        </video>
         
-        <div className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
+        <div className="hero-content relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left: Copy */}
             <div>

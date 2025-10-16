@@ -391,6 +391,23 @@
   background: url('/tools-background.png') no-repeat center/cover;
   position: relative;
   padding: 120px 20px;
+  transition: transform 0.5s ease-out;
+  will-change: transform;
+}
+
+/* Hero Background Video */
+.hero-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.3;
+  z-index: 0;
+  transition: transform 0.3s ease-out;
+  will-change: transform;
+  pointer-events: none;
 }
 
 .hero-gradient::before {
@@ -402,9 +419,56 @@
   z-index: 1;
 }
 
-.hero-gradient > * {
+.hero-content {
   position: relative;
   z-index: 2;
+}
+
+/* Mouse Glow Effect */
+.mouse-glow {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(22, 115, 255, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { 
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  50% { 
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.hero-gradient:hover .mouse-glow {
+  opacity: 1;
+}
+
+/* Tool Shimmer Animation */
+@keyframes toolShimmer {
+  0%, 100% { 
+    opacity: 0.3;
+    filter: brightness(1);
+  }
+  50% { 
+    opacity: 0.5;
+    filter: brightness(1.2);
+  }
+}
+
+.hero-video {
+  animation: toolShimmer 4s ease-in-out infinite;
 }
 
 /* Accessibility: Reduced motion support */
@@ -414,8 +478,16 @@
   .animate-slow-float-alt,
   .animate-spin,
   .glow-text,
-  .hero-title-enhanced {
+  .hero-title-enhanced,
+  .hero-video,
+  .mouse-glow {
     animation: none !important;
+    transition: none !important;
+  }
+  
+  .hero-gradient,
+  .hero-video {
+    transform: none !important;
   }
   
   video {
