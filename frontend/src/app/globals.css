@@ -392,6 +392,27 @@
   -webkit-text-stroke: 1px rgba(255, 200, 150, 0.5);
 }
 
+/* Hero Gradient Background */
+.hero-gradient {
+  background: url('/tools-background.png') no-repeat center/cover;
+  position: relative;
+  padding: 120px 20px;
+}
+
+.hero-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.1), #ffffff 85%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-gradient > * {
+  position: relative;
+  z-index: 2;
+}
+
 /* Accessibility: Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   .animate-coin-spin,
@@ -433,5 +454,394 @@
 }
 .animate-float-slow {
   animation: float-slow 10s ease-in-out infinite;
+}
+
+/* ===========================================
+   BUTTON STYLES SYSTEM
+   =========================================== */
+
+/* Primary CTA Button - Electric Blue Gradient */
+.btn-primary {
+  position: relative;
+  display: inline-block;
+  padding: 0.85rem 2.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #1673FF 0%, #4D9EFF 100%);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 20px rgba(22, 115, 255, 0.3);
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Hover lift and glow effect */
+.btn-primary:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 30px rgba(22, 115, 255, 0.6), 0 0 40px rgba(22, 115, 255, 0.4);
+  background: linear-gradient(135deg, #1673FF 0%, #6BB0FF 100%);
+}
+
+.btn-primary:active {
+  transform: translateY(-2px) scale(0.98);
+  box-shadow: 0 4px 20px rgba(22, 115, 255, 0.5);
+}
+
+/* Click ripple effect */
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-primary:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 0;
+  transition: width 0s, height 0s, opacity 0.6s;
+}
+
+/* Secondary CTA Button - White with Blue Border */
+.btn-secondary {
+  position: relative;
+  display: inline-block;
+  padding: 0.85rem 2.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: white;
+  background: transparent;
+  border: 2px solid rgba(22, 115, 255, 0.5);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 0 rgba(22, 115, 255, 0);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  overflow: hidden;
+}
+
+/* Gradient fill on hover */
+.btn-secondary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1673FF 0%, #4D9EFF 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.btn-secondary:hover {
+  border-color: #1673FF;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(22, 115, 255, 0.4), 0 0 30px rgba(22, 115, 255, 0.3);
+}
+
+.btn-secondary:hover::before {
+  opacity: 1;
+}
+
+.btn-secondary:active {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(22, 115, 255, 0.3);
+}
+
+/* Gold CTA Button */
+.btn-gold {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 700;
+  color: #000000;
+  background: #FFD700;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+  border: none;
+  cursor: pointer;
+}
+.btn-gold:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+/* Electric Blue Button (Alternative style) */
+.btn-electric {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  color: white;
+  background: #1673FF;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-electric:hover {
+  background: #4D9EFF;
+  box-shadow: 0 0 20px rgba(22, 115, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Tertiary Gray Button */
+.btn-tertiary {
+  display: inline-block;
+  padding: 0.65rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  color: white;
+  background: #374151;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+.btn-tertiary:hover {
+  background: #4B5563;
+}
+
+/* Danger Red Button */
+.btn-danger {
+  display: inline-block;
+  padding: 0.65rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  color: white;
+  background: #8B0000;
+  transition: all 0.3s ease;
+}
+.btn-danger:hover {
+  background: #991B1B;
+}
+
+/* Ghost/Outline Button */
+.btn-ghost {
+  display: inline-block;
+  padding: 0.65rem 2rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  color: white;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+/* Glass/Glassmorphic Button */
+.btn-glass {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+.btn-glass:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 215, 0, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Icon-Only Button */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+.btn-icon:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: scale(1.1);
+}
+
+/* Button Size Modifiers */
+.btn-sm {
+  padding: 0.5rem 1.5rem;
+  font-size: 0.875rem;
+}
+
+.btn-lg {
+  padding: 1rem 3rem;
+  font-size: 1.125rem;
+}
+
+.btn-xl {
+  padding: 1.25rem 4rem;
+  font-size: 1.25rem;
+  letter-spacing: 2px;
+}
+
+/* Button States */
+button:disabled,
+button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Loading Button State */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Button Group */
+.btn-group {
+  display: inline-flex;
+  gap: 0;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.btn-group button {
+  border-radius: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-group button:first-child {
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.btn-group button:last-child {
+  border-radius: 0 0.5rem 0.5rem 0;
+  border-right: none;
+}
+
+/* Gradient Animated Button */
+.btn-gradient-animated {
+  display: inline-block;
+  padding: 0.85rem 2.5rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: white;
+  background: linear-gradient(90deg, #8b0000, #ff0000, #8b0000);
+  background-size: 200% 100%;
+  transition: all 0.3s ease;
+  animation: gradient-shift 3s ease infinite;
+}
+
+.btn-gradient-animated:hover {
+  filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.9));
+  transform: translateY(-2px);
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* Pulsing Button */
+.btn-pulse {
+  animation: pulse-scale 2s ease-in-out infinite;
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Glowing Button */
+.btn-glow {
+  display: inline-block;
+  padding: 0.85rem 2.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  color: white;
+  background: linear-gradient(135deg, #1673FF, #4D9EFF);
+  box-shadow: 0 0 20px rgba(22, 115, 255, 0.5);
+  animation: glow-pulse 2s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+
+.btn-glow:hover {
+  box-shadow: 0 0 30px rgba(22, 115, 255, 0.8);
+  transform: translateY(-2px);
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(22, 115, 255, 0.5); }
+  50% { box-shadow: 0 0 30px rgba(22, 115, 255, 0.7); }
+}
+
+/* Focus States for Accessibility */
+button:focus-visible {
+  outline: 2px solid #FFD700;
+  outline-offset: 2px;
+}
+
+/* Ripple Effect Animation */
+.ripple-effect {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  animation: ripple-animation 0.6s ease-out;
+}
+
+@keyframes ripple-animation {
+  0% {
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+  }
+  100% {
+    width: 300px;
+    height: 300px;
+    opacity: 0;
+  }
+}
+
+/* Magnetic button smooth transitions */
+.btn-primary,
+.btn-secondary,
+.magnetic-button {
+  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
+              box-shadow 0.3s ease,
+              background 0.3s ease;
 }
 
