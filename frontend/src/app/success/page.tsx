@@ -1,13 +1,9 @@
 'use client'
 import Link from 'next/link'
-import { PaintPreset } from '@/components/PaintSplatter'
 
 export default function SuccessPage() {
   return (
-    <section className="relative min-h-screen bg-black text-white overflow-hidden flex items-center justify-center">
-      {/* Celebration Paint Splatters */}
-      <PaintPreset preset="successCelebration" />
-      
+    <section className="relative min-h-screen bg-gradient-to-br from-white via-blue-50 to-white overflow-hidden flex items-center justify-center">
       <div className="relative z-10 text-center max-w-2xl mx-auto px-6">
         {/* Success Icon */}
         <div className="text-8xl mb-8">🎉</div>
@@ -17,11 +13,11 @@ export default function SuccessPage() {
           PAYMENT SUCCESSFUL!
         </h1>
         
-        <h2 className="text-3xl font-bold text-[#ffd700] mb-8">
+        <h2 className="text-3xl font-bold text-[#D4A017] mb-8">
           Welcome to Trade Hustle Resume Builder
         </h2>
         
-        <p className="text-xl text-gray-300 mb-12 leading-relaxed">
+        <p className="text-xl text-gray-700 mb-12 leading-relaxed">
           Your payment has been processed successfully. You now have full access to our AI-powered resume builder. 
           Let's get you that dream job!
         </p>
@@ -35,16 +31,16 @@ export default function SuccessPage() {
           </Link>
           
           <Link href="/">
-            <button className="w-full sm:w-auto bg-transparent border-2 border-[#ffd700] text-[#ffd700] hover:bg-[#ffd700] hover:text-black font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300">
+            <button className="w-full sm:w-auto bg-transparent border-2 border-[#D4A017] text-[#D4A017] hover:bg-[#D4A017] hover:text-white font-bold py-4 px-8 rounded-lg text-xl transition-all duration-300">
               BACK TO HOME
             </button>
           </Link>
         </div>
         
         {/* Additional Info */}
-        <div className="mt-16 p-6 bg-gradient-to-b from-[#111] to-[#222] border border-gray-700 rounded-xl">
-          <h3 className="text-xl font-bold text-[#ffd700] mb-4">What's Next?</h3>
-          <div className="text-left space-y-3 text-gray-300">
+        <div className="mt-16 p-6 bg-white border-2 border-gray-200 rounded-xl shadow-lg">
+          <h3 className="text-xl font-bold text-[#D4A017] mb-4">What's Next?</h3>
+          <div className="text-left space-y-3 text-gray-700">
             <div className="flex items-start">
               <span className="text-[#E50914] mr-3 mt-1">1.</span>
               <span>Start with our AI assistant to generate professional content</span>

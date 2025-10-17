@@ -12,10 +12,16 @@ module.exports = {
         body: ['EB Garamond', 'serif'],
       },
       colors: {
-        hustleRed: '#8b0000',
-        hustleGold: '#ffd700',
-        hustleYellow: '#ffd700',
-        hustleNavy: '#001a33',
+        // BRIGHT THEME Hustle Colors - use for accents, not fills
+        hustleRed: '#E50914',        // Primary CTA color
+        hustleYellow: '#D4A017',     // Highlight/accent color
+        hustleBlue: '#1673FF',       // Interactive/focus color
+        hustleGold: '#D4A017',       // Legacy alias for yellow
+        hustleNavy: '#001a33',       // Legacy (minimize use)
+        // Neutral foundation
+        neutralBg: '#f8f9fb',        // Page background
+        neutralText: '#1a1a1a',      // Primary text
+        neutralCard: '#ffffff',      // Card backgrounds
       },
       // 12-Column Modular Grid System
       gridTemplateColumns: {

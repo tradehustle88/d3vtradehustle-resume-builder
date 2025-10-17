@@ -212,7 +212,7 @@ export default function TradeAIAssistant() {
 
           {/* Output Display */}
           {output && (
-            <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 max-h-96 overflow-y-auto">
+            <div className="bg-white border-2 border-hustleBlue/15 rounded-lg p-4 max-h-96 overflow-y-auto shadow-inner">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-[#ffd700] font-semibold flex items-center">
                   <span className="mr-2">✨</span>

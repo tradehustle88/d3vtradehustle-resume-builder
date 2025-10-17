@@ -1,3 +1,4 @@
 {
-    "chat.sendElementsToChat.enabled": false
+    "chat.sendElementsToChat.enabled": false,
+    "chatgpt.openOnStartup": true
 }

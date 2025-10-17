@@ -106,7 +106,7 @@ export default function TradeSelectionGrid() {
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-black to-gray-900 py-16 px-4">
+    <section className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-5xl font-extrabold text-white mb-4">
@@ -160,7 +160,7 @@ export default function TradeSelectionGrid() {
         <div className="max-w-2xl mx-auto">
           <button
             onClick={() => setShowCustomInput(!showCustomInput)}
-            className="w-full bg-gradient-to-r from-gray-700 to-gray-900 hover:from-gray-600 hover:to-gray-800 text-white font-bold py-6 px-8 rounded-xl transition-all duration-300 shadow-lg border-2 border-gray-600 hover:border-[#FFD700]"
+            className="w-full bg-hustleRed hover:bg-hustleRed/90 text-white font-bold py-6 px-8 rounded-xl transition-all duration-300 shadow-[0_4px_16px_rgba(229,9,20,0.25)] border-2 border-hustleRed hover:shadow-[0_6px_24px_rgba(229,9,20,0.35)]"
           >
             <span className="text-3xl mr-3">📝</span>
             <span className="text-xl">Custom Trade / Other</span>
@@ -176,7 +176,7 @@ export default function TradeSelectionGrid() {
                 value={customTrade}
                 onChange={(e) => setCustomTrade(e.target.value)}
                 placeholder="e.g., Landscaper, Roofer, Painter..."
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#FFD700] mb-4"
+                className="w-full px-4 py-3 bg-white border-2 border-hustleBlue/20 rounded-lg text-neutralText placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-hustleBlue focus:border-hustleBlue mb-4"
                 onKeyPress={(e) => e.key === 'Enter' && handleCustomSubmit()}
               />
               <button

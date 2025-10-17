@@ -208,7 +208,7 @@ export default function ResumeRefiner({
 
       {/* Results Display */}
       {result && (
-        <div className="mt-4 p-3 bg-gray-900 border border-gray-700 rounded">
+        <div className="mt-4 p-3 bg-white border-2 border-hustleBlue/15 rounded shadow-sm">
           <div className="flex items-center justify-between mb-2">
             <h4 className="text-[#ffd700] font-medium text-sm">✨ Refined Content:</h4>
             <button

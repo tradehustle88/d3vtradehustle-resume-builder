@@ -84,7 +84,7 @@ export default function ResumePreview({ resumeData, trade, templateId }: ResumeP
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-black to-gray-900 py-16 px-4">
+    <section className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 py-16 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
@@ -283,7 +283,7 @@ export default function ResumePreview({ resumeData, trade, templateId }: ResumeP
 
       {/* Pricing Modal Trigger */}
       {showPricingModal && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-white/95 backdrop-blur z-50 flex items-center justify-center p-4">
           <div className="bg-gray-800 rounded-xl max-w-2xl w-full p-8">
             <h3 className="text-3xl font-bold text-white mb-4">Ready to Download?</h3>
             <p className="text-gray-300 mb-6">Choose your download option to continue</p>
