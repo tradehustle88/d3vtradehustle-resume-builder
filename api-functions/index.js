@@ -409,6 +409,155 @@ app.post("/api/editResume", honeypotCheck, verifyUser, async (req, res) => {
 });
 
 //
+// Trade Resume Generator - Data-driven resume creation with AI
+// Combines trade-specific data from trades_data.json with Gemini AI
+//
+app.post("/api/generateTradeResume", honeypotCheck, verifyUser, async (req, res) => {
+  try {
+    const {uid, email, displayName} = req.user;
+    const {tradeKey, userData = {}, customPrompt = "", useVertexAI = true} = req.body;
+
+    console.log(`📝 Generating ${tradeKey} resume for ${email} (${uid})`);
+
+    if (!tradeKey) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing tradeKey parameter (e.g., 'HVAC', 'ELECTRICIAN', 'PLUMBER')",
+      });
+    }
+
+    // Import resume engine
+    const {
+      getTradeData,
+      generateResumePrompt,
+      validateResumeContent,
+    } = require("./resumeEngine");
+
+    // Get trade-specific data
+    const tradeData = getTradeData(tradeKey);
+    if (!tradeData) {
+      return res.status(400).json({
+        success: false,
+        message: `Invalid trade key: ${tradeKey}. Available trades: HVAC, ELECTRICIAN, PLUMBER`,
+      });
+    }
+
+    // Generate AI prompt
+    const promptConfig = generateResumePrompt(tradeKey, userData, customPrompt);
+
+    // Call AI to generate placeholder content
+    let aiResponse;
+    let modelUsed;
+    let provider;
+
+    if (vertexAI && useVertexAI) {
+      try {
+        console.log("🚀 Using Vertex AI (Gemini 1.5 Pro) for trade resume...");
+        const model = vertexAI.getGenerativeModel({
+          model: "gemini-1.5-pro",
+        });
+
+        const result = await model.generateContent({
+          contents: [
+            {role: "user", parts: [{text: promptConfig.systemPrompt}]},
+            {role: "user", parts: [{text: promptConfig.userPrompt}]},
+          ],
+        });
+
+        aiResponse = result.response.candidates[0].content.parts[0].text;
+        modelUsed = "gemini-1.5-pro";
+        provider = "vertex-ai";
+      } catch (vertexError) {
+        console.warn("⚠️ Vertex AI failed, falling back to Gemini API:", vertexError.message);
+
+        if (genAI) {
+          const model = genAI.getGenerativeModel({
+            model: "gemini-2.5-flash-preview-09-2025",
+          });
+          const result = await model.generateContent(promptConfig.systemPrompt + "\n\n" + promptConfig.userPrompt);
+          aiResponse = result.response.text();
+          modelUsed = "gemini-2.5-flash-preview-09-2025";
+          provider = "gemini-api";
+        } else {
+          throw new Error("Both Vertex AI and Gemini API unavailable");
+        }
+      }
+    } else if (genAI) {
+      console.log("🚀 Using Gemini API for trade resume...");
+      const model = genAI.getGenerativeModel({
+        model: "gemini-2.5-flash-preview-09-2025",
+      });
+      const result = await model.generateContent(promptConfig.systemPrompt + "\n\n" + promptConfig.userPrompt);
+      aiResponse = result.response.text();
+      modelUsed = "gemini-2.5-flash-preview-09-2025";
+      provider = "gemini-api";
+    } else {
+      return res.status(503).json({
+        success: false,
+        message: "AI service unavailable - please set GOOGLE_API_KEY environment variable",
+      });
+    }
+
+    // Parse AI response (expecting JSON)
+    let aiPlaceholders;
+    try {
+      // Extract JSON from markdown code blocks if present
+      const jsonMatch = aiResponse.match(/```json\s*([\s\S]*?)\s*```/) ||
+                        aiResponse.match(/```\s*([\s\S]*?)\s*```/) ||
+                        [null, aiResponse];
+      aiPlaceholders = JSON.parse(jsonMatch[1].trim());
+    } catch (parseError) {
+      console.warn("⚠️ Failed to parse AI response as JSON, using raw response");
+      aiPlaceholders = {raw: aiResponse};
+    }
+
+    // Validate content
+    const validation = validateResumeContent(JSON.stringify(aiPlaceholders));
+
+    // Save generation to history
+    await db.collection("tradeResumes").add({
+      userId: uid,
+      email,
+      tradeKey,
+      tradeTitle: tradeData.TRADE_TITLE,
+      userData,
+      customPrompt,
+      aiPlaceholders,
+      createdAt: new Date(),
+      model: modelUsed,
+      provider,
+      validation,
+    });
+
+    console.log(`✅ Trade resume generated successfully for ${email}`);
+
+    res.json({
+      success: true,
+      tradeKey,
+      tradeTitle: tradeData.TRADE_TITLE,
+      placeholders: aiPlaceholders,
+      tradeData: {
+        certifications: tradeData.CERTIFICATIONS,
+        skills: tradeData.SKILLS,
+      },
+      validation,
+      metadata: {
+        model: modelUsed,
+        provider,
+        promptMetadata: promptConfig.metadata,
+      },
+    });
+  } catch (err) {
+    console.error("❌ Trade resume generation error:", err);
+    res.status(500).json({
+      success: false,
+      message: err.message,
+      errorId: crypto.randomBytes(8).toString("hex"),
+    });
+  }
+});
+
+//
 // Gemini AI Agent - Flexible AI endpoint with dual provider support
 //
 app.post("/api/geminiAgent", honeypotCheck, verifyUser, async (req, res) => {

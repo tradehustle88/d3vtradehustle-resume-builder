@@ -91,6 +91,62 @@ export async function editResume(
   });
 }
 
+// Generate trade-specific resume with AI - requires authentication
+export async function generateTradeResume(
+  idToken: string,
+  tradeKey: string,
+  userData?: {
+    name?: string;
+    yearsExperience?: number;
+    location?: string;
+    currentCompany?: string;
+    currentJobDates?: string;
+    phone?: string;
+    email?: string;
+  },
+  customPrompt?: string,
+  useVertexAI: boolean = true
+) {
+  return request<{
+    success: boolean;
+    tradeKey: string;
+    tradeTitle: string;
+    placeholders: Record<string, string>;
+    tradeData: {
+      certifications: string[];
+      skills: string[];
+    };
+    validation: {
+      valid: boolean;
+      warnings: string[];
+      wordCount: number;
+      hasUnfilledPlaceholders: boolean;
+    };
+    metadata: {
+      model: string;
+      provider: string;
+      promptMetadata: {
+        tradeKey: string;
+        tradeTitle: string;
+        certificationsCount: number;
+        skillsCount: number;
+      };
+    };
+  }>("/api/generateTradeResume", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      tradeKey,
+      userData,
+      customPrompt,
+      useVertexAI,
+    }),
+  });
+}
+
 // Save Gemini AI output (for scoring or edits)
 export async function saveGeminiOutput(message: string) {
   return request<{ success: boolean; storedId?: string }>(
