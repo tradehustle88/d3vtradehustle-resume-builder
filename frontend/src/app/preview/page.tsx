@@ -1,7 +1,7 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
-import ResumePreview from '@/components/ResumePreview'
+import ResumePreview from '@/components/ResumePreviewOld'
 
 function PreviewContent() {
   const searchParams = useSearchParams()

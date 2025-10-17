@@ -106,6 +106,7 @@ export async function generateTradeResume(
     currentJobDates?: string;
     phone?: string;
     email?: string;
+    certifications?: string[];
   },
   customPrompt?: string,
   useVertexAI: boolean = true
