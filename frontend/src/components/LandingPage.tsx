@@ -5,6 +5,7 @@ import Link from 'next/link'
 import TopNavBar from './TopNavBar'
 import CompleteHeroSystem from './CompleteHeroSystem'
 import TradeSelectionGrid from './TradeSelectionGrid'
+import ResumeVerifierSection from './ResumeVerifierSection'
 
 const proofStats = [
   { label: 'Trades Backed', value: '42+', description: 'Skilled trades represented across the platform.' },
@@ -31,6 +32,9 @@ export default function LandingPage() {
     <main className="min-h-screen bg-neutralBg text-neutralText">
       <TopNavBar />
       <CompleteHeroSystem />
+      
+      {/* ATS Verification Section */}
+      <ResumeVerifierSection />
 
       <section id="proof" className="border-t border-hustleBlue/10 bg-gradient-to-b from-white via-neutralBg to-blue-50/30">
         <div className="mx-auto flex max-w-6xl flex-col gap-16 px-6 py-24 sm:px-10">
