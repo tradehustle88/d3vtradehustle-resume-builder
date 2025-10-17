@@ -12,10 +12,11 @@ const ResumeVerifierSection = () => {
           muted
           loop
           playsInline
+          preload="auto"
           className="verifier-video"
-          poster="/assets/verifier-poster.png"
         >
           <source src="/assets/VerifierSection.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
         </video>
 
         <div className="verifier-overlay">

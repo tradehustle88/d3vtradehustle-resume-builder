@@ -12,13 +12,23 @@
   position: sticky;
   top: 0;
   width: 480px;
+  max-width: 90vw;
   height: 640px;
+  max-height: 80vh;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 0 50px rgba(0, 140, 255, 0.35);
   background: rgba(255, 255, 255, 0.05);
   backdrop-filter: blur(12px);
   transform: translateZ(0);
+}
+
+@media (max-width: 768px) {
+  .verifier-wrapper {
+    width: 90vw;
+    height: 70vh;
+    border-radius: 16px;
+  }
 }
 
 .verifier-video {
@@ -85,6 +95,15 @@
   font-size: 1rem;
   letter-spacing: 0.5px;
 }
+
+@media (max-width: 768px) {
+  .verifier-caption {
+    font-size: 0.875rem;
+    bottom: 15px;
+    left: 15px;
+  }
+}
+
 .pulse-dot {
   width: 10px;
   height: 10px;
