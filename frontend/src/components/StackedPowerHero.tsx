@@ -8,57 +8,56 @@ const stackedPowerBadges = [
 
 export default function StackedPowerHero() {
   return (
-    <section className="relative flex flex-col items-center justify-center text-center min-h-[100vh] px-5 py-12 bg-gradient-to-b from-[#0A0A0A] to-[#101820] text-white overflow-hidden">
-      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-[radial-gradient(circle_at_bottom,_rgba(212,160,23,0.12),_rgba(10,10,10,0)_65%)] pointer-events-none" />
+    <section className="relative flex flex-col items-center justify-center text-center min-h-[100vh] px-6 py-16 overflow-hidden" style={{
+      background: 'linear-gradient(to bottom right, #031B3E, #0C2C62, #F8FAFF 130%)'
+    }}>
+      {/* Logo centered under heading */}
+      <div className="mb-8">
+        <Image
+          src="/assets/resumeBuilderLogo-v3.png"
+          alt="Trade Hustle Resume Builder"
+          width={120}
+          height={120}
+          priority
+          className="mx-auto drop-shadow-lg"
+        />
+      </div>
 
-      <header>
-        <h1 className="text-4xl font-anton leading-tight mb-2 md:text-5xl">
-          Built for the Trade.
+      <header className="max-w-4xl mx-auto space-y-6">
+        <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-tight text-white tracking-tight" style={{ fontFamily: 'Anton, sans-serif' }}>
+          TRADE HUSTLE RESUME BUILDER
         </h1>
-        <p className="text-base text-gray-300 mb-6 md:text-lg">
-          Trusted by{" "}
-          <span className="text-hustleYellow font-bold drop-shadow-[0_0_12px_rgba(212,160,23,0.35)]">
-            31K+
-          </span>{" "}
-          resumes.
+        <p className="text-xl md:text-2xl font-semibold text-[#D4A017] mb-4">
+          Built by Hustle. Backed by Results.
+        </p>
+        <p className="text-lg md:text-xl text-white/90 leading-relaxed max-w-3xl mx-auto">
+          Recruiter-tested templates powered by Enhanced Intelligence to fix your resume in 5 minutes.
         </p>
       </header>
 
-      <div className="flex flex-col gap-3 w-full max-w-xs mb-8">
+      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-md mb-12 mt-10">
         <Link
           href="/builder"
-          className="w-full py-4 bg-hustleRed text-white rounded-xl text-lg font-semibold transition-transform active:scale-95 shadow-[0_0_15px_rgba(229,9,20,0.4)]"
+          className="flex-1 py-4 px-8 bg-[#E50914] text-white rounded-lg text-lg font-bold transition-all hover:bg-[#FF1B2D] shadow-lg hover:shadow-xl hover:scale-105"
         >
           Build My Resume
         </Link>
         <Link
           href="/ai-demo"
-          className="w-full py-4 border border-gray-600 rounded-xl text-lg font-semibold text-gray-200 active:scale-95 hover:border-hustleYellow transition-all"
+          className="flex-1 py-4 px-8 border-2 border-white/80 rounded-lg text-lg font-bold text-white hover:bg-white/10 hover:border-white transition-all"
         >
           Watch Demo
         </Link>
       </div>
 
-      <figure className="relative w-[90%] max-w-[340px] mb-10 md:max-w-[420px]">
-        <div className="w-full aspect-[3/4] rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(22,115,255,0.5)] animate-stacked-float ring-1 ring-white/10">
-          <Image
-            src="/assets/resume-preview.png"
-            alt="Trade Hustle Resume Preview"
-            fill
-            priority
-            className="object-cover opacity-90"
-          />
-        </div>
-      </figure>
-
-      <ul className="flex flex-wrap justify-center gap-2 text-[11px] text-gray-400">
+      <ul className="flex flex-wrap justify-center gap-3 text-sm">
         {stackedPowerBadges.map((badge) => (
           <li
             key={badge.label}
-            className={`px-3 py-1 rounded-full ${
+            className={`px-4 py-2 rounded-full font-semibold ${
               badge.emphasis
-                ? "bg-hustleYellow/80 text-black animate-pulse"
-                : "bg-gray-800"
+                ? "bg-[#D4A017] text-white shadow-lg"
+                : "bg-white/20 text-white backdrop-blur-sm"
             }`}
           >
             {badge.label}
@@ -66,37 +65,6 @@ export default function StackedPowerHero() {
         ))}
       </ul>
 
-      <style jsx global>{`
-        @keyframes stacked-float {
-          0%,
-          100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-6px);
-          }
-        }
-
-        .animate-stacked-float {
-          animation: stacked-float 5s ease-in-out infinite;
-        }
-
-        .text-hustleRed {
-          color: #e50914;
-        }
-
-        .text-hustleYellow {
-          color: #d4a017;
-        }
-
-        .bg-hustleRed {
-          background-color: #e50914;
-        }
-
-        .bg-hustleYellow {
-          background-color: #d4a017;
-        }
-      `}</style>
     </section>
   );
 }
