@@ -25,6 +25,11 @@ export interface TradePlaceholders {
 }
 
 /**
+ * Alias for consistency with new API
+ */
+export type TradePlaceholderMap = TradePlaceholders;
+
+/**
  * Trade data structure
  */
 export interface TradeData {
@@ -50,6 +55,15 @@ export interface ResumeUserData {
   currentJobDates?: string;
   phone?: string;
   email?: string;
+  certifications?: string[];
+}
+
+/**
+ * Extended user data for form
+ */
+export interface UserData extends ResumeUserData {
+  name: string;
+  email: string;
 }
 
 /**
@@ -160,4 +174,30 @@ export function formatSkills(tradeKey: TradeKey): string {
   const trade = TRADES_DATA[tradeKey];
   if (!trade) return '';
   return trade.SKILLS.join(' • ');
+}
+
+/**
+ * Get trade display info with icon and cert count
+ */
+export function getTradeDisplayInfo(tradeKey: string): {
+  displayName: string;
+  icon: string;
+  certCount: number;
+} {
+  const tradeIcons: Record<string, string> = {
+    HVAC: '❄️',
+    ELECTRICIAN: '⚡',
+    PLUMBER: '🔧',
+    CDL_DRIVER: '🚚',
+    WELDER: '🔥',
+    CARPENTER: '🪚',
+    AUTO_MECHANIC: '🔩',
+  };
+
+  const trade = TRADES_DATA[tradeKey as TradeKey];
+  return {
+    displayName: trade?.TRADE_TITLE || tradeKey,
+    icon: tradeIcons[tradeKey] || '🛠️',
+    certCount: trade?.CERTIFICATIONS?.length || 0,
+  };
 }

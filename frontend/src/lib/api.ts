@@ -3,8 +3,11 @@
 
 // Firebase Cloud Functions URL - can be overridden for local development
 // Using the /app function which hosts all API routes under /api
-const BASE_URL = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL ||
-  "https://app-fbs5jy4frq-uc.a.run.app";
+import type { ResumeUserData, TradeResumeResponse } from "./tradesData";
+
+const BASE_URL =
+  process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL ||
+  "https://app-fbs5jy4frq-uc.a.run.app/api";
 
 // Generic fetch helper
 async function request<T>(
