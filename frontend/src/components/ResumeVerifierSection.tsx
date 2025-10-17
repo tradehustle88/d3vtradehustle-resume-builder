@@ -12,7 +12,7 @@ const ResumeVerifierSection = () => {
           muted
           loop
           playsInline
-          preload="auto"
+          preload="none"
           className="verifier-video"
         >
           <source src="/assets/VerifierSection.mp4" type="video/mp4" />
