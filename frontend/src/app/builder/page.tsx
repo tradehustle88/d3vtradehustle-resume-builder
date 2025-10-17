@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import TopNavBar from "@/components/TopNavBar";
 import Footer from "@/components/Footer";
@@ -11,7 +11,7 @@ import { templates } from "@/data/templates";
 import { trackEvent } from "@/lib/analytics";
 import "./builder.css";
 
-export default function BuilderPage() {
+function BuilderContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const templateId = searchParams.get("template");
@@ -177,5 +177,17 @@ export default function BuilderPage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function BuilderPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#001a33] to-[#003366]">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    }>
+      <BuilderContent />
+    </Suspense>
   );
 }
