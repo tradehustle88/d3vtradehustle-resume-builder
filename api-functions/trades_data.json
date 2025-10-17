@@ -1,0 +1,90 @@
+{
+  "HVAC": {
+    "TRADE_TITLE": "HVAC Technician",
+    "CERTIFICATIONS": ["EPA 608 Universal", "OSHA 10", "State HVAC License"],
+    "SKILLS": [
+      "System Diagnostics",
+      "Preventive Maintenance",
+      "Electrical Troubleshooting",
+      "Ductwork Installation",
+      "Pressure Testing",
+      "Customer Service"
+    ],
+    "PLACEHOLDERS": {
+      "SUMMARY_SENTENCE_1": "Certified HVAC technician with expertise in residential and commercial climate control systems.",
+      "SUMMARY_SENTENCE_2": "Proven track record in diagnostics, preventive maintenance, and emergency repairs.",
+      "SKILL_1": "System Diagnostics & Troubleshooting",
+      "SKILL_2": "Preventive Maintenance Programs",
+      "SKILL_3": "Electrical & Control Systems",
+      "SKILL_4": "Ductwork Design & Installation",
+      "SKILL_5": "Refrigerant Pressure Testing",
+      "SKILL_6": "Customer Relations & Service",
+      "CERT_1": "EPA 608 Universal Certification",
+      "CERT_2": "OSHA 10-Hour Safety Training",
+      "CERT_3": "State HVAC License (Active)",
+      "EXPERIENCE_TITLE_1": "HVAC Technician",
+      "EXPERIENCE_COMPANY_1": "[Company Name]",
+      "EXPERIENCE_DATES_1": "[Start Date] - Present",
+      "EXPERIENCE_BULLET_1": "Perform diagnostics and repairs on residential HVAC systems, maintaining 98% first-call resolution rate",
+      "EXPERIENCE_BULLET_2": "Execute preventive maintenance programs for 100+ commercial clients, reducing emergency calls by 35%",
+      "EXPERIENCE_BULLET_3": "Install and commission new systems including ductwork, electrical controls, and refrigerant lines"
+    }
+  },
+  "ELECTRICIAN": {
+    "TRADE_TITLE": "Electrician",
+    "CERTIFICATIONS": ["Journeyman License", "OSHA 10", "NFPA 70E Training"],
+    "SKILLS": [
+      "Wiring & Panel Installation",
+      "Circuit Troubleshooting",
+      "Conduit Bending",
+      "Blueprint Reading"
+    ],
+    "PLACEHOLDERS": {
+      "SUMMARY_SENTENCE_1": "Licensed electrician with comprehensive expertise in commercial and residential electrical systems.",
+      "SUMMARY_SENTENCE_2": "Specialized in code-compliant installations, troubleshooting, and safety protocols.",
+      "SKILL_1": "Electrical Panel Installation",
+      "SKILL_2": "Circuit Design & Troubleshooting",
+      "SKILL_3": "Conduit Bending & Installation",
+      "SKILL_4": "Blueprint & Schematic Reading",
+      "SKILL_5": "NEC Code Compliance",
+      "SKILL_6": "Safety & LOTO Procedures",
+      "CERT_1": "Journeyman Electrician License",
+      "CERT_2": "OSHA 10-Hour Safety Training",
+      "CERT_3": "NFPA 70E Arc Flash Training",
+      "EXPERIENCE_TITLE_1": "Journeyman Electrician",
+      "EXPERIENCE_COMPANY_1": "[Company Name]",
+      "EXPERIENCE_DATES_1": "[Start Date] - Present",
+      "EXPERIENCE_BULLET_1": "Install and upgrade electrical panels, wiring systems, and lighting fixtures per NEC standards",
+      "EXPERIENCE_BULLET_2": "Troubleshoot complex circuit issues using multimeters and diagnostic equipment",
+      "EXPERIENCE_BULLET_3": "Read and interpret blueprints to plan conduit routes and electrical layouts for new construction"
+    }
+  },
+  "PLUMBER": {
+    "TRADE_TITLE": "Plumber",
+    "CERTIFICATIONS": ["Journeyman License", "Backflow Prevention"],
+    "SKILLS": [
+      "Pipe Fitting",
+      "Leak Detection",
+      "Water Heater Installation"
+    ],
+    "PLACEHOLDERS": {
+      "SUMMARY_SENTENCE_1": "Licensed plumber with proven expertise in residential and commercial plumbing systems.",
+      "SUMMARY_SENTENCE_2": "Skilled in installations, repairs, and emergency service with focus on quality workmanship.",
+      "SKILL_1": "Pipe Fitting & Installation",
+      "SKILL_2": "Leak Detection & Repair",
+      "SKILL_3": "Water Heater Service",
+      "SKILL_4": "Drain & Sewer Systems",
+      "SKILL_5": "Fixture Installation",
+      "SKILL_6": "Backflow Prevention",
+      "CERT_1": "Journeyman Plumber License",
+      "CERT_2": "Backflow Prevention Certification",
+      "CERT_3": "OSHA 10-Hour Safety Training",
+      "EXPERIENCE_TITLE_1": "Journeyman Plumber",
+      "EXPERIENCE_COMPANY_1": "[Company Name]",
+      "EXPERIENCE_DATES_1": "[Start Date] - Present",
+      "EXPERIENCE_BULLET_1": "Install and repair water supply lines, drainage systems, and fixtures in residential properties",
+      "EXPERIENCE_BULLET_2": "Perform leak detection using advanced equipment, reducing water damage claims by 40%",
+      "EXPERIENCE_BULLET_3": "Service and replace water heaters, ensuring code compliance and energy efficiency"
+    }
+  }
+}

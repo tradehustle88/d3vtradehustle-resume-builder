@@ -21,8 +21,8 @@ let tradesData = null;
  */
 function loadTradesData() {
   if (!tradesData) {
-    const dataPath = path.join(__dirname, '..', 'trades_data.json');
-    tradesData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    const dataPath = path.join(__dirname, "trades_data.json");
+    tradesData = JSON.parse(fs.readFileSync(dataPath, "utf8"));
   }
   return tradesData;
 }
