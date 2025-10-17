@@ -5,6 +5,7 @@ import TemplateCard from "./TemplateCard";
 import TemplatePreviewModal from "./TemplatePreviewModal";
 import "./TemplateGrid.css";
 import { ResumeData } from "@/data/resumeData";
+import { trackTemplateView, trackTemplateModalOpen, trackTemplateUseClick } from "@/lib/analytics";
 
 interface Template {
   id: string;
@@ -25,10 +26,18 @@ const TemplateGrid: React.FC<TemplateGridProps> = ({ templates }) => {
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
 
   const handleViewTemplate = (template: Template) => {
+    trackTemplateModalOpen(template.id, template.trade);
     setSelectedTemplate(template);
   };
 
   const handleUseTemplate = (templateId: string) => {
+    const template = templates.find(t => t.id === templateId);
+    if (template) {
+      // Check if user is authenticated (you can add useAuth hook here)
+      const isAuthenticated = false; // Replace with actual auth check
+      trackTemplateUseClick(template.id, template.trade, isAuthenticated);
+    }
+    
     // Navigate to builder with template ID
     window.location.href = `/builder?template=${templateId}`;
   };

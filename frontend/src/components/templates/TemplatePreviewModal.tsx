@@ -4,6 +4,7 @@ import React from "react";
 import Image from "next/image";
 import "./TemplatePreviewModal.css";
 import { ResumeData } from "@/data/resumeData";
+import { trackTemplateDownload } from "@/lib/analytics";
 
 interface Template {
   id: string;
@@ -27,6 +28,11 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({
   onClose,
   onUseTemplate,
 }) => {
+  const handleDownloadClick = () => {
+    trackTemplateDownload(template.id, template.trade);
+    // Add actual download logic here
+  };
+
   return (
     <div className="modal-backdrop" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
@@ -141,7 +147,7 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({
               <button className="btn-use-modal" onClick={onUseTemplate}>
                 Start Building
               </button>
-              <button className="btn-download">
+              <button className="btn-download" onClick={handleDownloadClick}>
                 Download Sample PDF
               </button>
             </div>

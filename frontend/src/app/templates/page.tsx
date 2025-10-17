@@ -10,6 +10,36 @@ import Footer from "@/components/Footer";
 import { templates } from "@/data/templates";
 import "./templates.css";
 
+// SEO Metadata (moved to layout or add via next/head for client components)
+export const metadata = {
+  title: "Trade Resume Templates | ATS-Optimized for HVAC, Electrician & More | Trade Hustle",
+  description: "Download professional trade resume templates with 92% ATS pass rate. Built for HVAC techs, electricians, plumbers, welders, carpenters, and mechanics. Free templates designed by industry experts.",
+  keywords: "trade resume templates, HVAC resume, electrician resume, plumber resume, welder resume, carpenter resume, mechanic resume, ATS resume, construction resume, skilled trades resume",
+  openGraph: {
+    title: "Professional Trade Resume Templates | Trade Hustle",
+    description: "ATS-optimized resume templates for skilled trades. 92% recruiter pass rate. Download free templates for HVAC, electrical, plumbing, welding, carpentry, and automotive careers.",
+    type: "website",
+    url: "https://tradehustleresumebuilder.web.app/templates",
+    images: [
+      {
+        url: "/assets/og-templates.png",
+        width: 1200,
+        height: 630,
+        alt: "Trade Hustle Resume Templates"
+      }
+    ]
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Trade Resume Templates | 92% ATS Pass Rate",
+    description: "Professional resume templates for skilled trades. Free download for HVAC, electrician, plumber, welder, carpenter, and mechanic resumes.",
+    images: ["/assets/twitter-templates.png"]
+  },
+  alternates: {
+    canonical: "https://tradehustleresumebuilder.web.app/templates"
+  }
+};
+
 export default function TemplatesPage() {
   return (
     <main className="templates-page">

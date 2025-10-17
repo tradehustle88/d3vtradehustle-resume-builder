@@ -17,7 +17,7 @@ export const templates: Template[] = [
     id: "hvac-pro",
     trade: "HVAC",
     title: "HVAC Pro",
-    thumbnail: "/assets/templates/hvac-thumb.png",
+    thumbnail: "/assets/templates/hvac-thumb.svg",
     description: "Professional HVAC template highlighting EPA certifications, commercial installations, and energy efficiency projects. Perfect for senior technicians and HVAC engineers.",
     features: [
       "ATS-Optimized for HVAC keywords",
@@ -32,7 +32,7 @@ export const templates: Template[] = [
     id: "electrician-elite",
     trade: "Electrical",
     title: "Electrician Elite",
-    thumbnail: "/assets/templates/electrician-thumb.png",
+    thumbnail: "/assets/templates/electrician-thumb.svg",
     description: "Master electrician template emphasizing license numbers, code compliance, and industrial experience. Ideal for journeyman and master electricians.",
     features: [
       "License & certification highlights",
@@ -47,7 +47,7 @@ export const templates: Template[] = [
     id: "plumber-master",
     trade: "Plumbing",
     title: "Plumber Master",
-    thumbnail: "/assets/templates/plumber-thumb.png",
+    thumbnail: "/assets/templates/plumber-thumb.svg",
     description: "Plumbing professional template showcasing license credentials, pipe fitting expertise, and commercial project experience.",
     features: [
       "Master license prominent display",
@@ -62,7 +62,7 @@ export const templates: Template[] = [
     id: "welder-certified",
     trade: "Welding",
     title: "Welder Certified",
-    thumbnail: "/assets/templates/welder-thumb.png",
+    thumbnail: "/assets/templates/welder-thumb.svg",
     description: "Certified welder template highlighting AWS certifications, welding processes, and structural project work.",
     features: [
       "AWS certification showcase",
@@ -77,7 +77,7 @@ export const templates: Template[] = [
     id: "carpenter-craftsman",
     trade: "Carpentry",
     title: "Carpenter Craftsman",
-    thumbnail: "/assets/templates/carpenter-thumb.png",
+    thumbnail: "/assets/templates/carpenter-thumb.svg",
     description: "Master carpenter template emphasizing finish work, framing expertise, and custom woodworking projects.",
     features: [
       "Custom project portfolio",
@@ -92,7 +92,7 @@ export const templates: Template[] = [
     id: "mechanic-specialist",
     trade: "Automotive",
     title: "Mechanic Specialist",
-    thumbnail: "/assets/templates/mechanic-thumb.png",
+    thumbnail: "/assets/templates/mechanic-thumb.svg",
     description: "ASE-certified mechanic template featuring diagnostic skills, manufacturer certifications, and repair specialties.",
     features: [
       "ASE certification badges",
