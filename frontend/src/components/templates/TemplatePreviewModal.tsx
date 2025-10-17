@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import "./TemplatePreviewModal.css";
+import { ResumeData } from "@/data/resumeData";
 
 interface Template {
   id: string;
@@ -12,6 +13,7 @@ interface Template {
   features: string[];
   description: string;
   previewImage?: string;
+  resumeData?: ResumeData;
 }
 
 interface TemplatePreviewModalProps {
@@ -33,18 +35,69 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({
         </button>
 
         <div className="modal-content">
-          {/* Left Side: Preview */}
+          {/* Left Side: Resume Preview */}
           <div className="modal-preview">
-            <Image
-              src={template.previewImage || template.thumbnail}
-              alt={`${template.title} full preview`}
-              width={600}
-              height={800}
-              className="preview-image"
-            />
+            {template.resumeData ? (
+              <div className="resume-preview-card">
+                <div className="resume-header">
+                  <h2>{template.resumeData.fullName}</h2>
+                  <p className="resume-title">{template.resumeData.title}</p>
+                  <div className="resume-contact">
+                    <span>📧 {template.resumeData.contact.email}</span>
+                    <span>📞 {template.resumeData.contact.phone}</span>
+                    <span>📍 {template.resumeData.contact.location}</span>
+                  </div>
+                </div>
+
+                <div className="resume-section">
+                  <h3>Professional Summary</h3>
+                  <p>{template.resumeData.summary}</p>
+                </div>
+
+                <div className="resume-section">
+                  <h3>Core Skills</h3>
+                  <div className="skills-grid">
+                    {template.resumeData.coreSkills.slice(0, 6).map((skill, idx) => (
+                      <span key={idx} className="skill-badge">{skill}</span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="resume-section">
+                  <h3>Certifications</h3>
+                  <ul className="cert-list">
+                    {template.resumeData.certifications.map((cert, idx) => (
+                      <li key={idx}>
+                        <span className="cert-icon">🏆</span>
+                        {cert}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {template.resumeData.experience.length > 0 && (
+                  <div className="resume-section">
+                    <h3>Recent Experience</h3>
+                    <div className="experience-item">
+                      <h4>{template.resumeData.experience[0].position}</h4>
+                      <p className="company">{template.resumeData.experience[0].company}</p>
+                      <p className="dates">{template.resumeData.experience[0].dates}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Image
+                src={template.previewImage || template.thumbnail}
+                alt={`${template.title} full preview`}
+                width={600}
+                height={800}
+                className="preview-image"
+              />
+            )}
           </div>
 
-          {/* Right Side: Details */}
+          {/* Right Side: Details & Actions */}
           <div className="modal-details">
             <div className="modal-header">
               <span className="modal-trade">{template.trade}</span>
@@ -63,6 +116,26 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({
                 ))}
               </ul>
             </div>
+
+            {template.resumeData && (
+              <div className="modal-highlights">
+                <h3>Template Highlights:</h3>
+                <div className="highlight-stats">
+                  <div className="stat-box">
+                    <span className="stat-number">{template.resumeData.coreSkills.length}</span>
+                    <span className="stat-label">Skills Listed</span>
+                  </div>
+                  <div className="stat-box">
+                    <span className="stat-number">{template.resumeData.certifications.length}</span>
+                    <span className="stat-label">Certifications</span>
+                  </div>
+                  <div className="stat-box">
+                    <span className="stat-number">{template.resumeData.experience.length}</span>
+                    <span className="stat-label">Positions</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="modal-actions">
               <button className="btn-use-modal" onClick={onUseTemplate}>

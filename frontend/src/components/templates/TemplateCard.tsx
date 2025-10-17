@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import "./TemplateCard.css";
+import { ResumeData } from "@/data/resumeData";
 
 interface TemplateCardProps {
   id: string;
@@ -10,6 +11,7 @@ interface TemplateCardProps {
   title: string;
   thumbnail: string;
   features: string[];
+  resumeData?: ResumeData;
   onViewTemplate: () => void;
   onUseTemplate: () => void;
 }
@@ -19,6 +21,7 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
   title,
   thumbnail,
   features,
+  resumeData,
   onViewTemplate,
   onUseTemplate,
 }) => {
@@ -45,6 +48,13 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
       <div className="template-details">
         <h3 className="template-title">{title}</h3>
         <p className="template-trade">{trade}</p>
+
+        {/* Show resume summary if available */}
+        {resumeData && (
+          <p className="template-summary">
+            {resumeData.summary.slice(0, 120)}...
+          </p>
+        )}
 
         <ul className="template-features">
           {features.map((feature, index) => (

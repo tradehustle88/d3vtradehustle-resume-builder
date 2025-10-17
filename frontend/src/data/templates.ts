@@ -1,3 +1,5 @@
+import { ResumeData, hvacResume, electricianResume, plumberResume } from './resumeData';
+
 // Template data for trade-specific resumes
 export interface Template {
   id: string;
@@ -7,6 +9,7 @@ export interface Template {
   features: string[];
   description: string;
   previewImage?: string;
+  resumeData?: ResumeData; // Resume data for the template
 }
 
 export const templates: Template[] = [
@@ -22,7 +25,8 @@ export const templates: Template[] = [
       "Project showcase section",
       "Editable in Word, PDF, Google Docs"
     ],
-    previewImage: "/assets/templates/hvac-preview.png"
+    previewImage: "/assets/templates/hvac-preview.png",
+    resumeData: hvacResume
   },
   {
     id: "electrician-elite",
@@ -36,7 +40,8 @@ export const templates: Template[] = [
       "Safety record emphasis",
       "ATS keyword-ready"
     ],
-    previewImage: "/assets/templates/electrician-preview.png"
+    previewImage: "/assets/templates/electrician-preview.png",
+    resumeData: electricianResume
   },
   {
     id: "plumber-master",
@@ -50,7 +55,8 @@ export const templates: Template[] = [
       "Code compliance tracking",
       "Instant download ready"
     ],
-    previewImage: "/assets/templates/plumber-preview.png"
+    previewImage: "/assets/templates/plumber-preview.png",
+    resumeData: plumberResume
   },
   {
     id: "welder-certified",

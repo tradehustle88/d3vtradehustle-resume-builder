@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import TemplateCard from "./TemplateCard";
 import TemplatePreviewModal from "./TemplatePreviewModal";
 import "./TemplateGrid.css";
+import { ResumeData } from "@/data/resumeData";
 
 interface Template {
   id: string;
@@ -13,6 +14,7 @@ interface Template {
   features: string[];
   description: string;
   previewImage?: string;
+  resumeData?: ResumeData;
 }
 
 interface TemplateGridProps {
@@ -46,6 +48,7 @@ const TemplateGrid: React.FC<TemplateGridProps> = ({ templates }) => {
             title={template.title}
             thumbnail={template.thumbnail}
             features={template.features}
+            resumeData={template.resumeData}
             onViewTemplate={() => handleViewTemplate(template)}
             onUseTemplate={() => handleUseTemplate(template.id)}
           />
