@@ -191,11 +191,202 @@ export const plumberResume: ResumeData = {
   ],
 };
 
+// Sample Welder resume data
+export const welderResume: ResumeData = {
+  id: "welder-certified",
+  trade: "Welding",
+  fullName: "James Thompson",
+  title: "Certified Welder - AWS & ASME",
+  summary: "AWS-certified welder with 9+ years experience in structural steel, pipeline, and fabrication welding. Expert in MIG, TIG, and Stick welding processes. Proven track record on large industrial projects with zero weld failures.",
+  contact: {
+    email: "james.thompson@email.com",
+    phone: "(555) 456-7890",
+    location: "Tulsa, OK",
+  },
+  coreSkills: [
+    "AWS D1.1 Structural Welding",
+    "MIG, TIG, Stick Welding",
+    "Blueprint & Symbol Reading",
+    "Pipe & Pressure Vessel Welding",
+    "Weld Inspection & QC",
+    "Metal Fabrication",
+    "Plasma & Oxy-Fuel Cutting",
+    "Rigging & Crane Signals",
+  ],
+  certifications: [
+    "AWS D1.1 Certified Welder",
+    "ASME Section IX Certified",
+    "6G Pipe Welding Certified",
+    "OSHA 30-Hour Construction",
+    "Confined Space Entry Certified",
+  ],
+  experience: [
+    {
+      position: "Structural Welder",
+      company: "Industrial Steel Fabricators",
+      location: "Tulsa, OK",
+      dates: "2018 - Present",
+      responsibilities: [
+        "Perform structural welding on commercial construction projects up to $5M",
+        "Read and interpret welding blueprints and specifications",
+        "Maintain 100% weld inspection pass rate over 6+ years",
+        "Train and mentor 5 junior welders on techniques and safety",
+      ],
+    },
+    {
+      position: "Pipe Welder",
+      company: "Pipeline Services Inc.",
+      location: "Tulsa, OK",
+      dates: "2015 - 2018",
+      responsibilities: [
+        "Welded 6-inch to 36-inch carbon steel pipelines",
+        "Performed field repairs on existing pipeline systems",
+        "Completed 500+ successful weld inspections",
+      ],
+    },
+  ],
+  education: [
+    {
+      degree: "Welding Technology Certificate",
+      school: "Tulsa Welding School",
+      year: "2015",
+    },
+  ],
+};
+
+// Sample Carpenter resume data
+export const carpenterResume: ResumeData = {
+  id: "carpenter-craftsman",
+  trade: "Carpentry",
+  fullName: "David Martinez",
+  title: "Master Carpenter & Finish Specialist",
+  summary: "Master Carpenter with 11+ years experience in residential and commercial construction. Specialized in custom finish work, cabinet installation, and trim carpentry. Expert in blueprint reading, framing, and project estimation.",
+  contact: {
+    email: "david.martinez@email.com",
+    phone: "(555) 567-8901",
+    location: "Denver, CO",
+  },
+  coreSkills: [
+    "Finish Carpentry & Trim Work",
+    "Custom Cabinet Installation",
+    "Framing & Rough Carpentry",
+    "Blueprint Reading & Layout",
+    "Door & Window Installation",
+    "Deck & Patio Construction",
+    "Power Tool Operation",
+    "Project Estimation",
+  ],
+  certifications: [
+    "NCCER Carpentry Certification",
+    "OSHA 30-Hour Construction",
+    "Forklift Operator Certified",
+    "First Aid & CPR Certified",
+  ],
+  experience: [
+    {
+      position: "Lead Carpenter",
+      company: "Premier Custom Homes",
+      location: "Denver, CO",
+      dates: "2017 - Present",
+      responsibilities: [
+        "Lead carpentry crews on $2M+ custom home projects",
+        "Install custom cabinetry, crown molding, and finish trim",
+        "Read and interpret architectural blueprints and shop drawings",
+        "Achieved 98% client satisfaction rating on 50+ projects",
+      ],
+    },
+    {
+      position: "Framing Carpenter",
+      company: "Rocky Mountain Builders",
+      location: "Denver, CO",
+      dates: "2013 - 2017",
+      responsibilities: [
+        "Framed residential structures including walls, floors, and roofs",
+        "Installed windows, doors, and exterior trim",
+        "Maintained strict adherence to building codes",
+      ],
+    },
+  ],
+  education: [
+    {
+      degree: "Carpentry Apprenticeship Program",
+      school: "Denver Trade School",
+      year: "2013",
+    },
+  ],
+};
+
+// Sample Mechanic resume data
+export const mechanicResume: ResumeData = {
+  id: "mechanic-specialist",
+  trade: "Automotive",
+  fullName: "Robert Chen",
+  title: "ASE Master Automotive Technician",
+  summary: "ASE Master Certified automotive technician with 10+ years diagnosing and repairing domestic and import vehicles. Expert in engine diagnostics, electrical systems, and transmission repair. Factory-trained on Ford, Toyota, and Honda platforms.",
+  contact: {
+    email: "robert.chen@email.com",
+    phone: "(555) 678-9012",
+    location: "Detroit, MI",
+  },
+  coreSkills: [
+    "Engine Diagnostics & Repair",
+    "Transmission Service & Rebuild",
+    "Electrical System Diagnostics",
+    "Brake & Suspension Systems",
+    "HVAC System Repair",
+    "OBD-II Scan Tool Operation",
+    "Hybrid & Electric Vehicle Service",
+    "Customer Service & Estimates",
+  ],
+  certifications: [
+    "ASE Master Automobile Technician",
+    "ASE L1 Advanced Engine Performance",
+    "Ford Factory Certified Technician",
+    "Toyota T-TEN Graduate",
+    "Hybrid Vehicle Safety Certified",
+  ],
+  experience: [
+    {
+      position: "Master Technician",
+      company: "Metro Auto Service Center",
+      location: "Detroit, MI",
+      dates: "2018 - Present",
+      responsibilities: [
+        "Diagnose and repair 20+ vehicles per week across all makes/models",
+        "Lead technician for complex electrical and engine diagnostics",
+        "Mentor 4 junior technicians on diagnostic procedures",
+        "Maintain 95% first-time-fix rate on repairs",
+      ],
+    },
+    {
+      position: "Automotive Technician",
+      company: "Ford Dealership of Detroit",
+      location: "Detroit, MI",
+      dates: "2014 - 2018",
+      responsibilities: [
+        "Performed factory-scheduled maintenance and warranty repairs",
+        "Specialized in Ford EcoBoost engine diagnostics",
+        "Completed 500+ successful diagnostic repairs",
+      ],
+    },
+  ],
+  education: [
+    {
+      degree: "Automotive Technology Degree",
+      school: "UTI - Universal Technical Institute",
+      year: "2014",
+    },
+  ],
+};
+
 // Export all resume data
 export const resumeDataByTrade = {
   hvac: hvacResume,
   electrical: electricianResume,
   plumbing: plumberResume,
+  welding: welderResume,
+  carpentry: carpenterResume,
+  automotive: mechanicResume,
 };
 
 // Default export for backward compatibility

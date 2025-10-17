@@ -1,4 +1,4 @@
-import { ResumeData, hvacResume, electricianResume, plumberResume } from './resumeData';
+import { ResumeData, hvacResume, electricianResume, plumberResume, welderResume, carpenterResume, mechanicResume } from './resumeData';
 
 // Template data for trade-specific resumes
 export interface Template {
@@ -70,7 +70,8 @@ export const templates: Template[] = [
       "Blueprint reading skills",
       "Safety certifications"
     ],
-    previewImage: "/assets/templates/welder-preview.png"
+    previewImage: "/assets/templates/welder-preview.png",
+    resumeData: welderResume
   },
   {
     id: "carpenter-craftsman",
@@ -84,7 +85,8 @@ export const templates: Template[] = [
       "Tool proficiency list",
       "ATS-optimized layout"
     ],
-    previewImage: "/assets/templates/carpenter-preview.png"
+    previewImage: "/assets/templates/carpenter-preview.png",
+    resumeData: carpenterResume
   },
   {
     id: "mechanic-specialist",
@@ -98,7 +100,8 @@ export const templates: Template[] = [
       "Manufacturer training",
       "Shop management skills"
     ],
-    previewImage: "/assets/templates/mechanic-preview.png"
+    previewImage: "/assets/templates/mechanic-preview.png",
+    resumeData: mechanicResume
   }
 ];
 
