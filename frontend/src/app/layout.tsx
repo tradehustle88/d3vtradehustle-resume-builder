@@ -1,25 +1,10 @@
 import type { Metadata } from "next";
-import { Inter, Anton } from "next/font/google";
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 import Script from "next/script";
 import { AuthProvider } from "@/lib/useAuth";
 import Footer from "@/components/Footer";
 import "./globals.css";
-
-// Load fonts with optimized settings for performance
-const inter = Inter({
-  subsets: ['latin'],
-  display: 'swap',
-  preload: true,
-  fallback: ['system-ui', 'arial'],
-});
-
-const anton = Anton({
-  weight: '400',
-  subsets: ['latin'],
-  display: 'swap',
-  preload: true,
-  fallback: ['system-ui', 'arial'],
-});
 
 // Metadata (SEO + OG + Social)
 export const metadata: Metadata = {
@@ -62,41 +47,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={GeistSans.className}>
       <head>
+        {/* ⭐ Preload LCP image for faster hero load */}
+        <link
+          rel="preload"
+          as="image"
+          href="/assets/resumeBuilderLogo-v3.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
+        
         {/* Favicon fallback */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
         
-        {/* DNS Prefetch for external resources - improves 3rd party load time */}
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        {/* ⭐ DNS prefetch for faster third-party loads */}
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-
-        {/* Font Awesome for social media icons */}
-        <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        />
-
-        {/* Google Fonts Optimized - display=swap prevents FOIT/FOUT */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Anton&family=Merriweather:wght@400;700&family=EB+Garamond:wght@400;700&display=swap" 
-          rel="stylesheet" 
-        />
-        
-        {/* Preload critical fonts for better LCP - Anton is primary hero font */}
-        <link
-          rel="preload"
-          href="https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
 
         {/* Google Analytics - Deferred for better performance */}
         <Script
@@ -127,10 +93,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body
-        className={`${inter.className} antialiased flex flex-col min-h-screen`}
-        style={{ fontFamily: `${inter.className}, ${anton.className}` }}
-      >
+      <body className="antialiased flex flex-col min-h-screen">
         <AuthProvider>
           <div className="flex-1">
             {children}
