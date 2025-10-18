@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+const webpack = require('webpack');
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
@@ -19,6 +20,32 @@ const nextConfig = {
   // Performance optimizations
   compiler: {
     removeConsole: process.env.NODE_ENV === 'production',  // Remove console.logs in production
+  },
+  
+  // Webpack configuration for client-side builds
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Comprehensive fallbacks for Node.js modules
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        util: false,
+        buffer: false,
+        process: false, // Fixes "process is not defined"
+      };
+      
+      // Define process.env for client-side
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          'process.env': JSON.stringify({}),
+        })
+      );
+    }
+    return config;
   },
   
   // ===== SECURITY HEADERS (Content Security Policy) =====

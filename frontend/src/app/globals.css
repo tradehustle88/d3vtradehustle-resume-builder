@@ -3,6 +3,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Performance-optimized animations */
+@import '../styles/animations.css';
+
 /* BRIGHT THEME Foundation */
 @layer base {
   body {

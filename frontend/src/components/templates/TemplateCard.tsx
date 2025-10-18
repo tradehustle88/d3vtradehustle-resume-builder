@@ -30,10 +30,13 @@ const TemplateCard: React.FC<TemplateCardProps> = ({
       <div className="template-thumbnail">
         <Image
           src={thumbnail}
-          alt={`${title} template preview`}
+          alt={`${title} resume template preview for ${trade}`}
           width={400}
           height={500}
           className="thumbnail-image"
+          loading="lazy"
+          quality={80}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
         />
         <div className="thumbnail-overlay">
           <button className="btn-view" onClick={onViewTemplate}>

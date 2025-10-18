@@ -2,13 +2,12 @@
 
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { motion } from 'framer-motion';
 import { CheckCircle2, FileText, User, Award, Zap, Briefcase, GraduationCap } from 'lucide-react';
 import { ResumeFormData } from './schema';
 
 export const ReviewSection: React.FC = () => {
   const { watch } = useFormContext<ResumeFormData>();
-  
+
   const formData = watch();
   const {
     name,
@@ -38,11 +37,8 @@ export const ReviewSection: React.FC = () => {
   const completionPercent = Math.round((completedSections / sections.length) * 100);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
+    <div
+className="space-y-6"
     >
       <div className="mb-8">
         <h2 className="text-3xl font-anton text-hustle-gold mb-2">
@@ -65,22 +61,17 @@ export const ReviewSection: React.FC = () => {
             </p>
           </div>
           {completionPercent === 100 && (
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: "spring", stiffness: 200 }}
-            >
+            <div
+>
               <CheckCircle2 className="w-12 h-12 text-hustle-gold" />
-            </motion.div>
+            </div>
           )}
         </div>
 
         <div className="w-full bg-hustle-navy rounded-full h-3 overflow-hidden">
-          <motion.div
-            className="h-full bg-gradient-to-r from-hustle-gold to-yellow-500"
-            initial={{ width: 0 }}
-            animate={{ width: `${completionPercent}%` }}
-            transition={{ duration: 1, ease: "easeOut" }}
+          <div
+            className="h-full bg-gradient-to-r from-hustle-gold to-yellow-500 transition-all duration-500"
+            style={{ width: `${completionPercent}%` }}
           />
         </div>
       </div>
@@ -88,12 +79,9 @@ export const ReviewSection: React.FC = () => {
       {/* Section Checklist */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {sections.map((section, index) => (
-          <motion.div
+          <div
             key={section.name}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className={`p-4 rounded-lg border-2 ${
+className={`p-4 rounded-lg border-2 ${
               section.complete
                 ? 'bg-hustle-gold/10 border-hustle-gold/50'
                 : 'bg-hustle-navy-dark border-hustle-gold/20'
@@ -111,7 +99,7 @@ export const ReviewSection: React.FC = () => {
                 {section.name}
               </span>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -219,10 +207,8 @@ export const ReviewSection: React.FC = () => {
 
       {/* Next Steps */}
       {completionPercent === 100 ? (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-gradient-to-r from-hustle-gold/20 to-yellow-500/20 border-2 border-hustle-gold rounded-lg p-6 text-center"
+        <div
+className="bg-gradient-to-r from-hustle-gold/20 to-yellow-500/20 border-2 border-hustle-gold rounded-lg p-6 text-center"
         >
           <CheckCircle2 className="w-16 h-16 text-hustle-gold mx-auto mb-4" />
           <h3 className="text-2xl font-anton text-hustle-gold mb-2">
@@ -231,7 +217,7 @@ export const ReviewSection: React.FC = () => {
           <p className="text-white/80 font-merriweather mb-4">
             Your professional HVAC resume is complete. Download it now and start applying!
           </p>
-        </motion.div>
+        </div>
       ) : (
         <div className="bg-hustle-navy-dark border border-hustle-gold/20 rounded-lg p-4">
           <p className="text-white/70 font-merriweather text-sm text-center">
@@ -239,6 +225,6 @@ export const ReviewSection: React.FC = () => {
           </p>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };

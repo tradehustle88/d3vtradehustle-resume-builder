@@ -95,10 +95,13 @@ const TemplatePreviewModal: React.FC<TemplatePreviewModalProps> = ({
             ) : (
               <Image
                 src={template.previewImage || template.thumbnail}
-                alt={`${template.title} full preview`}
+                alt={`${template.title} full preview - ${template.trade} resume template`}
                 width={600}
                 height={800}
                 className="preview-image"
+                loading="lazy"
+                quality={80}
+                sizes="(max-width: 768px) 100vw, 600px"
               />
             )}
           </div>

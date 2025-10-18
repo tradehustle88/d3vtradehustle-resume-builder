@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
-import { motion, AnimatePresence } from 'framer-motion';
 import { GraduationCap, Plus, Trash2 } from 'lucide-react';
 import { ResumeFormData } from './schema';
 
@@ -29,11 +28,8 @@ export const EducationSection: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
+    <div
+className="space-y-6"
     >
       <div className="mb-8">
         <h2 className="text-3xl font-anton text-hustle-gold mb-2">
@@ -44,14 +40,10 @@ export const EducationSection: React.FC = () => {
         </p>
       </div>
 
-      <AnimatePresence mode="popLayout">
-        {fields.map((field, index) => (
-          <motion.div
+      {fields.map((field, index) => (
+          <div
             key={field.id}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="bg-hustle-navy-dark border-2 border-hustle-gold/20 rounded-lg p-6"
+className="bg-hustle-navy-dark border-2 border-hustle-gold/20 rounded-lg p-6"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-2 text-hustle-gold font-merriweather">
@@ -151,27 +143,24 @@ export const EducationSection: React.FC = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
-      </AnimatePresence>
 
       {/* Add Education Button */}
-      <motion.button
+      <button
         type="button"
         onClick={handleAddEducation}
         className="btn-hustle-secondary w-full flex items-center justify-center gap-2"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-      >
+>
         <Plus className="w-5 h-5" />
         Add Education
-      </motion.button>
+      </button>
 
       {fields.length === 0 && (
         <p className="text-white/50 text-sm font-merriweather text-center">
           No formal education? No problem. Skip this section or add relevant training programs.
         </p>
       )}
-    </motion.div>
+    </div>
   );
 };

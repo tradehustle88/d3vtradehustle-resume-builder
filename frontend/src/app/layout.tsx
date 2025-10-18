@@ -1,21 +1,25 @@
 import type { Metadata } from "next";
-// Temporarily disable Google Fonts for build compatibility
-// import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, Anton } from "next/font/google";
 import Script from "next/script";
 import { AuthProvider } from "@/lib/useAuth";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
-// Load fonts - disabled due to network restrictions in build environment
-// const inter = Inter({
-//   variable: "--font-inter",
-//   subsets: ["latin"],
-// });
+// Load fonts with optimized settings for performance
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
+});
 
-// const jetbrainsMono = JetBrains_Mono({
-//   variable: "--font-jetbrains-mono",
-//   subsets: ["latin"],
-// });
+const anton = Anton({
+  weight: '400',
+  subsets: ['latin'],
+  display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
+});
 
 // Metadata (SEO + OG + Social)
 export const metadata: Metadata = {
@@ -34,7 +38,7 @@ export const metadata: Metadata = {
     siteName: "Trade Hustle",
     images: [
       {
-        url: "/assets/resumeBuilderLogo-v3.png", // hosted in /public
+        url: "/assets/resumeBuilderLogo-v3.webp", // WebP format for better performance
         width: 1024,
         height: 1536,
         alt: "Trade Hustle Resume Builder Logo",
@@ -48,7 +52,7 @@ export const metadata: Metadata = {
     title: "Trade Hustle Resume Builder",
     description:
       "Get hired faster with ATS-optimized trade resumes. Built for the trade. Backed by Hustle.",
-    images: ["/assets/resumeBuilderLogo-v3.png"],
+    images: ["/assets/resumeBuilderLogo-v3.webp"],
   },
 };
 
@@ -94,12 +98,12 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
 
-        {/* Google Analytics */}
+        {/* Google Analytics - Deferred for better performance */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-WV2HHYYKCL"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="ga" strategy="afterInteractive">
+        <Script id="ga" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -110,8 +114,8 @@ export default function RootLayout({
           `}
         </Script>
         
-        {/* Service Worker Registration */}
-        <Script id="sw-register" strategy="afterInteractive">
+        {/* Service Worker Registration - Deferred for better performance */}
+        <Script id="sw-register" strategy="lazyOnload">
           {`
             if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
               window.addEventListener('load', () => {
@@ -124,7 +128,8 @@ export default function RootLayout({
         </Script>
       </head>
       <body
-        className="antialiased flex flex-col min-h-screen"
+        className={`${inter.className} antialiased flex flex-col min-h-screen`}
+        style={{ fontFamily: `${inter.className}, ${anton.className}` }}
       >
         <AuthProvider>
           <div className="flex-1">

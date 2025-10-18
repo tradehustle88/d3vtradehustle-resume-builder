@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { CheckCircle2, Circle } from 'lucide-react';
 
 interface ProgressSidebarProps {
@@ -25,7 +24,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
         <h2 className="text-hustle-gold font-anton text-2xl mb-8 tracking-wide">
           YOUR RESUME
         </h2>
-        
+
         <nav aria-label="Resume building progress">
           <ol className="space-y-4">
             {steps.map((step, index) => {
@@ -35,7 +34,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
 
               return (
                 <li key={step.id}>
-                  <motion.button
+                  <button
                     onClick={() => isClickable && onStepClick(step.id)}
                     disabled={!isClickable}
                     className={`
@@ -44,20 +43,15 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                       ${isPast ? 'opacity-70 hover:opacity-100' : ''}
                       ${isClickable ? 'cursor-pointer hover:bg-hustle-gold/5' : 'cursor-default'}
                     `}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
+>
                     {/* Step Indicator */}
                     <div className="flex-shrink-0 mt-0.5">
                       {step.isComplete ? (
                         <CheckCircle2 className="w-6 h-6 text-hustle-gold" />
                       ) : isActive ? (
-                        <motion.div
+                        <div
                           className="w-6 h-6 rounded-full border-2 border-hustle-gold bg-hustle-gold/20"
-                          animate={{ scale: [1, 1.1, 1] }}
-                          transition={{ repeat: Infinity, duration: 2 }}
-                        />
+/>
                       ) : (
                         <Circle className="w-6 h-6 text-gray-500" />
                       )}
@@ -76,7 +70,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                         {step.label}
                       </div>
                     </div>
-                  </motion.button>
+                  </button>
                 </li>
               );
             })}
@@ -89,11 +83,9 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
             Overall Progress
           </div>
           <div className="w-full bg-hustle-navy-dark rounded-full h-2 overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-hustle-gold to-yellow-500"
-              initial={{ width: 0 }}
-              animate={{ width: `${(currentStep / steps.length) * 100}%` }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
+            <div
+              className="h-full bg-gradient-to-r from-hustle-gold to-yellow-500 transition-all duration-500"
+              style={{ width: `${(currentStep / steps.length) * 100}%` }}
             />
           </div>
           <div className="text-xs text-white/80 font-merriweather mt-2 text-right">
@@ -123,11 +115,9 @@ export const MobileProgressBar: React.FC<{ currentStep: number; totalSteps: numb
         </span>
       </div>
       <div className="w-full bg-hustle-navy-dark rounded-full h-2 overflow-hidden">
-        <motion.div
-          className="h-full bg-gradient-to-r from-hustle-gold to-yellow-500"
-          initial={{ width: 0 }}
-          animate={{ width: `${(currentStep / totalSteps) * 100}%` }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+        <div
+          className="h-full bg-gradient-to-r from-hustle-gold to-yellow-500 transition-all duration-500"
+          style={{ width: `${(currentStep / totalSteps) * 100}%` }}
         />
       </div>
     </div>

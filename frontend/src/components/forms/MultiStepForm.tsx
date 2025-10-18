@@ -1,32 +1,58 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { FormProvider, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Download, Save } from 'lucide-react';
 import { resumeSchema, defaultFormValues, ResumeFormData } from './schema';
 import { ProgressSidebar, MobileProgressBar } from './ProgressSidebar';
-import { HeaderSection } from './HeaderSection';
-import { SummarySection } from './SummarySection';
-import { CertificationsSection } from './CertificationsSection';
-import { SkillsSection } from './SkillsSection';
-import { ExperienceSection } from './ExperienceSection';
-import { EducationSection } from './EducationSection';
-import { ReferencesSection } from './ReferencesSection';
-import { ReviewSection } from './ReviewSection';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { saveResumeProgress, loadResumeProgress } from '@/lib/resume-storage';
 
+// Lazy load form sections for better performance (ssr: false for code splitting)
+const HeaderSection = dynamic(() => import('./HeaderSection').then(mod => ({ default: mod.HeaderSection })), {
+  ssr: false,
+  loading: () => <div className="text-center text-hustle-gold animate-pulse py-8">Loading section...</div>
+});
+const SummarySection = dynamic(() => import('./SummarySection').then(mod => ({ default: mod.SummarySection })), {
+  ssr: false,
+  loading: () => <div className="text-center text-hustle-gold animate-pulse py-8">Loading section...</div>
+});
+const CertificationsSection = dynamic(() => import('./CertificationsSection').then(mod => ({ default: mod.CertificationsSection })), {
+  ssr: false,
+  loading: () => <div className="text-center text-hustle-gold animate-pulse py-8">Loading section...</div>
+});
+const SkillsSection = dynamic(() => import('./SkillsSection').then(mod => ({ default: mod.SkillsSection })), {
+  ssr: false,
+  loading: () => <div className="text-center text-hustle-gold animate-pulse py-8">Loading section...</div>
+});
+const ExperienceSection = dynamic(() => import('./ExperienceSection').then(mod => ({ default: mod.ExperienceSection })), {
+  ssr: false,
+  loading: () => <div className="text-center text-hustle-gold animate-pulse py-8">Loading section...</div>
+});
+const EducationSection = dynamic(() => import('./EducationSection').then(mod => ({ default: mod.EducationSection })), {
+  ssr: false,
+  loading: () => <div className="text-center text-hustle-gold animate-pulse py-8">Loading section...</div>
+});
+const ReferencesSection = dynamic(() => import('./ReferencesSection').then(mod => ({ default: mod.ReferencesSection })), {
+  ssr: false,
+  loading: () => <div className="text-center text-hustle-gold animate-pulse py-8">Loading section...</div>
+});
+const ReviewSection = dynamic(() => import('./ReviewSection').then(mod => ({ default: mod.ReviewSection })), {
+  ssr: false,
+  loading: () => <div className="text-center text-hustle-gold animate-pulse py-8">Loading section...</div>
+});
+
 const STEPS = [
-  { id: 1, label: 'Contact Info', component: HeaderSection },
-  { id: 2, label: 'Summary', component: SummarySection },
-  { id: 3, label: 'Certifications', component: CertificationsSection },
-  { id: 4, label: 'Skills', component: SkillsSection },
-  { id: 5, label: 'Experience', component: ExperienceSection },
-  { id: 6, label: 'Education', component: EducationSection },
-  { id: 7, label: 'References', component: ReferencesSection },
-  { id: 8, label: 'Review & Export', component: ReviewSection },
+  { id: 1, label: 'Contact Info' },
+  { id: 2, label: 'Summary' },
+  { id: 3, label: 'Certifications' },
+  { id: 4, label: 'Skills' },
+  { id: 5, label: 'Experience' },
+  { id: 6, label: 'Education' },
+  { id: 7, label: 'References' },
+  { id: 8, label: 'Review & Export' },
 ];
 
 export default function MultiStepForm() {
@@ -75,7 +101,20 @@ export default function MultiStepForm() {
     return () => subscription.unsubscribe();
   }, [watch, user]);
 
-  const CurrentStepComponent = STEPS[currentStep - 1].component;
+  // Render the current step component dynamically
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 1: return <HeaderSection />;
+      case 2: return <SummarySection />;
+      case 3: return <CertificationsSection />;
+      case 4: return <SkillsSection />;
+      case 5: return <ExperienceSection />;
+      case 6: return <EducationSection />;
+      case 7: return <ReferencesSection />;
+      case 8: return <ReviewSection />;
+      default: return <HeaderSection />;
+    }
+  };
 
   const nextStep = () => {
     if (currentStep < STEPS.length) {
@@ -152,32 +191,21 @@ export default function MultiStepForm() {
           <main className="flex-1 bg-hustle-navy min-h-screen p-6 md:p-12 pb-24 md:pb-12">
             <div className="max-w-3xl mx-auto">
               {/* Auto-save Indicator */}
-              <AnimatePresence>
-                {isSaving && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    className="mb-4 flex items-center gap-2 text-hustle-gold text-sm font-merriweather"
+              {isSaving && (
+                  <div
+className="mb-4 flex items-center gap-2 text-hustle-gold text-sm font-merriweather"
                   >
                     <Save className="w-4 h-4 animate-pulse" />
                     Saving progress...
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
 
               {/* Step Content */}
-              <AnimatePresence mode="wait">
-                <motion.div
+              <div
                   key={currentStep}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <CurrentStepComponent />
-                </motion.div>
-              </AnimatePresence>
+>
+                  {renderCurrentStep()}
+                </div>
 
               {/* Navigation Buttons */}
               <div className="mt-8 flex items-center justify-between gap-4">
@@ -230,15 +258,13 @@ export default function MultiStepForm() {
 
               {/* Error Summary */}
               {Object.keys(errors).length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg"
+                <div
+className="mt-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg"
                 >
                   <p className="text-red-500 font-merriweather text-sm">
                     Please fix the errors above before continuing
                   </p>
-                </motion.div>
+                </div>
               )}
             </div>
           </main>

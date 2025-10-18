@@ -64,7 +64,7 @@ export default function CompleteHeroSystem() {
           <div className="relative animate-pulse-glow">
             <Image
               src="/assets/resumeBuilderLogo-v3.webp"
-              alt="Trade Hustle Engine"
+              alt="Trade Hustle Engine - Professional Resume Builder for Skilled Trades"
               width={140}
               height={140}
               priority
@@ -72,6 +72,7 @@ export default function CompleteHeroSystem() {
               placeholder="blur"
               blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0ZGRDYzMyIgb3BhY2l0eT0iMC4xIi8+PC9zdmc+"
               className="drop-shadow-2xl"
+              sizes="(max-width: 768px) 100px, 140px"
             />
             <div className="absolute inset-0 bg-[#FFD633] rounded-full blur-3xl opacity-20 animate-orbit-glow"></div>
           </div>

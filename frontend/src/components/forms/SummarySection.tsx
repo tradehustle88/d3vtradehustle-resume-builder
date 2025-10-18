@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { motion } from 'framer-motion';
 import { Sparkles, Info } from 'lucide-react';
 import { ResumeFormData } from './schema';
 import { AI_PROMPTS, FIELD_TOOLTIPS } from './ai-prompts';
@@ -53,11 +52,8 @@ export const SummarySection: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
+    <div
+className="space-y-6"
     >
       <div className="mb-8">
         <h2 className="text-3xl font-anton text-hustle-gold mb-2">
@@ -105,17 +101,15 @@ export const SummarySection: React.FC = () => {
           aria-label="Professional Summary"
           maxLength={500}
         />
-        
+
         <div className="flex justify-between items-center mt-1">
           <div>
             {errors.summary && (
-              <motion.p
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="text-red-500 text-sm font-merriweather"
+              <p
+className="text-red-500 text-sm font-merriweather"
               >
                 {errors.summary.message}
-              </motion.p>
+              </p>
             )}
           </div>
           <span className="text-white/50 text-sm font-merriweather">
@@ -123,6 +117,6 @@ export const SummarySection: React.FC = () => {
           </span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };

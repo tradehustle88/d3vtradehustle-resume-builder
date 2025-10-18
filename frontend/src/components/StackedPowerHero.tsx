@@ -14,12 +14,14 @@ export default function StackedPowerHero() {
       {/* Logo centered under heading */}
       <div className="mb-8">
         <Image
-          src="/assets/resumeBuilderLogo-v3.png"
-          alt="Trade Hustle Resume Builder"
+          src="/assets/resumeBuilderLogo-v3.webp"
+          alt="Trade Hustle Resume Builder - Professional Skilled Trade Resumes"
           width={120}
           height={120}
           priority
+          quality={85}
           className="mx-auto drop-shadow-lg"
+          sizes="(max-width: 768px) 80px, 120px"
         />
       </div>
 

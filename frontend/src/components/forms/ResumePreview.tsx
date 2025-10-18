@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { FileText, Download } from 'lucide-react';
 import { ResumeFormData } from './schema';
 
@@ -25,10 +24,8 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
   } = data;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="bg-white text-gray-900 rounded-lg shadow-2xl p-8 max-w-4xl mx-auto"
+    <div
+className="bg-white text-gray-900 rounded-lg shadow-2xl p-8 max-w-4xl mx-auto"
     >
       {/* Header */}
       <div className="border-b-4 border-hustle-gold pb-6 mb-6">
@@ -184,6 +181,6 @@ export const ResumePreview: React.FC<ResumePreviewProps> = ({ data }) => {
           </p>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };

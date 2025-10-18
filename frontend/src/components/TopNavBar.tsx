@@ -13,11 +13,13 @@ export default function TopNavBar() {
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Image
-              src="/assets/resumeBuilderLogo-v3.png"
-              alt="Trade Hustle"
+              src="/assets/resumeBuilderLogo-v3.webp"
+              alt="Trade Hustle Resume Builder Logo"
               width={40}
               height={40}
               className="drop-shadow-[0_0_8px_rgba(255,214,51,0.4)]"
+              quality={85}
+              sizes="40px"
             />
             <span className="hidden sm:inline-block text-white font-semibold text-sm tracking-wide">
               TRADE HUSTLE

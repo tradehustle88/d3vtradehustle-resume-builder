@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Briefcase, Plus, Trash2, Sparkles, Calendar } from 'lucide-react';
 import { ResumeFormData } from './schema';
 import { AI_PROMPTS } from './ai-prompts';
@@ -101,11 +100,8 @@ export const ExperienceSection: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
+    <div
+className="space-y-6"
     >
       <div className="mb-8">
         <h2 className="text-3xl font-anton text-hustle-gold mb-2">
@@ -116,18 +112,14 @@ export const ExperienceSection: React.FC = () => {
         </p>
       </div>
 
-      <AnimatePresence mode="popLayout">
-        {fields.map((field, index) => {
+      {fields.map((field, index) => {
           const achievements = watch(`experience.${index}.achievements`) || [];
           const isGenerating = generatingIndex === index;
 
           return (
-            <motion.div
+            <div
               key={field.id}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              className="bg-hustle-navy-dark border-2 border-hustle-gold/20 rounded-lg p-6"
+className="bg-hustle-navy-dark border-2 border-hustle-gold/20 rounded-lg p-6"
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
@@ -285,22 +277,19 @@ export const ExperienceSection: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           );
         })}
-      </AnimatePresence>
 
       {/* Add Experience Button */}
-      <motion.button
+      <button
         type="button"
         onClick={handleAddExperience}
         className="btn-hustle-secondary w-full flex items-center justify-center gap-2"
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.98 }}
-      >
+>
         <Plus className="w-5 h-5" />
         Add Work Experience
-      </motion.button>
-    </motion.div>
+      </button>
+    </div>
   );
 };

@@ -49,6 +49,8 @@ export default function SocialCoin({ href, iconSrc, alt, size = 56 }: SocialCoin
           width={Math.round(size * 0.5)}
           height={Math.round(size * 0.5)}
           className="relative z-10 opacity-95"
+          loading="lazy"
+          quality={85}
         />
       </div>
     </Link>

@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Zap, Plus, Trash2, Tag } from 'lucide-react';
 import { ResumeFormData, HVAC_SKILLS } from './schema';
 
@@ -38,11 +37,8 @@ export const SkillsSection: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
+    <div
+className="space-y-6"
     >
       <div className="mb-8">
         <h2 className="text-3xl font-anton text-hustle-gold mb-2">
@@ -56,14 +52,10 @@ export const SkillsSection: React.FC = () => {
       {/* Skills as Chips */}
       {fields.length > 0 && (
         <div className="flex flex-wrap gap-2 p-4 bg-hustle-navy-dark border-2 border-hustle-gold/20 rounded-lg min-h-[100px]">
-          <AnimatePresence mode="popLayout">
-            {fields.map((field, index) => (
-              <motion.div
+          {fields.map((field, index) => (
+              <div
                 key={field.id}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="group relative"
+className="group relative"
               >
                 <input
                   {...register(`skills.${index}.name`)}
@@ -81,9 +73,8 @@ export const SkillsSection: React.FC = () => {
                 </button>
                 {/* Hidden category field */}
                 <input type="hidden" {...register(`skills.${index}.category`)} />
-              </motion.div>
+              </div>
             ))}
-          </AnimatePresence>
         </div>
       )}
 
@@ -98,16 +89,14 @@ export const SkillsSection: React.FC = () => {
 
       {/* Add Skill Button */}
       {fields.length < 8 && (
-        <motion.button
+        <button
           type="button"
           onClick={() => handleAddSkill()}
           className="btn-hustle-secondary w-full flex items-center justify-center gap-2"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
+>
           <Plus className="w-5 h-5" />
           Add Skill
-        </motion.button>
+        </button>
       )}
 
       {/* Skill Suggestions */}
@@ -122,13 +111,9 @@ export const SkillsSection: React.FC = () => {
             {showSuggestions ? 'Hide' : 'Show'} Skill Suggestions
           </button>
 
-          <AnimatePresence>
-            {showSuggestions && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-4 bg-hustle-navy-dark border border-hustle-gold/30 rounded-lg p-4"
+          {showSuggestions && (
+              <div
+className="mt-4 bg-hustle-navy-dark border border-hustle-gold/30 rounded-lg p-4"
               >
                 {/* Category Tabs */}
                 <div className="flex gap-2 mb-4">
@@ -162,9 +147,8 @@ export const SkillsSection: React.FC = () => {
                     </button>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
         </div>
       )}
 
@@ -175,14 +159,12 @@ export const SkillsSection: React.FC = () => {
       )}
 
       {errors.skills && (
-        <motion.p
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: 'auto' }}
-          className="text-red-500 text-sm font-merriweather"
+        <p
+className="text-red-500 text-sm font-merriweather"
         >
           {errors.skills.message}
-        </motion.p>
+        </p>
       )}
-    </motion.div>
+    </div>
   );
 };

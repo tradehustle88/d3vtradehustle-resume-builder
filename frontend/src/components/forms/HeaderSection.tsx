@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { motion } from 'framer-motion';
 import { User, Mail, Phone, MapPin, Briefcase } from 'lucide-react';
 import { ResumeFormData } from './schema';
 
@@ -13,11 +12,8 @@ export const HeaderSection: React.FC = () => {
   } = useFormContext<ResumeFormData>();
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
+    <div
+className="space-y-6"
     >
       <div className="mb-8">
         <h2 className="text-3xl font-anton text-hustle-gold mb-2">
@@ -45,13 +41,11 @@ export const HeaderSection: React.FC = () => {
           aria-invalid={!!errors.name}
         />
         {errors.name && (
-          <motion.p
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="text-red-500 text-sm mt-1 font-merriweather"
+          <p
+className="text-red-500 text-sm mt-1 font-merriweather"
           >
             {errors.name.message}
-          </motion.p>
+          </p>
         )}
       </div>
 
@@ -72,13 +66,11 @@ export const HeaderSection: React.FC = () => {
           aria-invalid={!!errors.email}
         />
         {errors.email && (
-          <motion.p
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="text-red-500 text-sm mt-1 font-merriweather"
+          <p
+className="text-red-500 text-sm mt-1 font-merriweather"
           >
             {errors.email.message}
-          </motion.p>
+          </p>
         )}
       </div>
 
@@ -99,13 +91,11 @@ export const HeaderSection: React.FC = () => {
           aria-invalid={!!errors.phone}
         />
         {errors.phone && (
-          <motion.p
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="text-red-500 text-sm mt-1 font-merriweather"
+          <p
+className="text-red-500 text-sm mt-1 font-merriweather"
           >
             {errors.phone.message}
-          </motion.p>
+          </p>
         )}
       </div>
 
@@ -126,13 +116,11 @@ export const HeaderSection: React.FC = () => {
           aria-invalid={!!errors.location}
         />
         {errors.location && (
-          <motion.p
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="text-red-500 text-sm mt-1 font-merriweather"
+          <p
+className="text-red-500 text-sm mt-1 font-merriweather"
           >
             {errors.location.message}
-          </motion.p>
+          </p>
         )}
       </div>
 
@@ -154,6 +142,6 @@ export const HeaderSection: React.FC = () => {
           Your primary job title or trade specialty
         </p>
       </div>
-    </motion.div>
+    </div>
   );
 };

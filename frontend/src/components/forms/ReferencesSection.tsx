@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { motion } from 'framer-motion';
 import { Users, Info } from 'lucide-react';
 import { ResumeFormData } from './schema';
 import { FIELD_TOOLTIPS } from './ai-prompts';
@@ -17,11 +16,8 @@ export const ReferencesSection: React.FC = () => {
   const references = watch('references');
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
+    <div
+className="space-y-6"
     >
       <div className="mb-8">
         <h2 className="text-3xl font-anton text-hustle-gold mb-2">
@@ -69,13 +65,11 @@ john.smith@coolairhvac.com`}
         <div className="flex justify-between items-center mt-1">
           <div>
             {errors.references && (
-              <motion.p
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                className="text-red-500 text-sm font-merriweather"
+              <p
+className="text-red-500 text-sm font-merriweather"
               >
                 {errors.references.message}
-              </motion.p>
+              </p>
             )}
           </div>
           <span className="text-white/50 text-sm font-merriweather">
@@ -112,6 +106,6 @@ john.smith@coolairhvac.com`}
           </button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };

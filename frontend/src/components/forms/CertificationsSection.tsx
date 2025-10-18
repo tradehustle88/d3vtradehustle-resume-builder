@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Award, Plus, Trash2, Sparkles } from 'lucide-react';
 import { ResumeFormData, HVAC_CERTIFICATIONS } from './schema';
 
@@ -37,11 +36,8 @@ export const CertificationsSection: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="space-y-6"
+    <div
+className="space-y-6"
     >
       <div className="mb-8">
         <h2 className="text-3xl font-anton text-hustle-gold mb-2">
@@ -53,14 +49,10 @@ export const CertificationsSection: React.FC = () => {
       </div>
 
       {/* Existing Certifications */}
-      <AnimatePresence mode="popLayout">
-        {fields.map((field, index) => (
-          <motion.div
+      {fields.map((field, index) => (
+          <div
             key={field.id}
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="bg-hustle-navy-dark border-2 border-hustle-gold/20 rounded-lg p-4"
+className="bg-hustle-navy-dark border-2 border-hustle-gold/20 rounded-lg p-4"
           >
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-center gap-2 text-hustle-gold font-merriweather">
@@ -133,22 +125,19 @@ export const CertificationsSection: React.FC = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
-      </AnimatePresence>
 
       {/* Add Certification Button */}
       {fields.length < 6 && (
-        <motion.button
+        <button
           type="button"
           onClick={() => handleAddCertification()}
           className="btn-hustle-secondary w-full flex items-center justify-center gap-2"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-        >
+>
           <Plus className="w-5 h-5" />
           Add Certification
-        </motion.button>
+        </button>
       )}
 
       {/* Suggestions */}
@@ -163,13 +152,9 @@ export const CertificationsSection: React.FC = () => {
             {showSuggestions ? 'Hide' : 'Show'} Common HVAC Certifications
           </button>
 
-          <AnimatePresence>
-            {showSuggestions && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="mt-3 flex flex-wrap gap-2"
+          {showSuggestions && (
+              <div
+className="mt-3 flex flex-wrap gap-2"
               >
                 {HVAC_CERTIFICATIONS.map(cert => (
                   <button
@@ -182,9 +167,8 @@ export const CertificationsSection: React.FC = () => {
                     {cert}
                   </button>
                 ))}
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
         </div>
       )}
 
@@ -193,6 +177,6 @@ export const CertificationsSection: React.FC = () => {
           Maximum of 6 certifications reached. Focus on your most relevant credentials.
         </p>
       )}
-    </motion.div>
+    </div>
   );
 };
