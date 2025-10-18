@@ -62,6 +62,11 @@ export default function RootLayout({
       <head>
         {/* Favicon fallback */}
         <link rel="icon" href="/favicon.ico" sizes="any" />
+        
+        {/* DNS Prefetch for external resources - improves 3rd party load time */}
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
         {/* Font Awesome for social media icons */}
         <link
@@ -76,21 +81,14 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link 
-          href="https://fonts.googleapis.com/css2?family=Anton&family=EB+Garamond:wght@400;700&display=swap" 
+          href="https://fonts.googleapis.com/css2?family=Anton&family=Merriweather:wght@400;700&family=EB+Garamond:wght@400;700&display=swap" 
           rel="stylesheet" 
         />
         
-        {/* Preload critical fonts for better LCP */}
+        {/* Preload critical fonts for better LCP - Anton is primary hero font */}
         <link
           rel="preload"
           href="https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUA4V-e6yHgQ.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="anonymous"

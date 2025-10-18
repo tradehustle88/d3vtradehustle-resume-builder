@@ -6,9 +6,15 @@ const nextConfig = {
   trailingSlash: true,  // Add trailing slashes for better static hosting compatibility
   images: {
     unoptimized: true,  // Keep this for Firebase compatibility
+    formats: ['image/webp', 'image/avif'],  // Modern image formats for better compression
   },
   experimental: {
     forceSwcTransforms: true,
+  },
+  
+  // Performance optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',  // Remove console.logs in production
   },
   
   // ===== SECURITY HEADERS (Content Security Policy) =====

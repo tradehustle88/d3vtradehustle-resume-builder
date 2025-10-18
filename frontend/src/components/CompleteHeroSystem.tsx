@@ -68,6 +68,9 @@ export default function CompleteHeroSystem() {
               width={140}
               height={140}
               priority
+              quality={85}
+              placeholder="blur"
+              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTQwIiBoZWlnaHQ9IjE0MCIgZmlsbD0iI0ZGRDYzMyIgb3BhY2l0eT0iMC4xIi8+PC9zdmc+"
               className="drop-shadow-2xl"
             />
             <div className="absolute inset-0 bg-[#FFD633] rounded-full blur-3xl opacity-20 animate-orbit-glow"></div>
