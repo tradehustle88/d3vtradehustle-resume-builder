@@ -157,3 +157,91 @@ export const trackError = (description: string, fatal: boolean = false) => {
         });
     }
 };
+
+// ===============================================
+// CRYPTO PAYMENT TRACKING EVENTS
+// ===============================================
+
+/**
+ * Track when user initiates a crypto payment
+ */
+export const trackCryptoPaymentInitiated = (
+    tier: string,
+    amount: number,
+    currency: string,
+    provider: string
+) => {
+    trackEvent("crypto_payment_initiated", {
+        event_category: "payment",
+        event_label: `${provider}_${currency}`,
+        value: amount,
+        tier,
+        currency,
+        provider,
+    });
+};
+
+/**
+ * Track when crypto payment is successfully completed
+ */
+export const trackCryptoPaymentCompleted = (
+    tier: string,
+    amount: number,
+    currency: string,
+    provider: string,
+    paymentId: string
+) => {
+    trackEvent("crypto_payment_completed", {
+        event_category: "payment",
+        event_label: `${provider}_${currency}`,
+        value: amount,
+        tier,
+        currency,
+        provider,
+        payment_id: paymentId,
+    });
+};
+
+/**
+ * Track when crypto payment fails
+ */
+export const trackCryptoPaymentFailed = (
+    tier: string,
+    amount: number,
+    currency: string,
+    provider: string,
+    error: string
+) => {
+    trackEvent("crypto_payment_failed", {
+        event_category: "payment",
+        event_label: `${provider}_${currency}`,
+        value: amount,
+        tier,
+        currency,
+        provider,
+        error,
+    });
+};
+
+/**
+ * Track when user views crypto payment modal
+ */
+export const trackCryptoPaymentModalViewed = (tier: string, amount: number) => {
+    trackEvent("crypto_payment_modal_viewed", {
+        event_category: "payment",
+        event_label: tier,
+        value: amount,
+    });
+};
+
+/**
+ * Track when user selects a cryptocurrency
+ */
+export const trackCryptoCurrencySelected = (currency: string, provider: string) => {
+    trackEvent("crypto_currency_selected", {
+        event_category: "payment",
+        event_label: `${provider}_${currency}`,
+        currency,
+        provider,
+    });
+};

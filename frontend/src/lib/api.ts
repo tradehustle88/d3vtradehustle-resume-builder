@@ -210,3 +210,74 @@ export async function localVerifyRecaptcha(token: string) {
     body: JSON.stringify({ token }),
   });
 }
+
+// --------- Crypto Payment API Functions ---------
+
+// Create crypto payment
+export async function createCryptoPayment(
+  idToken: string,
+  tierId: string,
+  provider: "coinbase" | "nowpayments" = "coinbase",
+  currency: string = "btc"
+) {
+  return request<{
+    success: boolean;
+    provider: string;
+    chargeId?: string;
+    chargeCode?: string;
+    hostedUrl?: string;
+    addresses?: Record<string, string>;
+    invoiceId?: number;
+    invoiceUrl?: string;
+    payAddress?: string;
+    payAmount?: number;
+    payCurrency?: string;
+    expiresAt?: string;
+    expirationEstimateDate?: string;
+  }>("/api/crypto/create-payment", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${idToken}`,
+    },
+    body: JSON.stringify({
+      tierId,
+      provider,
+      currency,
+    }),
+  });
+}
+
+// Get crypto payment status
+export async function getCryptoPaymentStatus(idToken: string, paymentId: string) {
+  return request<{
+    success: boolean;
+    status: string;
+    provider: string;
+    amount: number;
+    currency: string;
+    createdAt: any;
+    confirmedAt?: any;
+  }>(`/api/crypto/payment-status/${paymentId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${idToken}`,
+    },
+  });
+}
+
+// Get supported cryptocurrencies
+export async function getSupportedCryptos() {
+  return request<{
+    success: boolean;
+    currencies: Record<string, {
+      name: string;
+      symbol: string;
+      icon: string;
+      providers: string[];
+    }>;
+  }>("/api/crypto/supported-currencies", {
+    method: "GET",
+  });
+}

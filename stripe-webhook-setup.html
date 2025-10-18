@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stripe Webhook Setup - Trade Hustle Resume Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001a33 0%, #003366 100%);
+            color: #fff;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(0, 26, 51, 0.9);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            color: #ffd700;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #ccc;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .webhook-url {
+            background: #003366;
+            border-left: 5px solid #ffd700;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .webhook-url h2 {
+            color: #ffd700;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+        
+        .url-box {
+            background: #001a33;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            word-break: break-all;
+            color: #ffd700;
+            border: 1px solid #ffd700;
+        }
+        
+        .steps {
+            margin: 30px 0;
+        }
+        
+        .step {
+            background: #003366;
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 5px solid #ffd700;
+        }
+        
+        .step h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .step code {
+            background: #001a33;
+            padding: 3px 8px;
+            border-radius: 3px;
+            color: #ffd700;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .command-box {
+            background: #001a33;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+            border: 1px solid #555;
+            color: #0f0;
+        }
+        
+        .events-list {
+            background: #001a33;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        
+        .events-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .events-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #003366;
+            color: #ccc;
+        }
+        
+        .events-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .events-list li code {
+            color: #ffd700;
+            background: transparent;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        
+        .warning-badge {
+            display: inline-block;
+            background: #ffc107;
+            color: #000;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        
+        .test-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .test-card h3 {
+            margin-bottom: 15px;
+        }
+        
+        .card-number {
+            font-size: 1.5em;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+            margin: 10px 0;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #003366;
+            color: #999;
+        }
+        
+        .footer a {
+            color: #ffd700;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .doc-card {
+            background: #003366;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .doc-card:hover {
+            border-color: #ffd700;
+            transform: translateY(-5px);
+        }
+        
+        .doc-card h4 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        
+        .doc-card p {
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        
+        .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Stripe Webhook Setup</h1>
+        <p class="subtitle">Trade Hustle Resume Builder - Production Configuration</p>
+        
+        <div class="webhook-url">
+            <h2>📍 Your Production Webhook URL</h2>
+            <div class="url-box">
+                https://us-central1-tradehustleresumebuilder.cloudfunctions.net/stripeWebhook
+            </div>
+            <span class="status-badge">✅ Already Implemented</span>
+            <span class="status-badge">🔒 Signature Verified</span>
+        </div>
+        
+        <h2 style="color: #ffd700; margin-top: 40px; margin-bottom: 20px;">📚 Documentation Available</h2>
+        <div class="docs-grid">
+            <div class="doc-card">
+                <div class="icon">⚡</div>
+                <h4>Quick Start</h4>
+                <p>STRIPE_WEBHOOK_QUICKSTART.md</p>
+                <p>5-minute setup guide</p>
+            </div>
+            <div class="doc-card">
+                <div class="icon">📖</div>
+                <h4>Complete Guide</h4>
+                <p>STRIPE_WEBHOOK_SETUP.md</p>
+                <p>Comprehensive documentation</p>
+            </div>
+            <div class="doc-card">
+                <div class="icon">🎨</div>
+                <h4>Visual Flow</h4>
+                <p>STRIPE_WEBHOOK_VISUAL_FLOW.md</p>
+                <p>Diagrams & flowcharts</p>
+            </div>
+        </div>
+        
+        <div class="steps">
+            <h2 style="color: #ffd700; margin-bottom: 20px;">⚡ Setup Steps</h2>
+            
+            <div class="step">
+                <h3>Step 1: Open Stripe Dashboard</h3>
+                <p>Navigate to: <a href="https://dashboard.stripe.com/webhooks" target="_blank" style="color: #ffd700;">https://dashboard.stripe.com/webhooks</a></p>
+                <p>Click the <strong>+ Add endpoint</strong> button</p>
+            </div>
+            
+            <div class="step">
+                <h3>Step 2: Configure Endpoint</h3>
+                <p>Paste your webhook URL in the endpoint field:</p>
+                <div class="command-box">
+                    https://us-central1-tradehustleresumebuilder.cloudfunctions.net/stripeWebhook
+                </div>
+            </div>
+            
+            <div class="step">
+                <h3>Step 3: Select Events to Listen</h3>
+                <div class="events-list">
+                    <ul>
+                        <li><code>checkout.session.completed</code> - Payment successful</li>
+                        <li><code>checkout.session.expired</code> - Checkout expired</li>
+                        <li><code>customer.subscription.created</code> - New subscription</li>
+                        <li><code>customer.subscription.updated</code> - Subscription modified</li>
+                        <li><code>customer.subscription.deleted</code> - Subscription canceled</li>
+                        <li><code>invoice.paid</code> - Invoice payment successful</li>
+                        <li><code>invoice.payment_failed</code> - Invoice payment failed</li>
+                        <li><code>invoice.payment_action_required</code> - Action needed</li>
+                        <li><code>payment_intent.succeeded</code> - One-time payment success</li>
+                        <li><code>payment_intent.payment_failed</code> - Payment failed</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="step">
+                <h3>Step 4: Save & Copy Signing Secret</h3>
+                <p>After clicking "Add endpoint", Stripe will show you a <strong>Signing secret</strong></p>
+                <p>It looks like: <code>whsec_1234567890abcdefghijklmnopqrstuvwxyz...</code></p>
+                <span class="warning-badge">⚠️ Copy this - you'll need it next!</span>
+            </div>
+            
+            <div class="step">
+                <h3>Step 5: Add Secret to Firebase</h3>
+                <p>Run this command in your terminal:</p>
+                <div class="command-box">
+                    $ firebase functions:secrets:set STRIPE_WEBHOOK_SECRET<br>
+                    ? Enter a value for STRIPE_WEBHOOK_SECRET: [paste your secret here]
+                </div>
+            </div>
+            
+            <div class="step">
+                <h3>Step 6: Deploy Functions</h3>
+                <p>Deploy your updated functions:</p>
+                <div class="command-box">
+                    $ firebase deploy --only functions
+                </div>
+                <span class="status-badge">✅ Done! Your webhook is live!</span>
+            </div>
+        </div>
+        
+        <div class="test-card">
+            <h3>🧪 Test Your Webhook</h3>
+            <p>Use this Stripe test card:</p>
+            <div class="card-number">4242 4242 4242 4242</div>
+            <p>Expiry: <strong>12/30</strong> (any future date)</p>
+            <p>CVC: <strong>123</strong> (any 3 digits)</p>
+            <p>ZIP: <strong>12345</strong> (any 5 digits)</p>
+        </div>
+        
+        <div class="step">
+            <h3>📊 Monitor Your Webhooks</h3>
+            <p><strong>Stripe Dashboard:</strong> Developers → Webhooks → Recent deliveries</p>
+            <p><strong>Firebase Logs:</strong></p>
+            <div class="command-box">
+                $ firebase functions:log --only stripeWebhook
+            </div>
+            <p style="margin-top: 10px;">Or visit: <a href="https://console.firebase.google.com/project/tradehustleresumebuilder/functions/logs" target="_blank" style="color: #ffd700;">Firebase Console</a></p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>🎉 Your webhook is production-ready!</strong></p>
+            <p>Built with hustle 💪 by <a href="https://tradehustleresume.web.app" target="_blank">Trade Hustle Resume Builder</a></p>
+            <p style="margin-top: 15px; font-size: 0.9em;">
+                <a href="STRIPE_WEBHOOK_QUICKSTART.md">Quick Start Guide</a> | 
+                <a href="STRIPE_WEBHOOK_SETUP.md">Full Documentation</a> | 
+                <a href="STRIPE_WEBHOOK_VISUAL_FLOW.md">Visual Flow</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

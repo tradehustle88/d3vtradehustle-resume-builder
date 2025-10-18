@@ -1319,6 +1319,179 @@ app.post("/api/blueprints/verify", honeypotCheck, verifyUser, async (req, res) =
 
 //
 // ============================================
+// CRYPTO PAYMENT ENDPOINTS
+// ============================================
+//
+
+const cryptoPayments = require("./services/crypto-payments");
+
+/**
+ * POST /api/crypto/create-payment
+ * Create crypto payment charge (Coinbase Commerce or NOWPayments)
+ * Body: { tierId, provider, currency }
+ */
+app.post("/api/crypto/create-payment", honeypotCheck, verifyUser, async (req, res) => {
+  try {
+    const {uid, email} = req.user;
+    const {tierId, provider = "coinbase", currency = "btc"} = req.body;
+
+    if (!tierId) {
+      return res.status(400).json({
+        success: false,
+        error: "tierId is required",
+      });
+    }
+
+    // Get pricing tier information
+    const tier = getTierById(tierId);
+    if (!tier) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid tier ID",
+      });
+    }
+
+    console.log(`₿ Crypto payment initiated: ${provider}/${currency} for ${email}`);
+
+    let result;
+
+    if (provider === "coinbase" || provider === "coinbase_commerce") {
+      // Create Coinbase Commerce charge (supports multiple currencies)
+      result = await cryptoPayments.createCoinbaseCommerceCharge({
+        userId: uid,
+        email,
+        amount: tier.price,
+        productName: tier.name,
+        tierId,
+        metadata: {
+          tier: tier.name,
+          interval: tier.interval || "one-time",
+        },
+      });
+    } else if (provider === "nowpayments") {
+      // Create NOWPayments invoice (specific currency)
+      result = await cryptoPayments.createNOWPaymentsInvoice({
+        userId: uid,
+        email,
+        amount: tier.price,
+        productName: tier.name,
+        tierId,
+        currency,
+        metadata: {
+          tier: tier.name,
+          interval: tier.interval || "one-time",
+        },
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid provider. Use 'coinbase' or 'nowpayments'",
+      });
+    }
+
+    res.json(result);
+  } catch (error) {
+    console.error("❌ Crypto Payment Creation Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * GET /api/crypto/payment-status/:paymentId
+ * Check crypto payment status
+ */
+app.get("/api/crypto/payment-status/:paymentId", verifyUser, async (req, res) => {
+  try {
+    const {paymentId} = req.params;
+
+    if (!paymentId) {
+      return res.status(400).json({
+        success: false,
+        error: "paymentId is required",
+      });
+    }
+
+    const status = await cryptoPayments.getPaymentStatus(paymentId);
+
+    res.json(status);
+  } catch (error) {
+    console.error("❌ Payment Status Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * GET /api/crypto/supported-currencies
+ * Get list of supported cryptocurrencies
+ */
+app.get("/api/crypto/supported-currencies", async (req, res) => {
+  try {
+    res.json({
+      success: true,
+      currencies: cryptoPayments.supportedCryptos,
+    });
+  } catch (error) {
+    console.error("❌ Supported Currencies Error:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * POST /api/crypto/webhook/coinbase
+ * Coinbase Commerce webhook handler
+ */
+app.post("/api/crypto/webhook/coinbase", express.raw({type: "application/json"}), async (req, res) => {
+  try {
+    const signature = req.headers["x-cc-webhook-signature"];
+    const rawBody = req.body.toString();
+
+    // Verify webhook signature
+    if (!cryptoPayments.verifyCoinbaseWebhook(signature, rawBody)) {
+      console.warn("⚠️ Invalid Coinbase webhook signature");
+      return res.status(400).json({error: "Invalid signature"});
+    }
+
+    const event = JSON.parse(rawBody);
+
+    // Process webhook event
+    await cryptoPayments.processCoinbaseWebhook(event);
+
+    res.json({received: true});
+  } catch (error) {
+    console.error("❌ Coinbase Webhook Error:", error);
+    res.status(500).json({error: error.message});
+  }
+});
+
+/**
+ * POST /api/crypto/webhook/nowpayments
+ * NOWPayments IPN webhook handler
+ */
+app.post("/api/crypto/webhook/nowpayments", async (req, res) => {
+  try {
+    const payload = req.body;
+
+    // Process webhook payload
+    await cryptoPayments.processNOWPaymentsWebhook(payload);
+
+    res.json({received: true});
+  } catch (error) {
+    console.error("❌ NOWPayments Webhook Error:", error);
+    res.status(500).json({error: error.message});
+  }
+});
+
+//
+// ============================================
 // REFERRAL PROGRAM ENDPOINTS
 // ============================================
 //
