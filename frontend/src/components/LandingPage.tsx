@@ -1,11 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import TopNavBar from './TopNavBar'
 import CompleteHeroSystem from './CompleteHeroSystem'
-import TradeSelectionGrid from './TradeSelectionGrid'
-import ResumeVerifierSection from './ResumeVerifierSection'
+
+// Lazy load below-the-fold components for better initial load performance
+const TradeSelectionGrid = dynamic(() => import('./TradeSelectionGrid'), { ssr: false })
+const ResumeVerifierSection = dynamic(() => import('./ResumeVerifierSection'), { 
+  ssr: false,
+  loading: () => <div className="h-96 animate-pulse bg-gray-100" />
+})
 
 const proofStats = [
   { label: 'Trades Backed', value: '42+', description: 'Skilled trades represented across the platform.' },

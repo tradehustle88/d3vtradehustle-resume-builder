@@ -63,7 +63,7 @@ export default function CompleteHeroSystem() {
         <div className="flex justify-center mb-8">
           <div className="relative animate-pulse-glow">
             <Image
-              src="/assets/resumeBuilderLogo-v3.png"
+              src="/assets/resumeBuilderLogo-v3.webp"
               alt="Trade Hustle Engine"
               width={140}
               height={140}

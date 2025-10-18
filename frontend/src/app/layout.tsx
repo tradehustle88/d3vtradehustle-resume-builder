@@ -109,6 +109,19 @@ export default function RootLayout({
             });
           `}
         </Script>
+        
+        {/* Service Worker Registration */}
+        <Script id="sw-register" strategy="afterInteractive">
+          {`
+            if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+              window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                  .then(registration => console.log('SW registered:', registration.scope))
+                  .catch(error => console.log('SW registration failed:', error));
+              });
+            }
+          `}
+        </Script>
       </head>
       <body
         className="antialiased flex flex-col min-h-screen"
