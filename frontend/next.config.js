@@ -35,13 +35,12 @@ const nextConfig = {
         stream: false,
         util: false,
         buffer: false,
-        process: false, // Fixes "process is not defined"
       };
       
-      // Define process.env for client-side
+      // Provide process polyfill for client-side
       config.plugins.push(
-        new webpack.DefinePlugin({
-          'process.env': JSON.stringify({}),
+        new webpack.ProvidePlugin({
+          process: 'process/browser',
         })
       );
     }
