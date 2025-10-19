@@ -61,4 +61,13 @@ try {
     Write-Host "⚠️  Could not check NPM packages" -ForegroundColor Yellow
 }
 
+Write-Host ""
 Write-Host "🚀 Hustle level: optimal" -ForegroundColor Magenta
+Write-Host ""
+
+# Quick access shortcuts
+Write-Host "⚡ Quick Access Commands:" -ForegroundColor Cyan
+Write-Host "  npm run open:gcp-creds       # GCP Credentials" -ForegroundColor Gray
+Write-Host "  npm run open:firebase        # Firebase Console" -ForegroundColor Gray
+Write-Host "  npm run open:firebase:auth   # Firebase Auth" -ForegroundColor Gray
+Write-Host "  npm run open:github          # GitHub Repo" -ForegroundColor Gray

@@ -12,7 +12,14 @@
     "prepare": "husky install",
     "security-audit": "npm audit --audit-level=moderate",
     "vibe-check": "bash scripts/vibe-check.sh",
-    "vibe-check:ps": "pwsh -File scripts/vibe-check.ps1"
+    "vibe-check:ps": "pwsh -File scripts/vibe-check.ps1",
+    "open:gcp-creds": "pwsh -File scripts/open-gcp-creds.ps1",
+    "open:firebase": "pwsh -File scripts/open-firebase.ps1",
+    "open:firebase:auth": "pwsh -File scripts/open-firebase.ps1 -Page auth",
+    "open:firebase:firestore": "pwsh -File scripts/open-firebase.ps1 -Page firestore",
+    "open:firebase:functions": "pwsh -File scripts/open-firebase.ps1 -Page functions",
+    "open:firebase:hosting": "pwsh -File scripts/open-firebase.ps1 -Page hosting",
+    "open:github": "pwsh -Command \"Start-Process 'https://github.com/tradehustle88/d3vtradehustle-resume-builder'\""
   },
   "dependencies": {
     "@google-cloud/vertexai": "^1.10.0",
