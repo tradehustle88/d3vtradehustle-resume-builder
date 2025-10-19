@@ -10,7 +10,7 @@
 
 ### 1. Revoke Old API Key (2 minutes) ⚠️ CRITICAL
 
-The old exposed key `AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk` is still active!
+The old exposed key `AIzaSyD-***REDACTED***` is still active!
 
 **Option A: Restrict the Old Key**
 1. Go to: https://console.cloud.google.com/apis/credentials?project=tradehustleresumebuilder
@@ -24,7 +24,7 @@ The old exposed key `AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk` is still active!
 
 **Option B: Delete the Old Key** (if you created a new app)
 1. Go to same URL above
-2. Find the OLD API key (ends with XoBbPk)
+2. Find the OLD API key (the exposed one from your documentation)
 3. Click the trash icon
 4. Confirm deletion
 

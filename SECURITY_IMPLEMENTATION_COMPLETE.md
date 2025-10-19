@@ -31,7 +31,7 @@
 
 ### 1. Rotate Firebase API Key (5 minutes)
 
-**Exposed Key:** `AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk`
+**Exposed Key:** `AIzaSyD-***REDACTED***`
 
 ```bash
 # 1. Go to Firebase Console

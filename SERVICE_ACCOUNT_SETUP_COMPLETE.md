@@ -56,7 +56,7 @@ Your frontend still has the **EXPOSED** API key!
    code frontend\.env.local
    
    # Replace this line:
-   NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk
+   NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyD-***REDACTED***
    
    # With your new key:
    NEXT_PUBLIC_FIREBASE_API_KEY=AIza_your_new_key_here

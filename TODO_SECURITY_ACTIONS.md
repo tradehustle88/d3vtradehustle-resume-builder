@@ -19,7 +19,7 @@
 
 ### 1. Rotate Firebase API Keys ⏰ 5 minutes
 
-**Your exposed key:** `AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk`
+**Your exposed key:** `AIzaSyD-***REDACTED***`
 
 ```bash
 # Open Firebase Console
@@ -128,7 +128,7 @@ npm run check-secrets
 # Should pass ✅
 
 # Test 5: Verify no secrets in git history (after cleanup)
-git log --all -p | Select-String "AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk"
+git log --all -p | Select-String "AIzaSyD-***REDACTED***"
 # Should return nothing after history cleanup
 ```
 

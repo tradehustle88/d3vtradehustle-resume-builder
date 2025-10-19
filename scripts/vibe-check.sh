@@ -18,4 +18,13 @@ firebase projects:list >/dev/null 2>&1 \
 
 echo "💾 Disk space:" && df -h | grep "/$"
 echo "⚙️ Node:" $(node -v)
+echo ""
 echo "🚀 Hustle level: optimal"
+echo ""
+
+# Quick access shortcuts
+echo "⚡ Quick Access Commands:"
+echo "  npm run open:gcp-creds       # GCP Credentials"
+echo "  npm run open:firebase        # Firebase Console"
+echo "  npm run open:firebase:auth   # Firebase Auth"
+echo "  npm run open:github          # GitHub Repo"

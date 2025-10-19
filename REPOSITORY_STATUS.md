@@ -91,7 +91,7 @@ npm run vibe-check
 
 The old exposed key is still active:
 ```
-AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk
+AIzaSyD-***REDACTED***
 ```
 
 **Action:** Go to Google Cloud Console and restrict or delete it

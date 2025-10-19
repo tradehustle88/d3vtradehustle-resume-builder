@@ -39,7 +39,7 @@
 
 ### STEP 1: Rotate Firebase Keys IMMEDIATELY
 
-Your API key `AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk` is compromised. Follow these steps:
+Your API key `AIzaSyD-***REDACTED***` is compromised. Follow these steps:
 
 1. **Open Firebase Console:**
    ```

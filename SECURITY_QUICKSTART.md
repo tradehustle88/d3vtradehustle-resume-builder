@@ -7,7 +7,7 @@
 https://console.firebase.google.com/project/tradehustleresumebuilder/settings/general/
 ```
 
-**Exposed Key:** `AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk`  
+**Exposed Key:** `AIzaSyD-***REDACTED***`  
 **Status:** ⚠️ Compromised - Found in 130 locations in git history
 
 ### 2. Clean Git History

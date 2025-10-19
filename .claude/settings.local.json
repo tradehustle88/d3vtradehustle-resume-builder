@@ -7,7 +7,8 @@
       "Bash(git commit:*)",
       "Bash(Copy-Item \"c:\\Users\\trade\\Downloads\\resumeBuilderlogo (1).png\" \"C:\\Users\\trade\\d3vtradehustle-resume-builder\\frontend\\public\\logo.png\")",
       "Bash(start:*)",
-      "Bash(pwsh:*)"
+      "Bash(pwsh:*)",
+      "Bash(npm run vibe-check:ps:*)"
     ],
     "deny": [],
     "ask": []
