@@ -86,7 +86,7 @@ Error: auth/api-key-not-valid
 
 **Fixed Values** (in `frontend/.env.local`):
 ```bash
-NEXT_PUBLIC_FIREBASE_API_KEY=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk
+NEXT_PUBLIC_FIREBASE_API_KEY=YOUR_FIREBASE_API_KEY
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tradehustleresumebuilder.firebaseapp.com
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=tradehustleresumebuilder
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tradehustleresumebuilder.firebasestorage.app

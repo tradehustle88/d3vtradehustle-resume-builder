@@ -1488,7 +1488,7 @@
             "entity": "web.app"
           },
           {
-            "url": "https://tradehustleresumebuilder.firebaseapp.com/__/auth/iframe?apiKey=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk&appName=%5BDEFAULT%5D&v=10.14.1&eid=p&usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.J8aLcn7bYF8.O%2Fd%3D1%2Frs%3DAHpOoo-YaQN_2soL6ZNher0ZcTp3d4Q_nw%2Fm%3D__features__",
+            "url": "https://tradehustleresumebuilder.firebaseapp.com/__/auth/iframe?apiKey=YOUR_FIREBASE_API_KEY&appName=%5BDEFAULT%5D&v=10.14.1&eid=p&usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.J8aLcn7bYF8.O%2Fd%3D1%2Frs%3DAHpOoo-YaQN_2soL6ZNher0ZcTp3d4Q_nw%2Fm%3D__features__",
             "sessionTargetType": "iframe",
             "protocol": "h2",
             "rendererStartTime": 1263.9210000038147,
@@ -1520,7 +1520,7 @@
             "entity": "firebaseapp.com"
           },
           {
-            "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk&cb=1760760295508",
+            "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=YOUR_FIREBASE_API_KEY&cb=1760760295508",
             "sessionTargetType": "iframe",
             "protocol": "h2",
             "rendererStartTime": 1910.8070000112057,
@@ -1536,7 +1536,7 @@
             "entity": "Other Google APIs/SDKs"
           },
           {
-            "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk&cb=1760760295508",
+            "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=YOUR_FIREBASE_API_KEY&cb=1760760295508",
             "sessionTargetType": "iframe",
             "protocol": "h2",
             "rendererStartTime": 1915.7290000021458,
@@ -1745,13 +1745,13 @@
             },
             {
               "type": "parser",
-              "url": "https://tradehustleresumebuilder.firebaseapp.com/__/auth/iframe?apiKey=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk&appName=%5BDEFAULT%5D&v=10.14.1&eid=p&usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.J8aLcn7bYF8.O%2Fd%3D1%2Frs%3DAHpOoo-YaQN_2soL6ZNher0ZcTp3d4Q_nw%2Fm%3D__features__",
+              "url": "https://tradehustleresumebuilder.firebaseapp.com/__/auth/iframe?apiKey=YOUR_FIREBASE_API_KEY&appName=%5BDEFAULT%5D&v=10.14.1&eid=p&usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.J8aLcn7bYF8.O%2Fd%3D1%2Frs%3DAHpOoo-YaQN_2soL6ZNher0ZcTp3d4Q_nw%2Fm%3D__features__",
               "lineNumber": 5,
               "columnNumber": 47
             },
             {
               "type": "preflight",
-              "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk&cb=1760760295508"
+              "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=YOUR_FIREBASE_API_KEY&cb=1760760295508"
             }
           ]
         }
@@ -2188,7 +2188,7 @@
                   "tbtImpact": 0
                 },
                 {
-                  "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk&cb=1760760295508",
+                  "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=YOUR_FIREBASE_API_KEY&cb=1760760295508",
                   "mainThreadTime": 0,
                   "blockingTime": 0,
                   "transferSize": 478,
@@ -2233,7 +2233,7 @@
                   "tbtImpact": 0
                 },
                 {
-                  "url": "https://tradehustleresumebuilder.firebaseapp.com/__/auth/iframe?apiKey=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk&appName=%5BDEFAULT%5D&v=10.14.1&eid=p&usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.J8aLcn7bYF8.O%2Fd%3D1%2Frs%3DAHpOoo-YaQN_2soL6ZNher0ZcTp3d4Q_nw%2Fm%3D__features__",
+                  "url": "https://tradehustleresumebuilder.firebaseapp.com/__/auth/iframe?apiKey=YOUR_FIREBASE_API_KEY&appName=%5BDEFAULT%5D&v=10.14.1&eid=p&usegapi=1&jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.J8aLcn7bYF8.O%2Fd%3D1%2Frs%3DAHpOoo-YaQN_2soL6ZNher0ZcTp3d4Q_nw%2Fm%3D__features__",
                   "mainThreadTime": 0.9520000000000001,
                   "blockingTime": 0,
                   "transferSize": 540,
@@ -6225,7 +6225,7 @@
                       "isLongest": true,
                       "children": {
                         "8624.4": {
-                          "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=AIzaSyD-nOOjvBgp5lls0qRG_VAWFt95-XoBbPk&cb=1760760295508",
+                          "url": "https://www.googleapis.com/identitytoolkit/v3/relyingparty/getProjectConfig?key=YOUR_FIREBASE_API_KEY&cb=1760760295508",
                           "navStartToEndTime": 2320,
                           "transferSize": 478,
                           "isLongest": true,

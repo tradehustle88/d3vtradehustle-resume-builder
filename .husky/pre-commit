@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔒 Running security checks..."
+
+# Check for secrets and API keys
+npm run check-secrets
+
+# Prevent commits with sensitive patterns
+SECRETS_PATTERN="(AIza[0-9A-Za-z-_]{35}|sk_live_|sk_test_|pk_live_|pk_test_|firebase.*apiKey|FIREBASE_API_KEY|serviceAccountKey)"
+
+# Check staged files
+FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+for FILE in $FILES; do
+  if [ -f "$FILE" ]; then
+    if grep -iE "$SECRETS_PATTERN" "$FILE" > /dev/null 2>&1; then
+      echo "❌ ERROR: Potential secret detected in $FILE"
+      echo "Please remove sensitive data before committing."
+      exit 1
+    fi
+  fi
+done
+
+# Check for .env files
+if echo "$FILES" | grep -E "\.env$|\.env\.local$" > /dev/null 2>&1; then
+  echo "❌ ERROR: .env files should not be committed"
+  echo "Files found:"
+  echo "$FILES" | grep -E "\.env$|\.env\.local$"
+  exit 1
+fi
+
+echo "✅ Security checks passed"
