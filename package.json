@@ -10,7 +10,9 @@
     "lint": "next lint",
     "check-secrets": "node scripts/check-secrets.js",
     "prepare": "husky install",
-    "security-audit": "npm audit --audit-level=moderate"
+    "security-audit": "npm audit --audit-level=moderate",
+    "vibe-check": "bash scripts/vibe-check.sh",
+    "vibe-check:ps": "pwsh -File scripts/vibe-check.ps1"
   },
   "dependencies": {
     "@google-cloud/vertexai": "^1.10.0",

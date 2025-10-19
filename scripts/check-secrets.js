@@ -74,8 +74,11 @@ const IGNORE_PATTERNS = [
   /package-lock\.json$/,
   /yarn\.lock$/,
   /\.example$/,  // Allow .env.example files
-  /\.md$/,       // Allow markdown docs (with warnings)
-  /\.html$/      // Allow HTML reports (with warnings)
+  /scripts\/check-secrets\.js$/,  // Don't scan the scanner itself
+  /scripts\/.*\.ps1$/,  // Allow security scripts with example keys
+  /SECURITY_.*\.md$/,  // Allow security documentation
+  /lighthouse-.*\.report\.(html|json)$/,  // Allow lighthouse reports
+  /.*\.report\.(html|json)$/  // Allow all report files
 ];
 
 function getStagedFiles() {

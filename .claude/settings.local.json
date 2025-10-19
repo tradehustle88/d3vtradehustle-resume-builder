@@ -6,7 +6,8 @@
       "Bash(node:*)",
       "Bash(git commit:*)",
       "Bash(Copy-Item \"c:\\Users\\trade\\Downloads\\resumeBuilderlogo (1).png\" \"C:\\Users\\trade\\d3vtradehustle-resume-builder\\frontend\\public\\logo.png\")",
-      "Bash(start:*)"
+      "Bash(start:*)",
+      "Bash(pwsh:*)"
     ],
     "deny": [],
     "ask": []
