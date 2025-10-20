@@ -1,6 +1,9 @@
 "use client";
 
 import React from "react";
+import SortableList from "../../dnd/SortableList";
+import SortableItem from "../../dnd/SortableItem";
+import "../../dnd/dnd.css";
 
 interface CertificationsFormProps {
   data: any;
@@ -9,16 +12,28 @@ interface CertificationsFormProps {
 }
 
 export default function CertificationsForm({ data, onUpdate, trade }: CertificationsFormProps) {
-  const certifications = data.certifications || [];
-  const education = data.education || [];
+  // Add unique IDs for drag-and-drop
+  const certifications = (data.certifications || []).map((cert: any, idx: number) => ({
+    ...cert,
+    id: cert.id || `cert-${idx}-${Date.now()}`,
+  }));
+
+  const education = (data.education || []).map((edu: any, idx: number) => ({
+    ...edu,
+    id: edu.id || `edu-${idx}-${Date.now()}`,
+  }));
 
   const addCertification = () => {
     onUpdate({
       certifications: [
         ...certifications,
-        { name: '', issuer: '', date: '', number: '' }
+        { id: `cert-${certifications.length}-${Date.now()}`, name: '', issuer: '', date: '', number: '' }
       ]
     });
+  };
+
+  const handleCertReorder = (reordered: any[]) => {
+    onUpdate({ certifications: reordered });
   };
 
   const removeCertification = (index: number) => {
@@ -36,9 +51,13 @@ export default function CertificationsForm({ data, onUpdate, trade }: Certificat
     onUpdate({
       education: [
         ...education,
-        { degree: '', school: '', year: '' }
+        { id: `edu-${education.length}-${Date.now()}`, degree: '', school: '', year: '' }
       ]
     });
+  };
+
+  const handleEduReorder = (reordered: any[]) => {
+    onUpdate({ education: reordered });
   };
 
   const removeEducation = (index: number) => {
@@ -56,11 +75,17 @@ export default function CertificationsForm({ data, onUpdate, trade }: Certificat
     <div className="form-section">
       <h3 className="form-section-title">Certifications & Licenses</h3>
       <p className="form-hint" style={{ marginBottom: '1.5rem' }}>
-        List all relevant {trade} certifications, licenses, and safety training.
+        List all relevant {trade} certifications, licenses, and safety training. Drag to reorder.
       </p>
 
-      {certifications.map((cert: any, index: number) => (
-        <div key={index} className="list-item">
+      <SortableList
+        items={certifications}
+        onReorder={handleCertReorder}
+        getId={(item) => item.id}
+      >
+        {(cert: any, index: number) => (
+          <SortableItem key={cert.id} id={cert.id}>
+            <div className="list-item">
           <div className="list-item-header">
             <span className="list-item-title">Certification {index + 1}</span>
             {certifications.length > 1 && (
@@ -119,8 +144,10 @@ export default function CertificationsForm({ data, onUpdate, trade }: Certificat
               onChange={(e) => updateCertification(index, 'number', e.target.value)}
             />
           </div>
-        </div>
-      ))}
+            </div>
+          </SortableItem>
+        )}
+      </SortableList>
 
       <button
         type="button"
@@ -133,11 +160,17 @@ export default function CertificationsForm({ data, onUpdate, trade }: Certificat
 
       <h3 className="form-section-title" style={{ marginTop: '2rem' }}>Education</h3>
       <p className="form-hint" style={{ marginBottom: '1.5rem' }}>
-        Include trade schools, apprenticeships, or formal education.
+        Include trade schools, apprenticeships, or formal education. Drag to reorder.
       </p>
 
-      {education.map((edu: any, index: number) => (
-        <div key={index} className="list-item">
+      <SortableList
+        items={education}
+        onReorder={handleEduReorder}
+        getId={(item) => item.id}
+      >
+        {(edu: any, index: number) => (
+          <SortableItem key={edu.id} id={edu.id}>
+            <div className="list-item">
           <div className="list-item-header">
             <span className="list-item-title">Education {index + 1}</span>
             {education.length > 1 && (
@@ -185,8 +218,10 @@ export default function CertificationsForm({ data, onUpdate, trade }: Certificat
               />
             </div>
           </div>
-        </div>
-      ))}
+            </div>
+          </SortableItem>
+        )}
+      </SortableList>
 
       <button
         type="button"

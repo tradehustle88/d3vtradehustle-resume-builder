@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import SortableList from "../../dnd/SortableList";
+import SortableItem from "../../dnd/SortableItem";
+import "../../dnd/dnd.css";
 
 interface ExperienceFormProps {
   data: any;
@@ -9,10 +12,15 @@ interface ExperienceFormProps {
 }
 
 export default function ExperienceForm({ data, onUpdate, trade }: ExperienceFormProps) {
-  const experience = data.experience || [];
+  // Add unique IDs to experience items for drag-and-drop
+  const experience = (data.experience || []).map((exp: any, idx: number) => ({
+    ...exp,
+    id: exp.id || `exp-${idx}-${Date.now()}`,
+  }));
 
   const addExperience = () => {
     const newExp = {
+      id: `exp-${experience.length}-${Date.now()}`,
       title: '',
       company: '',
       dates: '',
@@ -31,6 +39,10 @@ export default function ExperienceForm({ data, onUpdate, trade }: ExperienceForm
     const updated = [...experience];
     updated[index] = { ...updated[index], [field]: value };
     onUpdate({ experience: updated });
+  };
+
+  const handleReorder = (reordered: any[]) => {
+    onUpdate({ experience: reordered });
   };
 
   const addResponsibility = (expIndex: number) => {
@@ -57,23 +69,29 @@ export default function ExperienceForm({ data, onUpdate, trade }: ExperienceForm
     <div className="form-section">
       <h3 className="form-section-title">Work Experience</h3>
       <p className="form-hint" style={{ marginBottom: '1.5rem' }}>
-        List your most recent jobs first. Focus on {trade}-specific responsibilities and achievements.
+        List your most recent jobs first. Drag to reorder. Focus on {trade}-specific responsibilities and achievements.
       </p>
 
-      {experience.map((exp: any, expIndex: number) => (
-        <div key={expIndex} className="list-item">
-          <div className="list-item-header">
-            <span className="list-item-title">Position {expIndex + 1}</span>
-            {experience.length > 1 && (
-              <button
-                type="button"
-                className="btn-remove"
-                onClick={() => removeExperience(expIndex)}
-              >
-                Remove
-              </button>
-            )}
-          </div>
+      <SortableList
+        items={experience}
+        onReorder={handleReorder}
+        getId={(item) => item.id}
+      >
+        {(exp: any, expIndex: number) => (
+          <SortableItem key={exp.id} id={exp.id}>
+            <div className="list-item">
+              <div className="list-item-header">
+                <span className="list-item-title">Position {expIndex + 1}</span>
+                {experience.length > 1 && (
+                  <button
+                    type="button"
+                    className="btn-remove"
+                    onClick={() => removeExperience(expIndex)}
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
 
           <div className="form-group">
             <label className="form-label">Job Title <span className="required">*</span></label>
@@ -152,8 +170,10 @@ export default function ExperienceForm({ data, onUpdate, trade }: ExperienceForm
               + Add Responsibility
             </button>
           </div>
-        </div>
-      ))}
+            </div>
+          </SortableItem>
+        )}
+      </SortableList>
 
       <button
         type="button"
