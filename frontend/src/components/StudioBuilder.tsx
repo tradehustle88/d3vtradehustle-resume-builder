@@ -40,7 +40,7 @@ export default function StudioBuilder() {
 
   useEffect(() => {
     const unsubscribe = onHomepageLayoutChange((layout) => {
-      if (layout) {
+      if (layout && Array.isArray(layout.sections)) {
         // Ensure all sections from the registry are present, even if new ones were added
         const allSectionIds = Object.keys(sectionRegistry);
         const layoutSectionIds = new Set(layout.sections.map(s => s.id));
