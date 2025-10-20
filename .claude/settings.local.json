@@ -8,7 +8,17 @@
       "Bash(Copy-Item \"c:\\Users\\trade\\Downloads\\resumeBuilderlogo (1).png\" \"C:\\Users\\trade\\d3vtradehustle-resume-builder\\frontend\\public\\logo.png\")",
       "Bash(start:*)",
       "Bash(pwsh:*)",
-      "Bash(npm run vibe-check:ps:*)"
+      "Bash(npm run vibe-check:ps:*)",
+      "Bash(curl -s https://app-fbs5jy4frq-uc.a.run.app/api/status)",
+      "Bash(curl -s https://app-fbs5jy4frq-uc.a.run.app/)",
+      "Bash(firebase functions:config:get)",
+      "Bash(firebase projects:list)",
+      "Bash(firebase deploy --only functions:app)",
+      "Bash(timeout 120 pwsh -Command \"Write-Host ''Waiting for deployment to complete...''; Start-Sleep -Seconds 60; Write-Host ''Deployment should be complete now''\")",
+      "Bash(git add api-functions/index.js FULL_STACK_VIBE_CHECK.md)",
+      "Bash(git push origin feature/hustle-ui)",
+      "Bash(npm install @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities)",
+      "Bash(timeout 30 pwsh -Command \"Start-Sleep -Seconds 15; Write-Host ''Waiting for npm install...''\")"
     ],
     "deny": [],
     "ask": []
