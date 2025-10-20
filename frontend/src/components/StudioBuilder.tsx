@@ -105,6 +105,25 @@ export default function StudioBuilder() {
     debouncedUpdate(newSections);
   };
 
+  const handleResetLayout = async () => {
+    if (!confirm('Reset layout to default? This will clear all custom titles and descriptions.')) {
+      return;
+    }
+    try {
+      const defaultLayout = Object.keys(sectionRegistry).map(id => ({
+        id: id as keyof typeof sectionRegistry,
+        visible: true,
+        component: getComponentName(id),
+      }));
+      setSections(defaultLayout);
+      await updateHomepageLayout(defaultLayout);
+      alert('Layout reset successfully!');
+    } catch (e) {
+      console.error('Error resetting layout:', e);
+      alert('Failed to reset layout');
+    }
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-screen bg-gray-50">Loading Studio...</div>;
   }
@@ -134,8 +153,15 @@ export default function StudioBuilder() {
               {isEditing ? 'Click any text to edit inline' : 'Drag and drop to reorder your homepage sections'}
             </p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             {getSaveStatusIndicator()}
+            <button
+              onClick={handleResetLayout}
+              className="px-3 py-2 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-md hover:bg-red-50"
+              title="Reset layout to default with component fields"
+            >
+              🔄 Reset
+            </button>
             <button
               onClick={() => setIsEditing(!isEditing)}
               className={`px-4 py-2 rounded font-bold transition-colors ${
