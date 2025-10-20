@@ -8,7 +8,7 @@ import "./globals.css";
 
 // Metadata (SEO + OG + Social)
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://resume.nexxgennhustle.com'),
+  metadataBase: new URL('https://resume.nexxgennhustle.com'),
   title: "Trade Hustle Resume Builder",
   description:
     "ATS-optimized trade resumes powered by Enhanced Intelligence. Built for the trade. Backed by Hustle.",
@@ -83,7 +83,7 @@ export default function RootLayout({
         {/* Service Worker Registration - Deferred for better performance */}
         <Script id="sw-register" strategy="lazyOnload">
           {`
-            if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+            if ('serviceWorker' in navigator && location.hostname !== 'localhost') {
               window.addEventListener('load', () => {
                 navigator.serviceWorker.register('/service-worker.js')
                   .then(registration => console.log('SW registered:', registration.scope))

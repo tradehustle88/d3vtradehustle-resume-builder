@@ -22,6 +22,7 @@ export default function StudioBuilder() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving' | 'error'>('saved');
+  const [isEditing, setIsEditing] = useState(false);
 
   // Debounced update function
   const debouncedUpdate = debounce(async (newSections: Section[]) => {
@@ -105,10 +106,22 @@ export default function StudioBuilder() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-xl font-bold text-gray-900">Trade Hustle Studio</h1>
-            <p className="text-sm text-gray-500">Drag and drop to reorder your homepage sections.</p>
+            <p className="text-sm text-gray-500">
+              {isEditing ? 'Click any text to edit inline' : 'Drag and drop to reorder your homepage sections'}
+            </p>
           </div>
           <div className="flex items-center gap-4">
             {getSaveStatusIndicator()}
+            <button
+              onClick={() => setIsEditing(!isEditing)}
+              className={`px-4 py-2 rounded font-bold transition-colors ${
+                isEditing 
+                  ? 'bg-hustleYellow text-black hover:bg-yellow-500' 
+                  : 'bg-gray-700 text-white hover:bg-gray-800'
+              }`}
+            >
+              {isEditing ? '✓ Exit Edit Mode' : '✏️ Edit Mode'}
+            </button>
             <button
               onClick={() => signOut(auth)}
               className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
