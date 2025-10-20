@@ -1,4 +1,5 @@
-# ⚡ Quick Access Commands
+Key: AIzaSyD-nOO...XoBbPk    ← DELETE THIS ONE (old exposed key)
+Key: AIzaSyCFCN9...v6-_fM    ← KEEP THIS ONE (your current key)# ⚡ Quick Access Commands
 
 **Fast access to all your project resources and tools**
 
