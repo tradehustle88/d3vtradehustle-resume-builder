@@ -1,9 +1,17 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import StackedPowerHero from './StackedPowerHero'
-import TradeSelectionGrid from './TradeSelectionGrid'
+import TopNavBar from './TopNavBar'
+import CompleteHeroSystem from './CompleteHeroSystem'
+
+// Lazy load below-the-fold components for better initial load performance
+const TradeSelectionGrid = dynamic(() => import('./TradeSelectionGrid'), { ssr: false })
+const ResumeVerifierSection = dynamic(() => import('./ResumeVerifierSection'), { 
+  ssr: false,
+  loading: () => <div className="h-96 animate-pulse bg-gray-100" />
+})
 
 const proofStats = [
   { label: 'Trades Backed', value: '42+', description: 'Skilled trades represented across the platform.' },
@@ -27,16 +35,20 @@ export default function LandingPage() {
   const [showTradeSelection, setShowTradeSelection] = useState(false)
 
   return (
-    <main className="min-h-screen bg-black text-white">
-      <StackedPowerHero />
+    <main className="min-h-screen bg-neutralBg text-neutralText">
+      <TopNavBar />
+      <CompleteHeroSystem />
+      
+      {/* ATS Verification Section */}
+      <ResumeVerifierSection />
 
-      <section id="proof" className="border-t border-white/10 bg-gradient-to-b from-black via-black to-gray-950">
+      <section id="proof" className="border-t border-hustleBlue/10 bg-gradient-to-b from-white via-neutralBg to-blue-50/30">
         <div className="mx-auto flex max-w-6xl flex-col gap-16 px-6 py-24 sm:px-10">
           <div className="flex flex-col gap-6 text-center sm:gap-8">
-            <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+            <h2 className="text-3xl font-semibold tracking-tight text-neutralText sm:text-4xl">
               Proof from the field
             </h2>
-            <p className="mx-auto max-w-3xl text-base text-gray-300 sm:text-lg">
+            <p className="mx-auto max-w-3xl text-base text-gray-600 sm:text-lg">
               Trade Hustle builders are landing interviews faster with credential-forward resumes
               that showcase hustle, certifications, and project wins in seconds.
             </p>
@@ -45,11 +57,11 @@ export default function LandingPage() {
             {proofStats.map((stat) => (
               <article
                 key={stat.label}
-                className="rounded-2xl border border-white/10 bg-gray-950/60 p-6 shadow-[0_0_25px_-12px_rgba(255,215,0,0.35)]"
+                className="rounded-2xl border border-hustleBlue/15 bg-white p-6 shadow-[0_4px_16px_rgba(0,0,0,0.08)]"
               >
-                <p className="text-sm uppercase tracking-[0.2em] text-[#FFD700]">{stat.label}</p>
-                <p className="mt-3 text-4xl font-semibold text-white">{stat.value}</p>
-                <p className="mt-4 text-sm text-gray-400">{stat.description}</p>
+                <p className="text-sm uppercase tracking-[0.2em] text-hustleRed">{stat.label}</p>
+                <p className="mt-3 text-4xl font-semibold text-neutralText">{stat.value}</p>
+                <p className="mt-4 text-sm text-gray-600">{stat.description}</p>
               </article>
             ))}
           </div>
@@ -58,25 +70,25 @@ export default function LandingPage() {
 
       <section
         id="visual"
-        className="border-t border-white/10 bg-gradient-to-br from-gray-950 via-black to-gray-950 py-24"
+        className="border-t border-hustleBlue/10 bg-gradient-to-br from-blue-50/30 via-neutralBg to-white py-24"
       >
         <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 sm:px-10 lg:flex-row lg:items-center">
           <div className="flex-1 space-y-6">
-            <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+            <h2 className="text-3xl font-semibold tracking-tight text-neutralText sm:text-4xl">
               Visual previews that sell your hustle
             </h2>
-            <p className="text-base text-gray-300 sm:text-lg">
+            <p className="text-base text-gray-600 sm:text-lg">
               Stack trade-tested templates, skill tags, and project proof so every employer sees why
               you&apos;re the standout hire. Toggle between pro looks that match union, residential,
               or commercial expectations in seconds.
             </p>
             <ul className="space-y-4">
               {visualHighlights.map((item) => (
-                <li key={item.title} className="flex gap-4 rounded-2xl border border-white/5 bg-black/60 p-4">
-                  <div className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-[#FFD700]" />
+                <li key={item.title} className="flex gap-4 rounded-2xl border border-hustleBlue/10 bg-white p-4 shadow-sm">
+                  <div className="mt-1 h-2 w-2 flex-shrink-0 rounded-full bg-hustleYellow" />
                   <div>
-                    <p className="font-semibold text-white">{item.title}</p>
-                    <p className="text-sm text-gray-400">{item.detail}</p>
+                    <p className="font-semibold text-neutralText">{item.title}</p>
+                    <p className="text-sm text-gray-600">{item.detail}</p>
                   </div>
                 </li>
               ))}
@@ -84,29 +96,29 @@ export default function LandingPage() {
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => setShowTradeSelection(true)}
-                className="inline-flex items-center justify-center rounded-full bg-[#FFD700] px-6 py-3 text-sm font-semibold text-black transition hover:bg-[#FFE366]"
+                className="inline-flex items-center justify-center rounded-full bg-hustleRed px-6 py-3 text-sm font-semibold text-white transition hover:bg-hustleRed/90 shadow-[0_4px_12px_rgba(229,9,20,0.25)]"
               >
                 Pick my trade playbook
               </button>
               <Link
                 href="/templates"
-                className="inline-flex items-center justify-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white transition hover:border-[#FFD700] hover:text-[#FFD700]"
+                className="inline-flex items-center justify-center rounded-full border-2 border-hustleBlue/30 px-6 py-3 text-sm font-semibold text-neutralText transition hover:border-hustleBlue hover:bg-hustleBlue/5"
               >
                 Browse template gallery
               </Link>
             </div>
           </div>
           <div className="flex-1">
-            <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-tr from-gray-900 via-black to-gray-950">
-              <div className="pointer-events-none absolute inset-0 animate-float bg-[radial-gradient(circle_at_top,_rgba(255,215,0,0.25),_transparent_65%)]" />
-              <div className="relative mx-auto flex w-full max-w-sm flex-col gap-3 rounded-2xl border border-white/10 bg-black/80 p-6 text-left shadow-[0_25px_65px_-35px_rgba(255,215,0,0.45)]">
-                <p className="text-xs uppercase tracking-[0.3em] text-[#FFD700]">Live preview</p>
-                <p className="text-lg font-semibold text-white">Certified HVAC Lead</p>
-                <p className="text-sm text-gray-400">
+            <div className="relative flex aspect-[4/5] items-center justify-center overflow-hidden rounded-3xl border border-hustleBlue/20 bg-gradient-to-tr from-white via-blue-50/50 to-white shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
+              <div className="pointer-events-none absolute inset-0 animate-float bg-[radial-gradient(circle_at_top,_rgba(22,115,255,0.15),_transparent_65%)]" />
+              <div className="relative mx-auto flex w-full max-w-sm flex-col gap-3 rounded-2xl border border-hustleBlue/20 bg-white p-6 text-left shadow-[0_8px_32px_rgba(0,0,0,0.12)]">
+                <p className="text-xs uppercase tracking-[0.3em] text-hustleRed">Live preview</p>
+                <p className="text-lg font-semibold text-neutralText">Certified HVAC Lead</p>
+                <p className="text-sm text-gray-600">
                   Licenses, safety credentials, and project stats showcased automatically. Just swap
                   in your details.
                 </p>
-                <div className="space-y-2 text-sm text-gray-300">
+                <div className="space-y-2 text-sm text-gray-700">
                   <p>• OSHA 30 • EPA 608 • Nadca Certified</p>
                   <p>• 37% faster callbacks across midsize commercial bids.</p>
                 </div>
@@ -116,13 +128,13 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="cta" className="border-t border-white/10 bg-black py-24">
+      <section id="cta" className="border-t border-hustleBlue/10 bg-gradient-to-b from-white to-blue-50/30 py-24">
         <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 sm:px-10">
           <div className="text-center">
-            <h2 className="text-3xl font-semibold tracking-tight text-white sm:text-4xl">
+            <h2 className="text-3xl font-semibold tracking-tight text-neutralText sm:text-4xl">
               Ready to stack your next opportunity?
             </h2>
-            <p className="mt-4 text-base text-gray-300 sm:text-lg">
+            <p className="mt-4 text-base text-gray-600 sm:text-lg">
               Jump in wherever you are—start with a guided wizard, pull up trade-specific playbooks,
               or compare plans to unlock pro automations.
             </p>
@@ -132,10 +144,10 @@ export default function LandingPage() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-2xl border border-white/10 bg-gradient-to-br from-gray-950 via-black to-gray-950 p-6 transition hover:border-[#FFD700] hover:shadow-[0_25px_55px_-35px_rgba(255,215,0,0.45)]"
+                className="rounded-2xl border border-hustleBlue/15 bg-white p-6 transition hover:border-hustleRed hover:shadow-[0_8px_24px_rgba(229,9,20,0.15)]"
               >
-                <p className="text-sm uppercase tracking-[0.25em] text-[#FFD700]">{item.label}</p>
-                <p className="mt-3 text-sm text-gray-300">{item.description}</p>
+                <p className="text-sm uppercase tracking-[0.25em] text-hustleRed">{item.label}</p>
+                <p className="mt-3 text-sm text-gray-600">{item.description}</p>
               </Link>
             ))}
           </div>
@@ -143,13 +155,13 @@ export default function LandingPage() {
       </section>
 
       {showTradeSelection && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-black/95 backdrop-blur">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-white/95 backdrop-blur">
           <div className="mx-auto flex min-h-full max-w-5xl flex-col gap-8 px-6 py-12 sm:px-10">
             <div className="flex justify-between">
-              <p className="text-sm uppercase tracking-[0.3em] text-[#FFD700]">Pick your trade</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-hustleRed">Pick your trade</p>
               <button
                 onClick={() => setShowTradeSelection(false)}
-                className="rounded-full border border-white/20 px-4 py-2 text-sm font-semibold text-white transition hover:border-[#FFD700] hover:text-[#FFD700]"
+                className="rounded-full border-2 border-hustleBlue/30 px-4 py-2 text-sm font-semibold text-neutralText transition hover:border-hustleBlue hover:bg-hustleBlue/5"
               >
                 Close
               </button>

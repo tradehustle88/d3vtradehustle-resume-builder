@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Hustle Button Showcase</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: linear-gradient(180deg, #000000 0%, #0A1B3A 60%, #000000 100%);
+      min-height: 100vh;
+      color: white;
+    }
+
+    /* Import button styles from globals.css */
+    .btn-hustle {
+      display: inline-block;
+      padding: 0.85rem 2.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: white;
+      background: #8b0000;
+      transition: all 0.3s ease;
+      letter-spacing: 1px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-hustle:hover {
+      background: #ff0000;
+      filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.9));
+      transform: translateY(-2px);
+    }
+
+    .btn-gold {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      color: #000000;
+      background: #FFD700;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(255, 215, 0, 0.3);
+      border: none;
+      cursor: pointer;
+    }
+    .btn-gold:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
+
+    .btn-electric {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: white;
+      background: #1673FF;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-electric:hover {
+      background: #4D9EFF;
+      box-shadow: 0 0 20px rgba(22, 115, 255, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      display: inline-block;
+      padding: 0.65rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: white;
+      background: #374151;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-secondary:hover {
+      background: #4B5563;
+    }
+
+    .btn-danger {
+      display: inline-block;
+      padding: 0.65rem 1.5rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: white;
+      background: #8B0000;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-danger:hover {
+      background: #991B1B;
+    }
+
+    .btn-ghost {
+      display: inline-block;
+      padding: 0.65rem 2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: white;
+      background: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .btn-glass {
+      display: inline-block;
+      padding: 0.75rem 2rem;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      color: white;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+    .btn-glass:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 215, 0, 0.4);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .btn-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 215, 0, 0.5);
+      transform: scale(1.1);
+    }
+
+    .btn-gradient-animated {
+      display: inline-block;
+      padding: 0.85rem 2.5rem;
+      border-radius: 9999px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: white;
+      background: linear-gradient(90deg, #8b0000, #ff0000, #8b0000);
+      background-size: 200% 100%;
+      transition: all 0.3s ease;
+      animation: gradient-shift 3s ease infinite;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-gradient-animated:hover {
+      filter: drop-shadow(0 0 12px rgba(255, 0, 0, 0.9));
+      transform: translateY(-2px);
+    }
+
+    @keyframes gradient-shift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    .btn-pulse {
+      animation: pulse-scale 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-scale {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .btn-glow {
+      display: inline-block;
+      padding: 0.85rem 2.5rem;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, #1673FF, #4D9EFF);
+      box-shadow: 0 0 20px rgba(22, 115, 255, 0.5);
+      animation: glow-pulse 2s ease-in-out infinite;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-glow:hover {
+      box-shadow: 0 0 30px rgba(22, 115, 255, 0.8);
+      transform: translateY(-2px);
+    }
+
+    @keyframes glow-pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(22, 115, 255, 0.5); }
+      50% { box-shadow: 0 0 30px rgba(22, 115, 255, 0.7); }
+    }
+
+    /* Size modifiers */
+    .btn-sm {
+      padding: 0.5rem 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .btn-lg {
+      padding: 1rem 3rem;
+      font-size: 1.125rem;
+    }
+
+    .btn-xl {
+      padding: 1.25rem 4rem;
+      font-size: 1.25rem;
+      letter-spacing: 2px;
+    }
+
+    /* Loading state */
+    .btn-loading {
+      position: relative;
+      pointer-events: none;
+    }
+
+    .btn-spinner {
+      display: inline-block;
+      width: 1rem;
+      height: 1rem;
+      margin-right: 0.5rem;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .showcase-section {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .title {
+      font-family: 'Anton', sans-serif;
+      font-size: 3rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #ff0000, #ffd700, #1673FF);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .button-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .button-label {
+      font-size: 0.75rem;
+      color: #FFD700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body class="p-8">
+  <div class="max-w-6xl mx-auto">
+    
+    <!-- Header -->
+    <h1 class="title">BUTTON SHOWCASE</h1>
+    <p class="text-center text-gray-300 mb-12">Trade Hustle Resume Builder Design System</p>
+
+    <!-- Primary Buttons -->
+    <div class="showcase-section">
+      <h2 class="text-2xl font-bold mb-6 text-yellow-400">🎯 Primary Buttons</h2>
+      <div class="button-grid">
+        <div class="button-item">
+          <button class="btn-hustle">Unlock The Hustle</button>
+          <span class="button-label">btn-hustle</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-gold">Upgrade Now</button>
+          <span class="button-label">btn-gold</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-electric">AI Generate</button>
+          <span class="button-label">btn-electric</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Secondary Buttons -->
+    <div class="showcase-section">
+      <h2 class="text-2xl font-bold mb-6 text-yellow-400">🎭 Secondary Buttons</h2>
+      <div class="button-grid">
+        <div class="button-item">
+          <button class="btn-secondary">Learn More</button>
+          <span class="button-label">btn-secondary</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-danger">Delete Resume</button>
+          <span class="button-label">btn-danger</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-ghost">Cancel</button>
+          <span class="button-label">btn-ghost</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Special Effect Buttons -->
+    <div class="showcase-section">
+      <h2 class="text-2xl font-bold mb-6 text-yellow-400">✨ Special Effects</h2>
+      <div class="button-grid">
+        <div class="button-item">
+          <button class="btn-gradient-animated">Get Started</button>
+          <span class="button-label">btn-gradient-animated</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-hustle btn-pulse">Limited Offer</button>
+          <span class="button-label">btn-pulse</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-glow">Premium Feature</button>
+          <span class="button-label">btn-glow</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Glass & Icon Buttons -->
+    <div class="showcase-section">
+      <h2 class="text-2xl font-bold mb-6 text-yellow-400">💎 Glass & Icon Buttons</h2>
+      <div class="button-grid">
+        <div class="button-item">
+          <button class="btn-glass">Continue</button>
+          <span class="button-label">btn-glass</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-icon">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+          <span class="button-label">btn-icon</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Size Variations -->
+    <div class="showcase-section">
+      <h2 class="text-2xl font-bold mb-6 text-yellow-400">📏 Size Variations</h2>
+      <div class="flex flex-wrap gap-4 items-center justify-center">
+        <div class="button-item">
+          <button class="btn-hustle btn-sm">Small</button>
+          <span class="button-label">btn-sm</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-hustle">Default</button>
+          <span class="button-label">default</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-hustle btn-lg">Large</button>
+          <span class="button-label">btn-lg</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-hustle btn-xl">Extra Large</button>
+          <span class="button-label">btn-xl</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Button States -->
+    <div class="showcase-section">
+      <h2 class="text-2xl font-bold mb-6 text-yellow-400">⚡ Button States</h2>
+      <div class="button-grid">
+        <div class="button-item">
+          <button class="btn-hustle" disabled>Disabled</button>
+          <span class="button-label">:disabled</span>
+        </div>
+        <div class="button-item">
+          <button class="btn-electric btn-loading">
+            <span class="btn-spinner"></span>
+            Loading...
+          </button>
+          <span class="button-label">btn-loading</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage Examples -->
+    <div class="showcase-section">
+      <h2 class="text-2xl font-bold mb-6 text-yellow-400">💼 Usage Examples</h2>
+      
+      <div class="space-y-8">
+        <!-- CTA Section -->
+        <div class="text-center p-8 bg-gradient-to-b from-transparent to-blue-900/20 rounded-lg">
+          <h3 class="text-3xl font-bold mb-4">Ready to Build Your Resume?</h3>
+          <p class="text-gray-300 mb-6">Get started in minutes with our AI-powered builder</p>
+          <div class="flex gap-4 justify-center flex-wrap">
+            <button class="btn-hustle btn-lg">Get Started Free</button>
+            <button class="btn-glass">Watch Demo</button>
+          </div>
+        </div>
+
+        <!-- Form Buttons -->
+        <div class="p-8 bg-gradient-to-b from-transparent to-red-900/10 rounded-lg">
+          <h3 class="text-xl font-bold mb-4">Form Actions</h3>
+          <div class="flex gap-4 flex-wrap">
+            <button class="btn-electric">Save Draft</button>
+            <button class="btn-gold">Publish Resume</button>
+            <button class="btn-ghost">Cancel</button>
+          </div>
+        </div>
+
+        <!-- Danger Actions -->
+        <div class="p-8 bg-gradient-to-b from-transparent to-yellow-900/10 rounded-lg">
+          <h3 class="text-xl font-bold mb-4">Danger Zone</h3>
+          <div class="flex gap-4 items-center flex-wrap">
+            <button class="btn-danger">Delete Account</button>
+            <button class="btn-danger">Clear All Data</button>
+            <span class="text-sm text-gray-400">⚠️ These actions cannot be undone</span>
+          </div>
+        </div>
+
+        <!-- Icon Actions -->
+        <div class="p-8 bg-gradient-to-b from-transparent to-purple-900/10 rounded-lg">
+          <h3 class="text-xl font-bold mb-4">Icon Buttons</h3>
+          <div class="flex gap-4 flex-wrap">
+            <button class="btn-icon" title="Close">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+            <button class="btn-icon" title="Settings">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </button>
+            <button class="btn-icon" title="Download">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+              </svg>
+            </button>
+            <button class="btn-icon" title="Share">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-12 text-gray-400 text-sm">
+      <p>Trade Hustle Resume Builder • Design System v2.0</p>
+      <p class="mt-2">See <strong>BUTTON_STYLES_GUIDE.md</strong> for implementation details</p>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -107,7 +107,7 @@ export default function AIResumeAssistant() {
             </button>
           </div>
           
-          <div className="bg-gray-900 border border-gray-700 rounded-lg p-4 max-h-96 overflow-y-auto">
+          <div className="bg-white border-2 border-hustleBlue/15 rounded-lg p-4 max-h-96 overflow-y-auto shadow-inner">
             <pre className="text-sm text-gray-100 whitespace-pre-wrap font-mono leading-relaxed">
               {output}
             </pre>

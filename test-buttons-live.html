@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button Test - Trade Hustle</title>
+  <link rel="stylesheet" href="../src/app/globals.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Import button styles directly */
+    @import url('../src/app/globals.css');
+  </style>
+</head>
+<body class="bg-[#0A0A0A] min-h-screen flex items-center justify-center p-8">
+  
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-5xl font-black text-white text-center mb-12">
+      Button System <span class="text-[#1673FF]">Live Test</span>
+    </h1>
+    
+    <div class="space-y-12">
+      <!-- Primary Buttons -->
+      <div class="text-center">
+        <h2 class="text-2xl font-bold text-white mb-6">Primary CTA Buttons</h2>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <button class="btn-primary">Start Building</button>
+          <button class="btn-primary">Get Started Free</button>
+          <button class="btn-primary btn-lg">Large Button</button>
+        </div>
+      </div>
+
+      <!-- Secondary Buttons -->
+      <div class="text-center">
+        <h2 class="text-2xl font-bold text-white mb-6">Secondary Buttons</h2>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <button class="btn-secondary">Learn More</button>
+          <button class="btn-secondary">Watch Demo</button>
+          <button class="btn-secondary">View Pricing</button>
+        </div>
+      </div>
+
+      <!-- Hero Example -->
+      <div class="bg-white/5 border border-white/10 rounded-2xl p-12 text-center">
+        <h2 class="text-4xl font-black text-white mb-4">Build Your Dream Resume</h2>
+        <p class="text-gray-300 mb-8">Professional resume builder powered by AI</p>
+        <div class="flex flex-wrap gap-4 justify-center">
+          <button class="btn-primary">View Templates & Start</button>
+          <button class="btn-secondary">Import from Indeed</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 text-center text-gray-400 text-sm">
+      <p>✨ Hover over buttons to see effects</p>
+      <p class="mt-2">🧲 Move cursor near buttons for magnetic effect</p>
+      <p class="mt-2">🎨 Click buttons to see ripple animation</p>
+    </div>
+  </div>
+
+  <script type="module">
+    // Magnetic button effect
+    function initMagneticButtons() {
+      const magneticButtons = document.querySelectorAll('.btn-primary, .btn-secondary');
+
+      magneticButtons.forEach((button) => {
+        button.addEventListener('mousemove', (e) => {
+          const rect = button.getBoundingClientRect();
+          const x = e.clientX - rect.left - rect.width / 2;
+          const y = e.clientY - rect.top - rect.height / 2;
+          const distance = Math.sqrt(x * x + y * y);
+          const maxDistance = 50;
+
+          if (distance < maxDistance) {
+            const strength = 0.3;
+            const currentTransform = button.classList.contains('btn-primary') 
+              ? `translate(${x * strength}px, ${y * strength}px) translateY(-4px) scale(1.02)`
+              : `translate(${x * strength}px, ${y * strength}px) translateY(-4px)`;
+            button.style.transform = currentTransform;
+          }
+        });
+
+        button.addEventListener('mouseleave', () => {
+          button.style.transform = 'translate(0, 0)';
+        });
+
+        button.addEventListener('click', (e) => {
+          const rect = button.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+
+          const ripple = document.createElement('span');
+          ripple.className = 'ripple-effect';
+          ripple.style.left = `${x}px`;
+          ripple.style.top = `${y}px`;
+
+          button.appendChild(ripple);
+
+          setTimeout(() => {
+            ripple.remove();
+          }, 600);
+        });
+      });
+    }
+
+    initMagneticButtons();
+  </script>
+</body>
+</html>

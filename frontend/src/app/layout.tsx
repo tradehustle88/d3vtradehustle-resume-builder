@@ -1,21 +1,10 @@
 import type { Metadata } from "next";
-// Temporarily disable Google Fonts for build compatibility
-// import { Inter, JetBrains_Mono } from "next/font/google";
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 import Script from "next/script";
 import { AuthProvider } from "@/lib/useAuth";
 import Footer from "@/components/Footer";
 import "./globals.css";
-
-// Load fonts - disabled due to network restrictions in build environment
-// const inter = Inter({
-//   variable: "--font-inter",
-//   subsets: ["latin"],
-// });
-
-// const jetbrainsMono = JetBrains_Mono({
-//   variable: "--font-jetbrains-mono",
-//   subsets: ["latin"],
-// });
 
 // Metadata (SEO + OG + Social)
 export const metadata: Metadata = {
@@ -34,7 +23,7 @@ export const metadata: Metadata = {
     siteName: "Trade Hustle",
     images: [
       {
-        url: "/assets/resumeBuilderLogo-v3.png", // hosted in /public
+        url: "/assets/resumeBuilderLogo-v3.webp", // WebP format for better performance
         width: 1024,
         height: 1536,
         alt: "Trade Hustle Resume Builder Logo",
@@ -48,7 +37,7 @@ export const metadata: Metadata = {
     title: "Trade Hustle Resume Builder",
     description:
       "Get hired faster with ATS-optimized trade resumes. Built for the trade. Backed by Hustle.",
-    images: ["/assets/resumeBuilderLogo-v3.png"],
+    images: ["/assets/resumeBuilderLogo-v3.webp"],
   },
 };
 
@@ -58,50 +47,29 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={GeistSans.className}>
       <head>
-        {/* Favicon fallback */}
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-
-        {/* Font Awesome for social media icons */}
+        {/* ⭐ Preload LCP image for faster hero load */}
         <link
-          rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
-          crossOrigin="anonymous"
-          referrerPolicy="no-referrer"
-        />
-
-        {/* Google Fonts Optimized - display=swap prevents FOIT/FOUT */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Anton&family=EB+Garamond:wght@400;700&display=swap" 
-          rel="stylesheet" 
+          rel="preload"
+          as="image"
+          href="/assets/resumeBuilderLogo-v3.webp"
+          type="image/webp"
+          fetchPriority="high"
         />
         
-        {/* Preload critical fonts for better LCP */}
-        <link
-          rel="preload"
-          href="https://fonts.gstatic.com/s/anton/v25/1Ptgg87LROyAm0K08i4gS7lu.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preload"
-          href="https://fonts.gstatic.com/s/ebgaramond/v27/SlGDmQSNjdsmc35JDF1K5E55YMjF_7DPuGi-6_RUA4V-e6yHgQ.woff2"
-          as="font"
-          type="font/woff2"
-          crossOrigin="anonymous"
-        />
+        {/* Favicon fallback */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        
+        {/* ⭐ DNS prefetch for faster third-party loads */}
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
-        {/* Google Analytics */}
+        {/* Google Analytics - Deferred for better performance */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-WV2HHYYKCL"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <Script id="ga" strategy="afterInteractive">
+        <Script id="ga" strategy="lazyOnload">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -111,10 +79,21 @@ export default function RootLayout({
             });
           `}
         </Script>
+        
+        {/* Service Worker Registration - Deferred for better performance */}
+        <Script id="sw-register" strategy="lazyOnload">
+          {`
+            if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
+              window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                  .then(registration => console.log('SW registered:', registration.scope))
+                  .catch(error => console.log('SW registration failed:', error));
+              });
+            }
+          `}
+        </Script>
       </head>
-      <body
-        className="antialiased flex flex-col min-h-screen"
-      >
+      <body className="antialiased flex flex-col min-h-screen">
         <AuthProvider>
           <div className="flex-1">
             {children}

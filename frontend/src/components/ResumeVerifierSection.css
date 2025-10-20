@@ -1,0 +1,118 @@
+.verifier-section {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(180deg, #0b0b10, #111115);
+  overflow: hidden;
+}
+
+.verifier-wrapper {
+  position: sticky;
+  top: 0;
+  width: 480px;
+  max-width: 90vw;
+  height: 640px;
+  max-height: 80vh;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 0 50px rgba(0, 140, 255, 0.35);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  transform: translateZ(0);
+}
+
+@media (max-width: 768px) {
+  .verifier-wrapper {
+    width: 90vw;
+    height: 70vh;
+    border-radius: 16px;
+  }
+}
+
+.verifier-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.95;
+  transition: opacity 0.4s ease;
+}
+
+.verifier-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Animated scan line */
+.scan-line {
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #00eaff, transparent);
+  animation: scan 6s linear infinite;
+  opacity: 0.4;
+}
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* Rotating verification rings */
+.circle-glow {
+  position: absolute;
+  border: 1px solid rgba(0, 200, 255, 0.2);
+  border-radius: 50%;
+  animation: orbit 14s linear infinite;
+}
+.glow1 {
+  width: 180px;
+  height: 180px;
+  top: 18%;
+  left: 12%;
+}
+.glow2 {
+  width: 220px;
+  height: 220px;
+  bottom: 10%;
+  right: 8%;
+  animation-delay: 3s;
+}
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Caption (ATS verification label) */
+.verifier-caption {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  align-items: center;
+  color: #00eaff;
+  font-family: "Lato", sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .verifier-caption {
+    font-size: 0.875rem;
+    bottom: 15px;
+    left: 15px;
+  }
+}
+
+.pulse-dot {
+  width: 10px;
+  height: 10px;
+  margin-left: 10px;
+  border-radius: 50%;
+  background: #00eaff;
+  animation: pulse 1.4s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.3); }
+}

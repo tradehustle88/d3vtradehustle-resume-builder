@@ -1,7 +1,7 @@
 'use client'
 import { useSearchParams } from 'next/navigation'
 import { Suspense } from 'react'
-import ResumePreview from '@/components/ResumePreview'
+import ResumePreview from '@/components/ResumePreviewOld'
 
 function PreviewContent() {
   const searchParams = useSearchParams()
@@ -25,7 +25,7 @@ function PreviewContent() {
 export default function PreviewPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 flex items-center justify-center">
         <div className="text-white text-2xl">Loading preview...</div>
       </div>
     }>

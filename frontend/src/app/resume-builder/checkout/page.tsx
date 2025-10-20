@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { trackCustomEvent } from '@/lib/analytics';
+import CryptoPaymentModal from '@/components/CryptoPaymentModal';
 
 export default function CheckoutPage() {
   const [selectedTrade, setSelectedTrade] = useState('');
@@ -10,6 +11,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [paymentMethod, setPaymentMethod] = useState('card');
+  const [showCryptoModal, setShowCryptoModal] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     name: '',
@@ -51,6 +53,13 @@ export default function CheckoutPage() {
         template: selectedTemplate,
         paymentMethod
       });
+
+      // Handle crypto payment separately
+      if (paymentMethod === 'crypto') {
+        setShowCryptoModal(true);
+        setLoading(false);
+        return;
+      }
 
       // TODO: Process payment via your payment provider (Stripe, etc.)
       // const paymentResult = await processPayment(formData, 23.00);
@@ -226,7 +235,7 @@ export default function CheckoutPage() {
                 <div>
                   <h3 className="text-lg font-bold text-white mb-4">Payment Method</h3>
 
-                  <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="grid grid-cols-3 gap-4 mb-4">
                     <button
                       type="button"
                       onClick={() => setPaymentMethod('card')}
@@ -252,6 +261,21 @@ export default function CheckoutPage() {
                       <div className="text-center">
                         <div className="text-2xl mb-1">🅿️</div>
                         <div className="text-white font-medium">PayPal</div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPaymentMethod('crypto')}
+                      className={`p-4 rounded-lg border-2 transition-all ${paymentMethod === 'crypto'
+                          ? 'border-red-500 bg-red-600/20'
+                          : 'border-white/20 bg-white/10'
+                        }`}
+                    >
+                      <div className="text-center">
+                        <div className="text-2xl mb-1">₿</div>
+                        <div className="text-white font-medium">Crypto</div>
+                        <div className="text-xs text-green-400">Lower Fees</div>
                       </div>
                     </button>
                   </div>
@@ -360,6 +384,23 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
+      {/* Crypto Payment Modal */}
+      <CryptoPaymentModal
+        isOpen={showCryptoModal}
+        onClose={() => setShowCryptoModal(false)}
+        tierId="blueprint"
+        amount={23.00}
+        tierName="AI Resume Builder"
+        onPaymentInitiated={(paymentData) => {
+          console.log('Crypto payment initiated:', paymentData);
+          trackCustomEvent('crypto_payment_started', {
+            trade: selectedTrade,
+            template: selectedTemplate,
+            provider: paymentData.provider,
+          });
+        }}
+      />
     </div>
   );
 }

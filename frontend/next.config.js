@@ -1,4 +1,9 @@
 /** @type {import('next').NextConfig} */
+const webpack = require('webpack');
+const withBundleAnalyzer = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
+})
+
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -6,9 +11,40 @@ const nextConfig = {
   trailingSlash: true,  // Add trailing slashes for better static hosting compatibility
   images: {
     unoptimized: true,  // Keep this for Firebase compatibility
+    formats: ['image/webp', 'image/avif'],  // Modern image formats for better compression
   },
   experimental: {
     forceSwcTransforms: true,
+  },
+  
+  // Performance optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',  // Remove console.logs in production
+  },
+  
+  // Webpack configuration for client-side builds
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Comprehensive fallbacks for Node.js modules
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        util: false,
+        buffer: false,
+      };
+      
+      // Provide process polyfill for client-side
+      config.plugins.push(
+        new webpack.ProvidePlugin({
+          process: 'process/browser',
+        })
+      );
+    }
+    return config;
   },
   
   // ===== SECURITY HEADERS (Content Security Policy) =====
@@ -64,6 +100,6 @@ const nextConfig = {
     ];
   },
   */
-};
+}
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig)
