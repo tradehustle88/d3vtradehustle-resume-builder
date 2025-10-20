@@ -109,13 +109,18 @@ const db = admin.firestore();
 const genAI = process.env.GOOGLE_API_KEY ? new GoogleGenerativeAI(process.env.GOOGLE_API_KEY) : null;
 
 // Vertex AI setup - alternative to direct Gemini API
+// Firebase Functions automatically provide GCLOUD_PROJECT and FUNCTION_REGION
 let vertexAI = null;
 try {
-  if (process.env.PROJECT_ID) {
+  const projectId = process.env.PROJECT_ID || process.env.GCLOUD_PROJECT;
+  const region = process.env.REGION || process.env.FUNCTION_REGION || "us-central1";
+
+  if (projectId) {
     vertexAI = new VertexAI({
-      project: process.env.PROJECT_ID,
-      location: process.env.REGION || "us-central1",
+      project: projectId,
+      location: region,
     });
+    console.log(`✅ Vertex AI initialized: ${projectId} (${region})`);
   }
 } catch (error) {
   console.warn("⚠️ Vertex AI initialization failed:", error.message);
@@ -151,15 +156,18 @@ async function verifyRecaptcha(token) {
 // Health check
 //
 app.get("/api/status", (req, res) => {
+  const projectId = process.env.PROJECT_ID || process.env.GCLOUD_PROJECT;
+  const region = process.env.REGION || process.env.FUNCTION_REGION || "us-central1";
+
   res.json({
     status: "ok",
     message: "🔥 Trade Hustle Functions Running",
     timestamp: new Date().toISOString(),
     environment: {
-      projectId: process.env.PROJECT_ID || "not-configured",
-      region: process.env.REGION || "not-configured",
+      projectId: projectId || "not-configured",
+      region: region || "not-configured",
       googleAI: process.env.GOOGLE_API_KEY ? "configured" : "not-configured",
-      vertexAI: !!vertexAI && !!process.env.PROJECT_ID ? "configured" : "not-configured",
+      vertexAI: !!vertexAI && !!projectId ? "configured" : "not-configured",
       recaptcha: process.env.RECAPTCHA_SECRET ? "configured" : "not-configured",
       gmail: !!process.env.GMAIL_USER && !!process.env.GMAIL_APP_PASSWORD ? "configured" : "not-configured",
     },
