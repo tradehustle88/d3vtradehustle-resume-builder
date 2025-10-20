@@ -75,7 +75,7 @@ export default function TemplateGallery() {
   // Loading state
   if (!tradeType) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#FFD700] mx-auto mb-4"></div>
           <p className="text-white text-xl">Loading templates...</p>
@@ -85,7 +85,7 @@ export default function TemplateGallery() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 py-16 px-4">
+    <main className="min-h-screen bg-gradient-to-b from-black to-gray-900 py-16 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -163,7 +163,7 @@ export default function TemplateGallery() {
                 onClick={() => handleTemplateSelect(template.id)}
               >
                 {/* Preview Image */}
-                <div className="aspect-[3/4] bg-white border-2 border-hustleBlue/15 flex items-center justify-center relative overflow-hidden rounded-lg shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
+                <div className="aspect-[3/4] bg-gray-900 flex items-center justify-center relative overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
                   
                   {/* Placeholder for template preview */}

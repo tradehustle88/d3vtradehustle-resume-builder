@@ -103,37 +103,31 @@ function UnlockPageContent() {
         {/* Paint splatter accent */}
         <Image
           src="/assets/paint-red-v3.png"
-          alt="Decorative paint splash accent"
+          alt="paint splash"
           width={224}
           height={224}
           className="absolute right-6 top-24 w-56 opacity-65 mix-blend-lighten pointer-events-none"
           loading="lazy"
-          quality={75}
-          sizes="224px"
         />
         <Image
           src="/assets/paint-drops-v1.png"
-          alt="Decorative paint drops accent"
+          alt="paint splash"
           width={192}
           height={192}
           className="absolute left-6 bottom-16 w-48 opacity-55 mix-blend-lighten pointer-events-none"
           loading="lazy"
-          quality={75}
-          sizes="192px"
         />
 
         {/* --- CONTENT: Two-Card Grid --- */}
         <div className="relative z-20 p-8 md:p-12">
           {/* Logo Above Cards */}
           <Image
-            src="/assets/resumeBuilderLogo-v3.webp"
-            alt="Trade Hustle Resume Builder - Unlock Your Professional Resume"
+            src="/assets/resumeBuilderLogo-v3.png"
+            alt="Trade Hustle Resume Builder"
             width={224}
             height={224}
             className="mx-auto w-48 md:w-56 mb-12 opacity-95"
             priority
-            quality={85}
-            sizes="(max-width: 768px) 192px, 224px"
           />
 
           {/* Two-Card Grid */}

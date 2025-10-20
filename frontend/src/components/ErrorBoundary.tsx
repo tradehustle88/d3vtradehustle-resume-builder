@@ -83,7 +83,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             </p>
             
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details className="mb-6 text-left bg-white border-2 border-hustleBlue/15 p-4 rounded-lg shadow-sm">
+              <details className="mb-6 text-left bg-black/50 p-4 rounded-lg">
                 <summary className="cursor-pointer text-yellow-400 font-mono text-sm mb-2">
                   Error Details (Development Only)
                 </summary>

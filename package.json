@@ -7,42 +7,24 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "check-secrets": "node scripts/check-secrets.js",
-    "prepare": "husky install",
-    "security-audit": "npm audit --audit-level=moderate",
-    "vibe-check": "bash scripts/vibe-check.sh",
-    "vibe-check:ps": "pwsh -File scripts/vibe-check.ps1",
-    "open:gcp-creds": "pwsh -File scripts/open-gcp-creds.ps1",
-    "open:firebase": "pwsh -File scripts/open-firebase.ps1",
-    "open:firebase:auth": "pwsh -File scripts/open-firebase.ps1 -Page auth",
-    "open:firebase:firestore": "pwsh -File scripts/open-firebase.ps1 -Page firestore",
-    "open:firebase:functions": "pwsh -File scripts/open-firebase.ps1 -Page functions",
-    "open:firebase:hosting": "pwsh -File scripts/open-firebase.ps1 -Page hosting",
-    "open:github": "pwsh -Command \"Start-Process 'https://github.com/tradehustle88/d3vtradehustle-resume-builder'\""
+    "lint": "next lint"
   },
   "dependencies": {
     "@google-cloud/vertexai": "^1.10.0",
-    "@hookform/resolvers": "^5.2.2",
     "autoprefixer": "^10.4.19",
     "dotenv": "^17.2.2",
     "express-rate-limit": "^8.1.0",
     "firebase": "^12.3.0",
     "firebase-admin": "^13.5.0",
-    "framer-motion": "^12.23.24",
-    "lucide-react": "^0.546.0",
     "next": "14.2.5",
     "postcss": "^8.4.38",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-hook-form": "^7.65.0",
-    "tailwindcss": "^3.4.4",
-    "zod": "^4.1.12"
+    "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",
-    "husky": "^8.0.3",
     "typescript": "^5.4.5"
   }
 }

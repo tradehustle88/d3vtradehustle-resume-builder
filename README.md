@@ -3,17 +3,12 @@
 A Firebase + FCM powered web app built for tradespeople.  
 Create, edit, and download **ATS-optimized resumes** with real-time push notifications, secure token handling, and modular resume templates.  
 
-**NEW: Data-driven resume engine with AI-powered content generation for 40+ trades!** 🎉  
-See [TRADE_RESUME_ENGINE.md](./TRADE_RESUME_ENGINE.md) for the complete system architecture.
-
 ---
 
 ## ✨ Features  
 - **Firebase Hosting + Cloud Functions** for serverless backend.  
 - **Push Notifications** with FCM + VAPID key setup.  
 - **ATS-optimized resume templates** for trades (HVAC, Electrical, Maintenance, etc.).  
-- **AI-Powered Resume Generation** using Gemini 2.5 Flash with trade-specific data.
-- **Data-Driven Architecture** supporting 40+ trades from a single JSON file.
 - **Secure Service Account handling** (`.gitignore` protects private keys).  
 
 ---
@@ -118,19 +113,5 @@ This repository includes comprehensive GitHub Copilot instructions to assist wit
 - **Common Issues**: Solutions for Firebase deployment and development setup issues
 
 The instructions help AI assistants understand the project structure, coding patterns, and deployment requirements.
-
----
-
-## 📊 Data Files
-
-### `trades_data.json`
-
-Master library of trade-specific resume data located at the repository root. Contains certifications, skills, and titles for:
-
-- **HVAC Technician** (EPA 608, system diagnostics, preventive maintenance)
-- **Electrician** (Journeyman license, wiring, circuit troubleshooting)
-- **Plumber** (Backflow prevention, pipe fitting, leak detection)
-
-Import this file in your application to populate trade-specific resume sections programmatically.
 
 ---

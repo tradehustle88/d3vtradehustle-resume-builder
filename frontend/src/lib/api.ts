@@ -3,11 +3,8 @@
 
 // Firebase Cloud Functions URL - can be overridden for local development
 // Using the /app function which hosts all API routes under /api
-import type { ResumeUserData, TradeResumeResponse } from "./tradesData";
-
-const BASE_URL =
-  process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL ||
-  "https://app-fbs5jy4frq-uc.a.run.app/api";
+const BASE_URL = process.env.NEXT_PUBLIC_FIREBASE_FUNCTIONS_URL ||
+  "https://app-fbs5jy4frq-uc.a.run.app";
 
 // Generic fetch helper
 async function request<T>(
@@ -94,63 +91,6 @@ export async function editResume(
   });
 }
 
-// Generate trade-specific resume with AI - requires authentication
-export async function generateTradeResume(
-  idToken: string,
-  tradeKey: string,
-  userData?: {
-    name?: string;
-    yearsExperience?: number;
-    location?: string;
-    currentCompany?: string;
-    currentJobDates?: string;
-    phone?: string;
-    email?: string;
-    certifications?: string[];
-  },
-  customPrompt?: string,
-  useVertexAI: boolean = true
-) {
-  return request<{
-    success: boolean;
-    tradeKey: string;
-    tradeTitle: string;
-    placeholders: Record<string, string>;
-    tradeData: {
-      certifications: string[];
-      skills: string[];
-    };
-    validation: {
-      valid: boolean;
-      warnings: string[];
-      wordCount: number;
-      hasUnfilledPlaceholders: boolean;
-    };
-    metadata: {
-      model: string;
-      provider: string;
-      promptMetadata: {
-        tradeKey: string;
-        tradeTitle: string;
-        certificationsCount: number;
-        skillsCount: number;
-      };
-    };
-  }>("/api/generateTradeResume", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${idToken}`,
-    },
-    body: JSON.stringify({
-      tradeKey,
-      userData,
-      customPrompt,
-      useVertexAI,
-    }),
-  });
-}
-
 // Save Gemini AI output (for scoring or edits)
 export async function saveGeminiOutput(message: string) {
   return request<{ success: boolean; storedId?: string }>(
@@ -208,76 +148,5 @@ export async function localVerifyRecaptcha(token: string) {
   return localRequest<{ success: boolean; score?: number }>("/verify-recaptcha", {
     method: "POST",
     body: JSON.stringify({ token }),
-  });
-}
-
-// --------- Crypto Payment API Functions ---------
-
-// Create crypto payment
-export async function createCryptoPayment(
-  idToken: string,
-  tierId: string,
-  provider: "coinbase" | "nowpayments" = "coinbase",
-  currency: string = "btc"
-) {
-  return request<{
-    success: boolean;
-    provider: string;
-    chargeId?: string;
-    chargeCode?: string;
-    hostedUrl?: string;
-    addresses?: Record<string, string>;
-    invoiceId?: number;
-    invoiceUrl?: string;
-    payAddress?: string;
-    payAmount?: number;
-    payCurrency?: string;
-    expiresAt?: string;
-    expirationEstimateDate?: string;
-  }>("/api/crypto/create-payment", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${idToken}`,
-    },
-    body: JSON.stringify({
-      tierId,
-      provider,
-      currency,
-    }),
-  });
-}
-
-// Get crypto payment status
-export async function getCryptoPaymentStatus(idToken: string, paymentId: string) {
-  return request<{
-    success: boolean;
-    status: string;
-    provider: string;
-    amount: number;
-    currency: string;
-    createdAt: any;
-    confirmedAt?: any;
-  }>(`/api/crypto/payment-status/${paymentId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${idToken}`,
-    },
-  });
-}
-
-// Get supported cryptocurrencies
-export async function getSupportedCryptos() {
-  return request<{
-    success: boolean;
-    currencies: Record<string, {
-      name: string;
-      symbol: string;
-      icon: string;
-      providers: string[];
-    }>;
-  }>("/api/crypto/supported-currencies", {
-    method: "GET",
   });
 }

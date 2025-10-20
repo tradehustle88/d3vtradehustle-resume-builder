@@ -123,7 +123,7 @@ export default function PricingModal({ onClose, defaultTier }: PricingModalProps
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-b from-white to-blue-50/30 py-16 px-4">
+    <section className="min-h-screen bg-gradient-to-b from-black to-gray-900 py-16 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">

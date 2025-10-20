@@ -14,20 +14,9 @@ declare global {
  */
 export const trackPageView = (url: string) => {
     if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('config', process.env.NEXT_PUBLIC_GA_ID || 'G-WV2HHYYKCL', {
+        window.gtag('config', 'G-WV2HHYYKCL', {
             page_path: url,
         });
-    }
-};
-
-/**
- * Track custom events
- * @param eventName - The name of the event
- * @param params - Event parameters
- */
-export const trackEvent = (eventName: string, params?: Record<string, any>) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', eventName, params);
     }
 };
 
@@ -36,11 +25,13 @@ export const trackEvent = (eventName: string, params?: Record<string, any>) => {
  * @param method - Download method (e.g., 'Trade Hustle Resume Kit', 'Direct Link')
  */
 export const trackResumeDownload = (method: string = 'Trade Hustle Resume Kit') => {
-    trackEvent('resume_download', {
-        method: method,
-        event_category: 'engagement',
-        event_label: 'Resume Kit Download',
-    });
+    if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'resume_download', {
+            method: method,
+            event_category: 'engagement',
+            event_label: 'Resume Kit Download',
+        });
+    }
 };
 
 /**
@@ -48,48 +39,13 @@ export const trackResumeDownload = (method: string = 'Trade Hustle Resume Kit') 
  * @param email - User email (optional, for conversion tracking)
  */
 export const trackResumeUnlock = (email?: string) => {
-    trackEvent('resume_unlock', {
-        event_category: 'conversion',
-        event_label: 'Resume Unlocked',
-        value: 1,
-    });
-};
-
-/**
- * Track template interactions
- */
-export const trackTemplateView = (templateId: string, trade: string) => {
-    trackEvent('template_card_viewed', {
-        template_id: templateId,
-        trade: trade,
-        event_category: 'engagement',
-    });
-};
-
-export const trackTemplateModalOpen = (templateId: string, trade: string) => {
-    trackEvent('template_modal_opened', {
-        template_id: templateId,
-        trade: trade,
-        event_category: 'engagement',
-    });
-};
-
-export const trackTemplateUseClick = (templateId: string, trade: string, authenticated: boolean) => {
-    trackEvent('template_use_clicked', {
-        template_id: templateId,
-        trade: trade,
-        authenticated: authenticated,
-        event_category: 'conversion',
-        event_label: authenticated ? 'Authenticated User' : 'Guest User',
-    });
-};
-
-export const trackTemplateDownload = (templateId: string, trade: string) => {
-    trackEvent('template_download_clicked', {
-        template_id: templateId,
-        trade: trade,
-        event_category: 'conversion',
-    });
+    if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'resume_unlock', {
+            event_category: 'conversion',
+            event_label: 'Resume Unlocked',
+            value: 1,
+        });
+    }
 };
 
 /**
@@ -145,6 +101,17 @@ export const trackCustomEvent = (eventName: string, params?: Record<string, any>
 };
 
 /**
+ * Generic event tracker
+ * @param eventName - The event name
+ * @param params - Optional event parameters
+ */
+export const trackEvent = (eventName: string, params?: Record<string, any>) => {
+    if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', eventName, params || {});
+    }
+};
+
+/**
  * Track errors for debugging
  * @param description - Error description
  * @param fatal - Whether the error is fatal
@@ -156,92 +123,4 @@ export const trackError = (description: string, fatal: boolean = false) => {
             fatal: fatal,
         });
     }
-};
-
-// ===============================================
-// CRYPTO PAYMENT TRACKING EVENTS
-// ===============================================
-
-/**
- * Track when user initiates a crypto payment
- */
-export const trackCryptoPaymentInitiated = (
-    tier: string,
-    amount: number,
-    currency: string,
-    provider: string
-) => {
-    trackEvent("crypto_payment_initiated", {
-        event_category: "payment",
-        event_label: `${provider}_${currency}`,
-        value: amount,
-        tier,
-        currency,
-        provider,
-    });
-};
-
-/**
- * Track when crypto payment is successfully completed
- */
-export const trackCryptoPaymentCompleted = (
-    tier: string,
-    amount: number,
-    currency: string,
-    provider: string,
-    paymentId: string
-) => {
-    trackEvent("crypto_payment_completed", {
-        event_category: "payment",
-        event_label: `${provider}_${currency}`,
-        value: amount,
-        tier,
-        currency,
-        provider,
-        payment_id: paymentId,
-    });
-};
-
-/**
- * Track when crypto payment fails
- */
-export const trackCryptoPaymentFailed = (
-    tier: string,
-    amount: number,
-    currency: string,
-    provider: string,
-    error: string
-) => {
-    trackEvent("crypto_payment_failed", {
-        event_category: "payment",
-        event_label: `${provider}_${currency}`,
-        value: amount,
-        tier,
-        currency,
-        provider,
-        error,
-    });
-};
-
-/**
- * Track when user views crypto payment modal
- */
-export const trackCryptoPaymentModalViewed = (tier: string, amount: number) => {
-    trackEvent("crypto_payment_modal_viewed", {
-        event_category: "payment",
-        event_label: tier,
-        value: amount,
-    });
-};
-
-/**
- * Track when user selects a cryptocurrency
- */
-export const trackCryptoCurrencySelected = (currency: string, provider: string) => {
-    trackEvent("crypto_currency_selected", {
-        event_category: "payment",
-        event_label: `${provider}_${currency}`,
-        currency,
-        provider,
-    });
 };

@@ -1,103 +1,21 @@
 
-# ==========================================
-# SECURITY: Never commit these files
-# ==========================================
-
-# Environment files - ALL VARIANTS
-.env
-.env.local
-.env.*.local
-.env.development.local
-.env.test.local
-.env.production.local
-**/.env
-**/.env.local
-**/.env.*.local
-
-# Firebase credentials
+# Firebase Admin key
 serviceAccountKey.json
-serviceAccount.json
-serviceAccount.b64
-**/serviceAccountKey.json
-**/serviceAccount*.json
-**/serviceAccount*.b64
-firebase-adminsdk-*.json
-/storage/emulated/0/Download/tradehustleresumebuilder-firebase-adminsdk-*.json
-.firebaserc.local
+/storage/emulated/0/Download/tradehustleresumebuilder-firebase-adminsdk-fbsvc-0167555505.json
+node_modules
 
-# API Keys and secrets
-*.pem
-*.key
-*.p12
-*.pfx
-secrets/
-credentials/
+# Environment files
+.env.local
+.env
 
-# ==========================================
-# Build & Dependencies
-# ==========================================
-node_modules/
-**/node_modules/
-.next/
-out/
-build/
-dist/
-
-# ==========================================
-# Firebase
-# ==========================================
-.firebase/
+# ignore function env
+api-functions/.env
+functions/.env
+.firebase/logs/
+.firebase/logs/vsce-debug.log
 firebase-debug.log
-firestore-debug.log
-ui-debug.log
-firebase-debug.*.log
 
-# ==========================================
-# Python environments
-# ==========================================
+# Python virtual environments
 .venv312/
 venv/
 .venv/
-__pycache__/
-*.py[cod]
-*$py.class
-
-# ==========================================
-# IDE & OS files
-# ==========================================
-.vscode/settings.json
-.idea/
-*.swp
-*.swo
-*~
-.DS_Store
-Thumbs.db
-
-# ==========================================
-# Logs
-# ==========================================
-*.log
-logs/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# ==========================================
-# Testing & Coverage
-# ==========================================
-coverage/
-.nyc_output/
-*.lcov
-
-# ==========================================
-# Temporary files
-# ==========================================
-*.tmp
-*.temp
-.cache/
-
-# ==========================================
-# Backups
-# ==========================================
-frontend_backup/
-*_backup/

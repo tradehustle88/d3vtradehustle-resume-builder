@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="w-full mt-auto border-t border-hustleBlue/10 bg-gradient-to-b from-white to-blue-50/20">
+    <footer className="w-full mt-auto border-t border-white/10 bg-gradient-to-b from-gray-900 to-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Updated Social Media Icons */}
         <SocialBar />

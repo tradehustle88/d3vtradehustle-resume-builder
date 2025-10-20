@@ -1,11 +1,3 @@
 {
-    "chat.sendElementsToChat.enabled": false,
-    "chatgpt.openOnStartup": true,
-    "github.copilot.chat.mcp.enabled": true,
-    "github.copilot.chat.mcp.servers": {
-        "chrome-devtools": {
-            "command": "npx",
-            "args": ["chrome-devtools-mcp@latest"]
-        }
-    }
+    "chat.sendElementsToChat.enabled": false
 }
