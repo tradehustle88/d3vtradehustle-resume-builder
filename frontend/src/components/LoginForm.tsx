@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase/clientApp';
+import { auth } from '@/lib/firebase';
 
 export default function LoginForm() {
   const [email, setEmail] = useState('');

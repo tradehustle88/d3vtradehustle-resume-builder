@@ -5,7 +5,7 @@ import { onHomepageLayoutChange, updateHomepageLayout, Section } from '../lib/fi
 import { sectionRegistry } from './sections/section-registry';
 import SortableList from './dnd/SortableList';
 import SortableItem from './dnd/SortableItem';
-import { auth } from '../firebase/clientApp';
+import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 
 // A simple debounce function to prevent too many writes to Firestore

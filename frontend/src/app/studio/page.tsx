@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/lib/useAuth';
 import StudioBuilder from '@/components/StudioBuilder';
 import LoginForm from '@/components/LoginForm';
 

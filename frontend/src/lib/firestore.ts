@@ -1,5 +1,5 @@
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
-import { firebaseApp } from '../firebase/clientApp';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { SectionId } from '../components/sections/section-registry';
 
 export interface Section {
@@ -12,7 +12,6 @@ export interface PageLayout {
   updatedAt: Date;
 }
 
-const db = getFirestore(firebaseApp);
 const homepageLayoutDocRef = doc(db, 'layouts', 'homepage');
 
 /**
