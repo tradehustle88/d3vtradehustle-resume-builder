@@ -5,6 +5,8 @@ import { SectionId } from '../components/sections/section-registry';
 export interface Section {
   id: SectionId;
   visible: boolean;
+  title?: string;
+  description?: string;
 }
 
 export interface PageLayout {

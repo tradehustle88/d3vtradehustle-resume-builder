@@ -921,3 +921,33 @@ button:focus-visible {
               background 0.3s ease;
 }
 
+/* Studio Inline Editing Styles */
+[contenteditable="true"] {
+  cursor: text;
+  transition: all 0.2s ease;
+}
+
+[contenteditable="true"]:hover {
+  background-color: rgba(255, 215, 0, 0.05);
+}
+
+[contenteditable="true"]:focus {
+  outline: 2px solid #1673ff;
+  background-color: rgba(22, 115, 255, 0.05);
+  box-shadow: 0 0 0 3px rgba(22, 115, 255, 0.1);
+}
+
+[contenteditable="true"]:focus::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: #1673ff;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}

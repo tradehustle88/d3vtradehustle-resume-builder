@@ -5,6 +5,7 @@ import { onHomepageLayoutChange, updateHomepageLayout, Section } from '../lib/fi
 import { sectionRegistry } from './sections/section-registry';
 import SortableList from './dnd/SortableList';
 import SortableItem from './dnd/SortableItem';
+import EditableSection from './EditableSection';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 
@@ -137,35 +138,14 @@ export default function StudioBuilder() {
           onReorder={handleReorder}
           getId={(item) => item.id}
         >
-          {(section) => (
+          {(section, index) => (
             <SortableItem key={section.id} id={section.id}>
-              <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="text-gray-400 cursor-grab">⋮⋮</div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">{sectionRegistry[section.id]?.name || section.id}</h3>
-                    <p className="text-sm text-gray-500">{sectionRegistry[section.id]?.description || 'Custom section'}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <span className={`text-xs font-semibold px-2 py-1 rounded-full ${section.visible ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                    {section.visible ? 'Visible' : 'Hidden'}
-                  </span>
-                  <label htmlFor={`vis-${section.id}`} className="flex items-center cursor-pointer">
-                    <div className="relative">
-                      <input 
-                        type="checkbox" 
-                        id={`vis-${section.id}`} 
-                        className="sr-only" 
-                        checked={section.visible}
-                        onChange={(e) => handleVisibilityChange(section.id, e.target.checked)}
-                      />
-                      <div className={`block w-14 h-8 rounded-full ${section.visible ? 'bg-hustleRed' : 'bg-gray-300'}`}></div>
-                      <div className={`dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${section.visible ? 'transform translate-x-6' : ''}`}></div>
-                    </div>
-                  </label>
-                </div>
-              </div>
+              <EditableSection 
+                section={section} 
+                index={index || 0} 
+                isEditing={isEditing}
+                onVisibilityChange={handleVisibilityChange}
+              />
             </SortableItem>
           )}
         </SortableList>
