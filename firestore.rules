@@ -32,6 +32,17 @@ service cloud.firestore {
     }
     
     // ============================================
+    // STUDIO / LAYOUTS COLLECTION
+    // ============================================
+    
+    match /layouts/{layoutId} {
+      // Anyone can read layouts (for homepage rendering)
+      allow read: if true;
+      // Only authenticated users can write layouts (Studio editing)
+      allow write: if isAuthenticated();
+    }
+    
+    // ============================================
     // USERS COLLECTION
     // ============================================
     
