@@ -43,11 +43,21 @@ export default function StudioBuilder() {
       if (layout && Array.isArray(layout.sections)) {
         // Ensure all sections from the registry are present, even if new ones were added
         const allSectionIds = Object.keys(sectionRegistry);
-        const layoutSectionIds = new Set(layout.sections.map(s => s.id));
         const newSections = allSectionIds.map(id => {
             const existing = layout.sections.find(s => s.id === id);
-            if (existing) return existing;
-            return { id: id as keyof typeof sectionRegistry, visible: true };
+            if (existing) {
+              // Ensure component field is set
+              if (!existing.component) {
+                existing.component = getComponentName(id);
+              }
+              return existing;
+            }
+            // Create new section with component name
+            return { 
+              id: id as keyof typeof sectionRegistry, 
+              visible: true,
+              component: getComponentName(id),
+            };
         });
         
         // Filter out any sections that are no longer in the registry
@@ -59,6 +69,7 @@ export default function StudioBuilder() {
         const defaultLayout = Object.keys(sectionRegistry).map(id => ({
           id: id as keyof typeof sectionRegistry,
           visible: true,
+          component: getComponentName(id),
         }));
         setSections(defaultLayout);
         updateHomepageLayout(defaultLayout); // Initialize in Firestore
@@ -68,6 +79,18 @@ export default function StudioBuilder() {
 
     return () => unsubscribe();
   }, []);
+
+  // Helper function to get component name from section ID
+  function getComponentName(sectionId: string): string {
+    const componentMap: Record<string, string> = {
+      hero: 'CompleteHeroSystem',
+      verifier: 'ResumeVerifierSection',
+      proof: 'ProofSection',
+      visual: 'VisualSection',
+      cta: 'CtaSection',
+    };
+    return componentMap[sectionId] || sectionId;
+  }
 
   const handleReorder = (reorderedSections: Section[]) => {
     setSections(reorderedSections);

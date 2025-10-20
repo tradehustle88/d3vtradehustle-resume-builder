@@ -5,8 +5,11 @@ import { SectionId } from '../components/sections/section-registry';
 export interface Section {
   id: SectionId;
   visible: boolean;
+  component?: string;
   title?: string;
   description?: string;
+  headline?: string;
+  [key: string]: any; // Allow other custom fields
 }
 
 export interface PageLayout {

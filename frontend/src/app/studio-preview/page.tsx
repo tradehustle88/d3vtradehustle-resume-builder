@@ -15,6 +15,8 @@ import { auth } from '@/lib/firebase';
 
 // Map real components - dynamically imported for performance
 const componentMap: Record<string, any> = {
+  CompleteHeroSystem: dynamic(() => import('@/components/CompleteHeroSystem')),
+  ResumeVerifierSection: dynamic(() => import('@/components/ResumeVerifierSection')),
   ProofSection: dynamic(() => import('@/components/sections/ProofSection')),
   VisualSection: dynamic(() => import('@/components/sections/VisualSection')),
   CtaSection: dynamic(() => import('@/components/sections/CtaSection')),
