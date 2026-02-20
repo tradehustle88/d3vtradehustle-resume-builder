@@ -8,7 +8,7 @@
     "start": "ts-node src/app.ts"
   },
   "dependencies": {
-    "axios": "^0.21.1"
+    "axios": "^1.13.5"
   },
   "devDependencies": {
     "ts-node": "^10.0.0",
